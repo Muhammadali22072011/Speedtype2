@@ -1,0 +1,875 @@
+/*
+ * Стили теста. Селекторы и имена переменных повторяют monkeytype
+ * (#words, .word, letter, #caret, [data-nav-item]) — благодаря этому
+ * 52 файла themes/*.css из их репозитория применяются как есть,
+ * без единой правки.
+ */
+
+/*
+ * ============ Переменные темы ============
+ *
+ * Здесь их нет и быть не должно.
+ *
+ * Десять цветов темы объявлены ровно в одном месте — теге
+ * <style id="themeColors"> из index.html, содержимое которого переписывает
+ * state/themes.ts при каждой смене темы. Пока эти же десять переменных
+ * лежали в :root этого файла, они перебивали тему: тег вставлялся в начало
+ * <head>, наш css грузился после него, вес у обоих селекторов одинаковый —
+ * выигрывал тот, что ниже. То есть любая из 187 тем применялась
+ * до последней переменной и молча возвращалась к serika_dark.
+ * Проверяется одной строкой в консоли: подменить содержимое тега
+ * и посмотреть на getComputedStyle(document.documentElement).
+ *
+ * Семантические токены и шкалы — styles/tokens.css.
+ */
+
+/* ============ Основа ============ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Атрибут hidden браузер гасит правилом [hidden] { display: none } из своей
+ * таблицы — вес у него нулевой, и любое наше правило по id (#focusHint,
+ * #capsWarning, #keymap задают display: flex) его перебивает. Из-за этого
+ * скрытые элементы оставались на экране: подсказка «нажмите сюда» лежала
+ * поверх чёткого текста, а плашка Caps Lock висела всегда.
+ * Восстанавливаем поведение атрибута с !important — иначе его снова
+ * перебьют селекторы по id.
+ */
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--surface-page);
+  color: var(--fg-main);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: var(--leading-tight);
+  transition: background-color var(--transition), color var(--transition);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:not(.button):hover {
+  color: var(--fg-main);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-fg);
+}
+
+::placeholder {
+  color: var(--fg-muted);
+  opacity: 1;
+}
+
+/* ============ Каркас страницы ============ */
+
+/* Ширина и отступы — как у них: контент до 1024px, поля по 2rem,
+   между блоками 2rem */
+#app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  max-width: calc(var(--layout-content-width) + 2 * var(--layout-padding-inline));
+  margin: 0 auto;
+  padding: var(--space-32);
+  gap: var(--space-32);
+}
+
+/*
+ * Защита от классической ловушки грида: у элемента грида min-width равен
+ * auto, то есть он не может стать уже своего содержимого. Одна широкая
+ * таблица или длинная строка кода — и растягивается вся страница, а тянуть
+ * её вбок на телефоне никто не станет. Сейчас ничего не растягивает,
+ * правило стоит на будущее и ничего не меняет визуально.
+ */
+#app > * {
+  min-width: 0;
+}
+
+/* ============ Шапка ============ */
+
+header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: 0;
+}
+
+[data-ui-element="logo"] {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-8);
+  cursor: pointer;
+}
+
+[data-ui-element="logo"] svg {
+  width: 2rem;
+  height: 2rem;
+  color: var(--fg-accent);
+  transition: color var(--transition);
+}
+
+/* Целимся в атрибут, а не в h1: логотип теперь span. Заголовок первого
+   уровня принадлежит содержимому страницы, а не шапке — иначе он один
+   и тот же на всех страницах, и поиску нечем их различать. Файлы тем
+   monkeytype используют этот же атрибут, так что они не заметили. */
+[data-ui-element="logo"] [data-ui-element="logoText"] {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-main);
+  line-height: var(--leading-none);
+}
+
+[data-ui-element="logoSubtext"] {
+  font-size: var(--font-size-3xs);
+  /* Первое объявление — запасное для браузеров без color-mix */
+  color: var(--fg-muted);
+  color: var(--fg-muted-readable);
+  letter-spacing: var(--tracking-normal);
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin-left: auto;
+}
+
+/* Кнопка меню — 36×36 с внутренним отступом и скруглением, как у них:
+   раньше была голая иконка 28×28 без области нажатия */
+[data-nav-item] {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: var(--space-8);
+  border-radius: var(--radius-md);
+  color: var(--fg-muted);
+  transition: color var(--transition), background-color var(--transition), opacity var(--transition);
+}
+
+[data-nav-item] svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+[data-nav-item]:focus-visible {
+  outline: none;
+  background-color: var(--surface-raised);
+  color: var(--fg-main);
+}
+
+[data-nav-item]:hover,
+[data-nav-item].active {
+  color: var(--fg-main);
+}
+
+[data-nav-item].active {
+  color: var(--fg-accent);
+}
+
+/* ============ Панель настроек теста ============ */
+
+#testConfig {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+  background-color: var(--surface-raised);
+  border-radius: var(--radius-md);
+  padding: var(--space-6) var(--space-12);
+  font-size: var(--font-size-xs);
+  width: fit-content;
+  margin: 0 auto;
+  transition: opacity var(--transition);
+}
+
+#testConfig.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#testConfig .group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+#testConfig .divider {
+  width: 0.25rem;
+}
+
+/*
+ * Кнопки панели меняют только цвет букв — заливка у них своя, панель уже
+ * лежит на --sub-alt-color.
+ *
+ * Фон гасим здесь, а не в правилах :hover и .active: у общего .button
+ * заливка основным цветом объявлена и там, и там, а ниже #testConfig
+ * .button.active красит тем же основным цветом текст. Совпало бы одно
+ * с другим — активные кнопки («слова», выбранное время) превращались
+ * в сплошной прямоугольник без надписи. Селектор по id перебивает
+ * общий .button.active, так что хватает одной строки.
+ */
+#testConfig .button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--fg-muted);
+  color: var(--fg-muted-readable);
+  transition: color var(--transition), background-color var(--transition);
+  white-space: nowrap;
+}
+
+#testConfig .button svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+#testConfig .button:hover {
+  color: var(--fg-main);
+}
+
+#testConfig .button.active {
+  color: var(--fg-accent);
+}
+
+/* ============ Поле теста ============ */
+
+#typingTest {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-16);
+  position: relative;
+}
+
+/* Полоса времени: во всю ширину экрана, приклеена к его верху */
+#timerBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--progress, 0%);
+  height: 0.5rem;
+  z-index: 20;
+  background-color: var(--surface-accent);
+  transition: width var(--progress-duration, 0.15s) var(--ease-linear, linear);
+}
+
+#timerBar.timer-sub { background-color: var(--fg-muted); }
+#timerBar.timer-text { background-color: var(--fg-main); }
+#timerBar.timer-black { background-color: #000; }
+
+
+/*
+ * Три видимые строки ограничивает обёртка, а не сам #words: высоту ей
+ * ставит JS по реальной высоте слова. Раньше стояло height: 3lh на #words,
+ * и поля слов в эту высоту не помещались — нижняя строка обрезалась
+ * посередине букв и наезжала на предыдущую.
+ */
+#wordsWrapper {
+  position: relative;
+  /* Как у них: по вертикали режем (лишние строки не должны вылезать),
+     по горизонтали нет — иначе обрезается хвост слова, которое человек
+     набрал длиннее нужного, и подсказки у края строки */
+  overflow: visible clip;
+  /* Размер шрифта живёт на обёртке, а не на #words: каретка — её сосед,
+     и её ширина задана в em. На #words она наследовала размер body
+     и выходила вдвое тоньше, чем у monkeytype. */
+  font-size: var(--font-size-2xl);
+}
+
+/*
+ * Лента едет вбок, поэтому здесь режем и по горизонтали. Края растворяем
+ * маской — их приём: без неё строка обрывается посреди буквы.
+ */
+#wordsWrapper.tape {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0) 1%,
+    rgb(0, 0, 0) 10%,
+    rgb(0, 0, 0) 90%,
+    rgba(0, 0, 0, 0) 99%
+  );
+}
+
+#words {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  width: 100%;
+  height: fit-content;
+  user-select: none;
+  font-size: inherit;
+  line-height: var(--leading-none);
+
+  --correct-letter-color: var(--fg-main);
+  --correct-letter-animation: none;
+  --untyped-letter-color: var(--fg-muted);
+  --untyped-letter-animation: none;
+  --incorrect-letter-color: var(--fg-error);
+  --incorrect-letter-animation: none;
+  --extra-letter-color: var(--fg-error-extra);
+  --extra-letter-animation: none;
+}
+
+/* Поля и высота строки — как у них: 0.25em по вертикали, 0.3em по горизонтали */
+#words .word {
+  margin: 0.25em 0.3em;
+  line-height: 1em;
+  border-bottom: var(--border-width-thick) solid transparent;
+  display: flex;
+}
+
+#words .word letter {
+  color: var(--untyped-letter-color);
+  animation: var(--untyped-letter-animation);
+  transition: color var(--transition);
+  display: inline-block;
+}
+
+#words .word letter.correct {
+  color: var(--correct-letter-color);
+  animation: var(--correct-letter-animation);
+}
+
+#words .word letter.incorrect {
+  color: var(--incorrect-letter-color);
+  animation: var(--incorrect-letter-animation);
+}
+
+#words .word letter.extra {
+  color: var(--extra-letter-color);
+  animation: var(--extra-letter-animation);
+  opacity: 0.6;
+}
+
+/* Слово, законченное с ошибкой, подчёркивается и обводится цветом фона —
+   без обводки подчёркивание сливается с хвостами букв */
+#words .word.error {
+  border-bottom-color: var(--border-error-color);
+  text-shadow:
+    1px 0 0 var(--surface-page),
+    -1px 0 0 var(--surface-page),
+    0 1px 0 var(--surface-page),
+    1px 1px 0 var(--surface-page),
+    -1px 1px 0 var(--surface-page);
+}
+
+/* Яркий режим переопределяет все четыре цвета, а не только рамку ошибки */
+#words.colorfulMode {
+  --correct-letter-color: var(--fg-accent);
+  --untyped-letter-color: var(--fg-muted);
+  --incorrect-letter-color: var(--fg-error-vivid);
+  --extra-letter-color: var(--fg-error-vivid-extra);
+}
+
+#words.flipped.colorfulMode {
+  --correct-letter-color: var(--fg-muted);
+  --untyped-letter-color: var(--fg-accent);
+  --incorrect-letter-color: var(--fg-error-vivid);
+  --extra-letter-color: var(--fg-error-vivid-extra);
+}
+
+#words.colorfulMode .word.error,
+#words.flipped.colorfulMode .word.error {
+  border-bottom-color: var(--border-error-vivid-color);
+}
+
+/* Ушёл фокус — слова гаснут и размываются, чтобы подсказка поверх них
+   читалась. Одного размытия мало: текст просвечивал сквозь надпись. */
+#words.blurred {
+  opacity: var(--state-blur-opacity);
+  filter: blur(4px);
+  transition: filter var(--transition), opacity var(--transition);
+}
+
+/* Скругление и высота — как у них: var(--roundness) и 1.2em */
+#caret {
+  position: absolute;
+  width: 0.1em;
+  height: 1.2em;
+  background-color: var(--caret-fg);
+  border-radius: var(--radius-md);
+  animation: caretFlashSmooth var(--caret-blink-duration) infinite;
+  transition:
+    left var(--caret-duration-medium) var(--ease-linear),
+    top var(--caret-duration-medium) var(--ease-linear);
+  transform-origin: top left;
+  will-change: left, top;
+}
+
+#caret.hidden {
+  display: none;
+}
+
+/* Плавное мигание — обычное; резкое включается при smoothCaret: off */
+@keyframes caretFlashSmooth {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes caretFlashHard {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+#caret.smooth-off {
+  animation-name: caretFlashHard;
+}
+
+#focusHint {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--fg-main);
+  font-size: var(--font-size-md);
+  cursor: pointer;
+  z-index: var(--z-overlay);
+}
+
+#wordsInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  z-index: var(--z-under);
+}
+
+#testHint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  color: var(--fg-muted);
+  font-size: var(--font-size-2xs);
+  transition: opacity var(--transition);
+}
+
+/* ============ Результат ============ */
+
+#result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+#result .stats {
+  display: flex;
+  gap: var(--space-32);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+#result .stats .group {
+  display: flex;
+  flex-direction: column;
+}
+
+#result .stats .group .top {
+  color: var(--fg-muted);
+  font-size: var(--font-size-md);
+}
+
+#result .stats .group .bottom {
+  color: var(--fg-accent);
+  font-size: var(--font-size-result);
+  line-height: var(--leading-none);
+  font-variant-numeric: tabular-nums;
+}
+
+#result .stats .group.small .bottom {
+  font-size: var(--font-size-xl);
+}
+
+#result .chart {
+  width: 100%;
+  height: 200px;
+}
+
+#result .chart svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+#result .actions {
+  display: flex;
+  gap: var(--space-12);
+  justify-content: center;
+}
+
+.personalBest {
+  color: var(--fg-accent);
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  font-size: var(--font-size-sm);
+  /* Рекорд появляется, а не просто оказывается на экране — как у них */
+  animation: personalBestIn var(--duration-base) var(--ease-standard);
+}
+
+.personalBest .was {
+  color: var(--fg-muted);
+}
+
+@keyframes personalBestIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem) scale(0.9);
+  }
+}
+
+/* Время без нажатий стоит рядом со временем теста, мельче и приглушённо */
+#result .afk {
+  margin-left: var(--space-6);
+  color: var(--fg-muted);
+  font-size: var(--font-size-md);
+}
+
+/* Сообщение о неудачном сохранении и кнопка повтора — в одну строку */
+.saveFailed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-12);
+  flex-wrap: wrap;
+}
+
+.center {
+  text-align: center;
+}
+
+/* ============ Кнопки, формы, таблицы ============ */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: var(--space-10) var(--space-16);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-raised);
+  color: var(--fg-muted);
+  transition: background-color var(--transition), color var(--transition);
+}
+
+.button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.button:hover,
+.button.is-hover {
+  background-color: var(--surface-accent);
+  color: var(--fg-on-solid);
+}
+
+.button.active {
+  background-color: var(--surface-accent);
+  color: var(--fg-on-solid);
+}
+
+.input {
+  padding: var(--space-10) var(--space-12);
+  border-radius: var(--radius-md);
+  border: none;
+  background-color: var(--surface-raised);
+  color: var(--fg-main);
+  font: inherit;
+  font-size: var(--font-size-md);
+  width: 100%;
+}
+
+.input:focus {
+  outline: var(--focus-ring);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  max-width: 320px;
+  margin: var(--space-32) auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-md);
+}
+
+.table th {
+  text-align: left;
+  color: var(--fg-muted);
+  font-weight: var(--font-weight-normal);
+  padding: var(--space-8) var(--space-12);
+}
+
+.table td {
+  padding: var(--space-8) var(--space-12);
+  border-top: var(--border);
+}
+
+.table tr:hover td {
+  background-color: var(--surface-raised);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-24);
+}
+
+.error {
+  color: var(--fg-error);
+  font-size: var(--font-size-sm);
+  min-height: 1.2rem;
+}
+
+.sub {
+  color: var(--fg-muted);
+}
+
+.main {
+  color: var(--fg-accent);
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--fg-main);
+}
+
+footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  flex-wrap: wrap;
+  color: var(--fg-muted);
+  font-size: var(--font-size-2xs);
+  padding-top: var(--space-16);
+}
+
+footer button:hover,
+footer a:hover {
+  color: var(--fg-main);
+}
+
+footer .right {
+  margin-left: auto;
+  display: flex;
+  gap: var(--space-16);
+  align-items: center;
+}
+
+/*
+ * Текстовая кнопка: подпись без рамки и фона. Класс тот же, что у них
+ * (.textButton) — три темы красят именно его.
+ */
+.textButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  background: none;
+  border: none;
+  padding: 0;
+  /* 12px на --sub-color не проходят контраст (2.16 при норме 4.5) */
+  color: var(--fg-muted);
+  color: var(--fg-muted-readable);
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.textButton:hover {
+  color: var(--fg-main);
+}
+
+.textButton svg {
+  width: 0.85em;
+  height: 0.85em;
+}
+
+/*
+ * Наверх. Круглая, 64px, появляется после 100px прокрутки. Класс
+ * .scrollToTopButton ждёт одна из тем.
+ */
+.scrollToTopButton {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--surface-raised);
+  color: var(--fg-muted);
+  cursor: pointer;
+  z-index: var(--z-modal);
+  transition: color var(--transition), background-color var(--transition);
+}
+
+.scrollToTopButton:hover {
+  color: var(--fg-on-solid);
+  background-color: var(--surface-inverted);
+}
+
+.scrollToTopButton svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* ============ Гонка ============ */
+
+#race .players {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+#race .player {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-6) var(--space-16);
+  align-items: center;
+}
+
+#race .player .name {
+  font-size: var(--font-size-md);
+}
+
+#race .player .track {
+  grid-column: 1 / -1;
+  height: 0.5rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-raised);
+  overflow: hidden;
+}
+
+#race .player .fill {
+  height: 100%;
+  background-color: var(--surface-accent);
+  transition: width var(--progress-duration) var(--ease-linear);
+}
+
+#race .player.me .name {
+  color: var(--fg-accent);
+}
+
+#race .player .place {
+  color: var(--fg-accent);
+  font-size: var(--font-size-sm);
+}
+
+#countdown {
+  font-size: var(--font-size-4xl);
+  color: var(--fg-accent);
+  text-align: center;
+  line-height: var(--leading-none);
+}
+
+/* ============ Модалка выбора ============ */
+
+.picker {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: grid;
+  place-items: start center;
+  padding: var(--space-64) var(--space-16);
+  z-index: var(--z-modal);
+}
+
+.picker .box {
+  background-color: var(--surface-page);
+  border-radius: var(--radius-md);
+  padding: var(--space-16);
+  width: min(600px, 100%);
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.picker .list {
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-6);
+}
+
+.picker .list .button {
+  justify-content: flex-start;
+  padding: var(--space-6) var(--space-10);
+  font-size: var(--font-size-sm);
+}
+
+/* Кружки с цветами темы в списке выбора */
+.themeDots {
+  display: inline-flex;
+  gap: var(--space-4);
+  margin-left: auto;
+}
+
+.themeDots span {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: var(--radius-circle);
+}
+
+/* Адаптив собран в styles/components.css — все семь ступеней в одном месте */

@@ -1,0 +1,1123 @@
+/*
+ * Стили режимов отображения, клавиатуры, настроек и командной строки.
+ * Вынесено из monkeytype.css, чтобы базовая разметка теста осталась читаемой.
+ */
+
+/* ============ Режимы отображения ============ */
+
+/* Обратить цвета: набранное тускнеет, ненабранное яркое */
+#words.flipped {
+  --correct-letter-color: var(--fg-muted);
+  --untyped-letter-color: var(--fg-main);
+}
+
+/* Эффекты набранного текста. Имена классов — как у monkeytype */
+#words.typed-effect-hide .word.typed letter { opacity: 0; }
+#words.typed-effect-fade .word.typed letter { opacity: 0.35; }
+
+#words.typed-effect-dots .word.typed letter {
+  color: transparent;
+  position: relative;
+}
+
+#words.typed-effect-dots .word.typed letter::after {
+  content: "\00B7";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--fg-muted);
+}
+
+/* Слепой режим: ошибок не видно вовсе */
+#words.blind .word letter.extra { display: none !important; }
+
+#words.blind .word letter.incorrect {
+  color: var(--correct-letter-color);
+  animation: var(--correct-letter-animation);
+}
+
+#words.blind .word.error { border-bottom-color: transparent; }
+
+/* Лишние буквы можно спрятать классом, а не выкидывая их из разметки */
+#words.hideExtraLetters .word letter.extra { display: none; }
+
+/*
+ * Подсветка. У них это переключение ЦВЕТА, а не прозрачности: набранные
+ * слова уходят в цвет ненабранного текста, активное — в цвет верного.
+ * Прозрачностью получался другой оттенок, особенно на светлых темах.
+ */
+#words.highlight-off .word.typed letter.correct {
+  color: var(--untyped-letter-color);
+  animation: var(--untyped-letter-animation);
+}
+
+#words.highlight-off.blind .word letter.incorrect {
+  color: var(--untyped-letter-color);
+  animation: var(--untyped-letter-animation);
+}
+
+#words.highlight-word .word.typed letter,
+#words.highlight-next-word .word.typed letter,
+#words.highlight-next-two-words .word.typed letter,
+#words.highlight-next-three-words .word.typed letter {
+  color: var(--untyped-letter-color);
+  animation: var(--untyped-letter-animation);
+}
+
+#words.highlight-word .word.active letter,
+#words.highlight-next-word .word.active letter,
+#words.highlight-next-word .word.active + .word letter,
+#words.highlight-next-two-words .word.active letter,
+#words.highlight-next-two-words .word.active + .word letter,
+#words.highlight-next-two-words .word.active + .word + .word letter,
+#words.highlight-next-three-words .word.active letter,
+#words.highlight-next-three-words .word.active + .word letter,
+#words.highlight-next-three-words .word.active + .word + .word letter,
+#words.highlight-next-three-words .word.active + .word + .word + .word letter {
+  color: var(--correct-letter-color);
+  animation: var(--correct-letter-animation);
+}
+
+#words.highlight-word:not(.blind) .word.typed.error letter,
+#words.highlight-word:not(.blind) .word.active:has(letter.incorrect) letter,
+#words.highlight-next-word:not(.blind) .word.typed.error letter,
+#words.highlight-next-two-words:not(.blind) .word.typed.error letter,
+#words.highlight-next-three-words:not(.blind) .word.typed.error letter {
+  color: var(--incorrect-letter-color);
+  animation: var(--incorrect-letter-animation);
+}
+
+/* Лента: одна строка, текст едет мимо каретки.
+   Высоту обёртки ставит JS, здесь только раскладка слов. */
+#words.tape {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  transition: transform var(--tape-duration) var(--ease-linear);
+}
+
+#words.tape .word {
+  margin: 0.25em 0.6em 0.25em 0;
+}
+
+/* Тепловая карта скорости по словам */
+#words .word[data-heat="1"] letter { color: var(--fg-error); }
+#words .word[data-heat="2"] letter { color: var(--fg-error-extra); }
+#words .word[data-heat="3"] letter { color: var(--fg-main); }
+#words .word[data-heat="4"] letter { color: var(--fg-accent); }
+
+/* ============ Каретка ============ */
+
+/* Классы называются как в monkeytype (#caret.default и так далее) —
+   иначе файлы тем, которые красят каретку, не находят её */
+#caret.off { width: 0; }
+#caret.default { width: 0.1em; }
+
+#caret.block {
+  width: 0.5em;
+  z-index: var(--z-under);
+  border-radius: 0.05em;
+}
+
+#caret.outline {
+  width: 0.5em;
+  background: transparent;
+  border: 0.05em solid var(--caret-fg);
+  border-radius: 0.05em;
+  animation-name: none;
+}
+
+#caret.underline {
+  height: 0.1em !important;
+  width: 0.5em;
+  transform: translateY(1.15em);
+}
+
+/* Длительности взяты из их caret.ts: off/slow/medium/fast = 0/150/100/85 мс */
+#caret.smooth-off { transition: none; }
+#caret.smooth-slow {
+  transition:
+    left var(--caret-duration-slow) var(--ease-inout),
+    top var(--caret-duration-slow) var(--ease-inout);
+}
+#caret.smooth-medium {
+  transition:
+    left var(--caret-duration-medium) var(--ease-inout),
+    top var(--caret-duration-medium) var(--ease-inout);
+}
+#caret.smooth-fast {
+  transition:
+    left var(--caret-duration-fast) var(--ease-inout),
+    top var(--caret-duration-fast) var(--ease-inout);
+}
+
+/* Пока человек печатает, каретка не мигает — иначе она мешает читать */
+#caret.typing { animation-name: none; opacity: 1; }
+
+/* Догоняющая каретка */
+#paceCaret {
+  position: absolute;
+  width: 0.1em;
+  background-color: var(--surface-muted);
+  border-radius: 0.1em;
+  opacity: 0.6;
+  transition:
+    left var(--caret-duration-medium) var(--ease-linear),
+    top var(--caret-duration-medium) var(--ease-linear);
+  pointer-events: none;
+}
+
+/* ============ Таймер и показатели ============ */
+
+/*
+ * Показатели над словами и под ними. Три отдельных места: мелкая строка
+ * сверху (#liveStatsMini), крупный таймер над словами и крупные цифры
+ * под ними. Кегль мелкой строки ставит скрипт — он равен кеглю слов,
+ * поэтому здесь только раскладка и цвет.
+ */
+#liveStatsMini {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-24);
+  min-height: 2.2rem;
+  color: var(--fg-accent);
+  transition: opacity var(--transition);
+}
+
+#liveStatsTextTop,
+#liveStatsTextBottom {
+  display: flex;
+  align-items: baseline;
+  /* Слева, вровень с началом строки слов, — как стояло до того, как
+     сюда добавили раскладку. По центру таймер отрывается от текста. */
+  justify-content: flex-start;
+  gap: var(--space-24);
+  font-size: var(--font-size-3xl);
+  color: var(--fg-accent);
+  transition: opacity var(--transition);
+}
+
+#liveStatsMini .value,
+#liveStatsTextTop .value,
+#liveStatsTextBottom .value {
+  font-variant-numeric: tabular-nums;
+}
+
+#liveStatsMini .label,
+#liveStatsTextTop .label,
+#liveStatsTextBottom .label {
+  font-size: var(--font-size-xs);
+  color: var(--fg-muted);
+  margin-left: var(--space-4);
+}
+
+/* Цвет таймера из настроек. Класс скрипт вешает на сам блок, а не на
+   значение внутри, поэтому и целимся в блок. */
+#liveStatsMini.timer-sub,
+#liveStatsTextTop .timer-sub { color: var(--fg-muted); }
+
+#liveStatsMini.timer-text,
+#liveStatsTextTop .timer-text { color: var(--fg-main); }
+
+#liveStatsMini.timer-black,
+#liveStatsTextTop .timer-black { color: #000; }
+
+/* Показатели гонки — там разметка прежняя, одним блоком */
+#liveStats .value.mini { font-size: var(--font-size-base); }
+#liveStats .value.timer-sub { color: var(--fg-muted); }
+#liveStats .value.timer-text { color: var(--fg-main); }
+#liveStats .value.timer-black { color: #000; }
+
+.timerBar {
+  width: 100%;
+  height: 0.4rem;
+  background-color: var(--surface-raised);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.timerBar .fill {
+  height: 100%;
+  background-color: var(--surface-accent);
+  transition: width var(--progress-duration) var(--ease-linear);
+}
+
+/* ============ Предупреждения и результат ============ */
+
+#capsWarning,
+.failed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  color: var(--fg-error);
+  font-size: var(--font-size-sm);
+}
+
+#capsWarning svg,
+.failed svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.wordsHistory {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  font-size: var(--font-size-sm);
+  color: var(--fg-muted);
+}
+
+.wordsHistory .ok { color: var(--fg-main); }
+.wordsHistory .bad { color: var(--fg-error); text-decoration: underline; }
+
+/*
+ * Тепловая карта скорости: пять ступеней от медленного к быстрому.
+ * Включается кнопкой в разборе и настройкой burstHeatmap. Цвета только
+ * из темы — своих здесь быть не должно, иначе на светлой теме получится
+ * нечитаемо.
+ */
+.wordsHistory.heat .heat-0 { color: var(--fg-error); }
+.wordsHistory.heat .heat-1 { color: var(--fg-error-extra); }
+.wordsHistory.heat .heat-2 { color: var(--fg-muted); }
+.wordsHistory.heat .heat-3 { color: var(--fg-main); }
+.wordsHistory.heat .heat-4 { color: var(--fg-accent); }
+
+.historyTools {
+  display: flex;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-8);
+  font-size: var(--font-size-2xs);
+}
+
+.historyTools .button {
+  padding: var(--space-4) var(--space-10);
+  border-radius: var(--radius-sm);
+}
+
+.heatLegend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+  font-size: var(--font-size-2xs);
+}
+
+.heatLegend span {
+  width: var(--space-16);
+  height: var(--space-6);
+  border-radius: var(--radius-sm);
+}
+
+.heatLegend .heat-0 { background-color: var(--fg-error); }
+.heatLegend .heat-1 { background-color: var(--fg-error-extra); }
+.heatLegend .heat-2 { background-color: var(--fg-muted); }
+.heatLegend .heat-3 { background-color: var(--fg-main); }
+.heatLegend .heat-4 { background-color: var(--fg-accent); }
+
+/* ============ Клавиатура на экране ============ */
+
+#keymap {
+  --keymap-size: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: center;
+  margin-top: var(--space-16);
+  transform: scale(var(--keymap-size));
+  transform-origin: top center;
+}
+
+.keymapRow {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.keymapKey {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-raised);
+  color: var(--fg-muted);
+  font-size: var(--font-size-2xs);
+  transition:
+    background-color var(--transition),
+    color var(--transition),
+    transform var(--transition);
+}
+
+.keymapSpace { width: 10rem; }
+
+.keymapKey.next {
+  background-color: var(--surface-accent);
+  color: var(--fg-on-solid);
+}
+
+.keymapKey.active {
+  background-color: var(--surface-inverted);
+  color: var(--fg-on-solid);
+  transform: translateY(2px);
+}
+
+.keymapKey.wrong {
+  background-color: var(--surface-danger);
+  color: var(--fg-on-solid);
+}
+
+/* Формы клавиатуры */
+#keymap.keymap-staggered .keymapRow:nth-child(2) { margin-left: var(--space-16); }
+#keymap.keymap-staggered .keymapRow:nth-child(3) { margin-left: var(--space-24); }
+#keymap.keymap-staggered .keymapRow:nth-child(4) { margin-left: 2.25rem; }
+#keymap.keymap-split .keymapKey:nth-child(6) { margin-right: var(--space-32); }
+
+/* Подписи клавиш */
+#keymap.legend-blank .keymapKey span { visibility: hidden; }
+#keymap.legend-uppercase .keymapKey span { text-transform: uppercase; }
+
+/* ============ Страница настроек ============ */
+
+.settingsHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-16);
+}
+
+.settingsHead h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.settingsHead h2 svg { width: 1.2rem; height: 1.2rem; }
+.settingsHead .button { margin-left: auto; }
+
+.settingsNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  margin-bottom: var(--space-32);
+}
+
+.settingsNav .button {
+  padding: var(--space-6) var(--space-12);
+  font-size: var(--font-size-xs);
+}
+
+.settingsGroup {
+  margin-bottom: var(--space-40);
+  scroll-margin-top: 1rem;
+}
+
+.settingsGroup h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-12);
+  color: var(--fg-accent);
+}
+
+.settingsGroup h3 svg { width: 1rem; height: 1rem; }
+
+.settingsGroup h3 em {
+  font-style: normal;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal);
+  color: var(--fg-muted);
+}
+
+.settingsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.setting {
+  display: grid;
+  grid-template-columns: minmax(10rem, 18rem) 1fr;
+  gap: var(--space-8) var(--space-24);
+  align-items: center;
+  padding: var(--space-10) var(--space-12);
+  background-color: var(--surface-raised);
+  border-radius: var(--radius-md);
+}
+
+.setting.pending { opacity: var(--state-dim-opacity); }
+
+.setLabel { display: flex; flex-direction: column; }
+.setName { font-size: var(--font-size-md); }
+.setHint { font-size: var(--font-size-2xs); color: var(--fg-muted); }
+.setPending { font-size: var(--font-size-3xs); color: var(--fg-error); }
+
+.setControl { display: flex; justify-content: flex-end; }
+
+.setValues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  justify-content: flex-end;
+}
+
+.setValues .button,
+.setToggle,
+.setPicker {
+  padding: var(--space-6) var(--space-10);
+  font-size: var(--font-size-xs);
+}
+
+.setNumber,
+.setText { max-width: 12rem; }
+
+/* ============ Модалки и командная строка ============ */
+
+.pickerHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.pickerHead h2 { font-size: var(--font-size-base); }
+.pickerHead .button { margin-left: auto; padding: var(--space-6) var(--space-8); }
+
+.pickerItem { justify-content: flex-start; gap: var(--space-8); }
+.pickerItem svg { width: 0.8rem; height: 0.8rem; flex-shrink: 0; }
+
+/* Курсор клавиатуры. Обводкой, а не заливкой: заливка уже занята под
+   .active — то значение, которое стоит сейчас, — и на нём курсор
+   перестал бы быть виден. Внутрь, чтобы не выталкивать соседей. */
+.pickerItem.cursor {
+  outline: var(--border-width-thick) solid var(--fg-main);
+  outline-offset: -2px;
+}
+
+.pickerLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pickerHint {
+  margin-left: auto;
+  font-size: var(--font-size-3xs);
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.commandline .box { max-width: 560px; }
+
+.cmdList {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-height: 50vh;
+}
+
+.cmdItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  width: 100%;
+  padding: var(--space-8) var(--space-12);
+  border-radius: var(--radius-sm);
+  color: var(--fg-muted);
+  text-align: left;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+.cmdItem:hover { color: var(--fg-main); }
+
+.cmdItem.selected {
+  background-color: var(--surface-accent);
+  color: var(--fg-on-solid);
+}
+
+.cmdIcon {
+  display: grid;
+  place-items: center;
+  width: 1rem;
+}
+
+.cmdIcon svg { width: 0.8rem; height: 0.8rem; }
+
+.cmdHint {
+  margin-left: auto;
+  font-size: var(--font-size-2xs);
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.cmdItem.selected .cmdHint { opacity: 0.85; }
+
+.cmdFooter {
+  display: flex;
+  gap: var(--space-16);
+  font-size: var(--font-size-3xs);
+  padding-top: var(--space-4);
+}
+
+/* ============ Ближе к monkeytype ============ */
+
+/* Тест по центру экрана по вертикали, как у них */
+#view {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Контейнер страницы внутри <main>: файлы тем и funbox целятся в `main .page`,
+   поэтому страница не может быть самим main */
+#page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+#page > #testConfig { margin-bottom: 0; }
+
+/*
+ * Раскладка страницы теста взята у monkeytype как есть
+ * (frontend/src/styles/test.scss):
+ *
+ *   .pageTest { height: 100%; display: grid; grid-template-rows: 1fr auto 1fr; }
+ *
+ * Панель режимов занимает верхнюю строку, тест — среднюю auto, снизу
+ * остаётся такая же пустая 1fr. Две равные строки по краям и держат тест
+ * ровно посередине страницы.
+ *
+ * Прежний способ — flex: 1 на самом тесте — центрировал его в остатке
+ * под панелью, и середина уезжала вниз ровно на её высоту.
+ *
+ * Селектор с id: у #page display объявлен по id, класс его не перебьёт.
+ */
+#page.pageTest {
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
+}
+
+/* Панель остаётся наверху страницы, под шапкой: её строка растянута
+   на всю свободную высоту, и без этого панель повисла бы посреди неё */
+#page.pageTest > #testConfig {
+  align-self: start;
+}
+
+/* В средней строке тест занимает ровно столько, сколько нужно содержимому */
+#typingTest {
+  justify-content: center;
+}
+
+/* Панель конфига: без заливки на ховере, только цвет текста */
+#testConfig .button:hover {
+  background-color: transparent;
+  color: var(--fg-main);
+}
+
+#testConfig .button.active:hover { color: var(--fg-accent); }
+
+/* Caps Lock: жёлтая плашка по центру, как у них */
+#capsWarning {
+  align-self: center;
+  gap: var(--space-8);
+  padding: var(--space-8) var(--space-24);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-raised);
+  color: var(--fg-accent);
+  font-size: var(--font-size-md);
+}
+
+#capsWarning svg { width: 1rem; height: 1rem; }
+
+/* Кнопка перезапуска под словами: только иконка, спокойная */
+#restartButton {
+  align-self: center;
+  display: grid;
+  place-items: center;
+  padding: var(--space-8) var(--space-32);
+  border-radius: var(--radius-md);
+  color: var(--fg-muted);
+  transition: color var(--transition), background-color var(--transition);
+}
+
+#restartButton svg { width: 1.1rem; height: 1.1rem; }
+
+#restartButton:hover {
+  color: var(--fg-main);
+  background-color: var(--surface-raised);
+}
+
+#restartButton:focus-visible {
+  outline: none;
+  background-color: var(--surface-inverted);
+  color: var(--fg-on-solid);
+}
+
+/* Подсказка фокуса: как у них — без рамок, поверх размытых слов.
+   Раньше здесь не было justify-content, и надпись прижималась влево,
+   ложась прямо на слова. */
+#focusHint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  font-size: var(--font-size-base);
+  color: var(--fg-main);
+  text-align: center;
+}
+
+#focusHint svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* ============ Режим набора ============ */
+
+/*
+ * Пока человек печатает, интерфейс уходит на второй план: меню гаснет,
+ * футер и подсказки исчезают, логотип тускнеет. Атрибут data-focused
+ * на <header> выбран не случайно — на нём завязаны 7 файлов тем.
+ */
+header[data-focused] [data-nav-item] {
+  opacity: var(--nav-focus-opacity);
+  pointer-events: none;
+}
+
+header[data-focused] [data-ui-element="logoText"] {
+  color: var(--fg-muted);
+}
+
+header[data-focused] [data-ui-element="logoSubtext"] {
+  color: transparent;
+}
+
+header[data-focused] [data-ui-element="logo"] svg {
+  color: var(--fg-muted);
+}
+
+header,
+header [data-nav-item],
+header [data-ui-element="logoText"],
+header [data-ui-element="logoSubtext"] {
+  transition: opacity var(--transition), color var(--transition);
+}
+
+body.typing footer,
+body.typing #testHint {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ============ Клавиши в тексте ============ */
+
+kbd {
+  display: inline-block;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25em;
+  background-color: var(--surface-muted);
+  color: var(--fg-on-solid);
+  font-family: var(--font);
+  font-size: 0.75em;
+  line-height: 1.4;
+}
+
+/*
+ * Подсказки клавиш: над футером, по центру, в две строки — как у них.
+ * Раньше три пары стояли в строку под тестом и уезжали вместе с ним.
+ */
+#testHint {
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-top: var(--space-32);
+}
+
+#testHint:empty {
+  display: none;
+}
+
+#testHint span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+/* ============ Всплывающие подсказки ============ */
+
+/*
+ * Минимальная реализация balloon.css: у monkeytype подсказки живут на паре
+ * [aria-label] + [data-balloon-pos], и одна из тем красит именно этот
+ * псевдоэлемент. Родной title тут не годится — он и выглядит иначе,
+ * и появляется через секунду.
+ */
+[aria-label][data-balloon-pos] {
+  position: relative;
+}
+
+[aria-label][data-balloon-pos]::after {
+  content: attr(aria-label);
+  position: absolute;
+  z-index: var(--z-tooltip);
+  padding: 0.4em 0.6em;
+  border-radius: var(--balloon-border-radius);
+  background-color: var(--surface-muted);
+  color: var(--fg-on-solid);
+  font-family: var(--font);
+  font-size: var(--balloon-font-size);
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+[aria-label][data-balloon-pos]:hover::after,
+[aria-label][data-balloon-pos]:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+[aria-label][data-balloon-pos="down"]::after {
+  top: calc(100% + 0.35rem);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+[aria-label][data-balloon-pos="up"]::after {
+  bottom: calc(100% + 0.35rem);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+[aria-label][data-balloon-pos="left"]::after {
+  right: calc(100% + 0.35rem);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+[aria-label][data-balloon-pos="right"]::after {
+  left: calc(100% + 0.35rem);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Подсказка не должна выскакивать после клика мышью — только на наведении
+   и при переходе клавиатурой */
+[aria-label][data-balloon-pos]:focus:not(:focus-visible):not(:hover)::after {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ============ Страница «о проекте» ============ */
+
+/* Оформление текстовых страниц общее: о проекте, гайд, нормы, вопросы.
+   .textPage ставят себе сами страницы — класс .pageX роутер выводит
+   из адреса, и заводить правило под каждый новый адрес пришлось бы руками. */
+:is(.pageAbout, .textPage) .section {
+  margin-bottom: var(--space-40);
+  max-width: 46rem;
+}
+
+:is(.pageAbout, .textPage) .section .title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--fg-accent);
+  margin-bottom: var(--space-12);
+}
+
+:is(.pageAbout, .textPage) .section .title svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+:is(.pageAbout, .textPage) .section p {
+  /* Основной текст этих страниц читают, а не просматривают: на --sub-color
+     контраст 2.16 при норме 4.5, и это 16 пикселей — заметно даже глазом.
+     Первое объявление запасное, для браузеров без color-mix. */
+  color: var(--fg-muted);
+  color: var(--fg-muted-readable);
+  line-height: var(--leading-text);
+  margin-bottom: var(--space-10);
+}
+
+:is(.pageAbout, .textPage) .section p b,
+:is(.pageAbout, .textPage) .section li b {
+  color: var(--fg-main);
+  font-weight: var(--font-weight-medium);
+}
+
+:is(.pageAbout, .textPage) .section a {
+  color: var(--fg-accent);
+}
+
+:is(.pageAbout, .textPage) .aboutList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  color: var(--fg-muted);
+  line-height: var(--leading-text);
+}
+
+:is(.pageAbout, .textPage) .aboutList li {
+  padding-left: var(--space-16);
+  border-left: var(--border-width-thick) solid var(--border-color);
+}
+
+:is(.pageAbout, .textPage) code {
+  background-color: var(--surface-raised);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-sm);
+  font-size: 0.9em;
+}
+
+/* ============ Состояния и доступность ============ */
+
+/*
+ * Фокус с клавиатуры. Раньше он был виден только на кнопке рестарта:
+ * пройти интерфейс табом было можно, но непонятно, где ты находишься.
+ */
+.button:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.input:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 0;
+}
+
+.button:active,
+[data-nav-item]:active {
+  transform: translateY(1px);
+}
+
+.button:disabled,
+button:disabled {
+  opacity: var(--state-disabled-opacity);
+  cursor: not-allowed;
+}
+
+/*
+ * Уважаем системную настройку «меньше движения»: гасим мигание каретки,
+ * тряску funbox и плавные переходы. Без этого режимы вроде earthquake
+ * или nausea для части людей просто непригодны.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  #caret {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* ============ Строка в списке выбора ============ */
+
+.pickerRow {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+}
+
+.pickerRow .pickerItem {
+  flex: 1;
+  min-width: 0;
+}
+
+.pickerRow.pending .pickerItem {
+  opacity: 0.5;
+}
+
+.pickerPending {
+  margin-left: auto;
+  font-size: var(--font-size-4xs);
+  color: var(--fg-error);
+  white-space: nowrap;
+}
+
+.pickerFav {
+  display: grid;
+  place-items: center;
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-sm);
+  color: var(--fg-muted);
+  opacity: 0.35;
+  transition: color var(--transition), opacity var(--transition);
+}
+
+.pickerFav svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.pickerFav:hover {
+  opacity: 1;
+  color: var(--fg-main);
+}
+
+.pickerFav.on {
+  opacity: 1;
+  color: var(--fg-accent);
+}
+
+/* Таблица уровней на странице «какая скорость нормальная»: на узком экране
+   прокручивается сама, а не тянет за собой страницу. */
+.tableScroll {
+  overflow-x: auto;
+  margin: var(--space-8) 0 var(--space-12);
+}
+
+.tableScroll .table {
+  min-width: 32rem;
+}
+
+:is(.pageAbout, .textPage) .section .button {
+  display: inline-flex;
+  margin-right: var(--space-12);
+}
+
+/* ============ Показ опечаток ============ */
+
+/*
+ * indicateTypos: below — под неверной буквой подписывается то, что было
+ * набрано на самом деле. У monkeytype это отдельные элементы <hint>,
+ * у нас — псевдоэлемент на самой букве: разметка проще, а выглядит так же.
+ */
+#words.indicate-below .word letter {
+  position: relative;
+}
+
+#words.indicate-below .word letter[data-typed]::after {
+  content: attr(data-typed);
+  position: absolute;
+  left: 50%;
+  bottom: -1.1em;
+  transform: translateX(-50%);
+  font-size: 0.75em;
+  line-height: var(--leading-none);
+  color: var(--correct-letter-color);
+  opacity: 0.5;
+  text-shadow: none;
+  pointer-events: none;
+}
+
+/* Слепой режим прячет и подписи: он для того и нужен */
+#words.blind .word letter[data-typed]::after {
+  display: none;
+}
+
+/* ============ Строка активных режимов ============ */
+
+/*
+ * Что сейчас включено. У monkeytype это отдельная строка под панелью
+ * режимов; язык и funbox живут именно здесь, а не в самой панели.
+ */
+#testModesNotice {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4) var(--space-16);
+  font-size: var(--font-size-xs);
+  /* 12.8px на --sub-color дают контраст 2.16 при норме 4.5 — Lighthouse
+     это ловит. Первое объявление запасное, для браузеров без color-mix. */
+  color: var(--fg-muted);
+  color: var(--fg-muted-readable);
+  min-height: 1.2rem;
+  transition: opacity var(--transition);
+}
+
+#testModesNotice .notice {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-2) var(--space-6);
+  border-radius: var(--radius-sm);
+  color: inherit;
+  white-space: nowrap;
+  transition: color var(--transition);
+}
+
+#testModesNotice .notice svg {
+  width: 0.8rem;
+  height: 0.8rem;
+  flex-shrink: 0;
+}
+
+#testModesNotice .notice:hover {
+  color: var(--fg-main);
+}
+
+#testModesNotice .notice.error {
+  color: var(--fg-error);
+}
+
+body.typing #testModesNotice {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ============ Экран результата ============ */
+
+#result .stats .group .bottom.testType,
+#result .stats .group .bottom.chars {
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
+#result .stats .group .bottom.chars {
+  cursor: help;
+}
+
+#result .actions .button {
+  padding: var(--space-10) 1.2rem;
+}
+
+#result .actions .button svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+#resultWordsHistory .wordsHistory {
+  justify-content: center;
+}
+
+/* ============ Funbox: memory ============ */
+
+/*
+ * Текст дают запомнить, потом прячут. Набранное остаётся видимым —
+ * иначе непонятно, докуда дошёл.
+ */
+#memoryTimer {
+  text-align: center;
+  color: var(--fg-accent);
+  font-size: var(--font-size-xs);
+}
+
+#words.memoryHidden .word:not(.typed):not(.active) letter,
+#words.memoryHidden .word.active letter:not(.correct):not(.incorrect) {
+  color: transparent;
+}
+
+/* ============ Funbox: arrows ============ */
+
+/* Стрелки набираются клавишами-стрелками, поэтому пробел между словами
+   не нужен — но слова всё равно разделяем, чтобы считалась скорость */
+#words.arrows .word letter {
+  font-size: 1.1em;
+}

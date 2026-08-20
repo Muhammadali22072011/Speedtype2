@@ -1,0 +1,36 @@
+{
+  "name": "uzbek",
+  "displayName": "O'zbekcha",
+  "rtl": false,
+  "words": [
+    "va", "bu", "bir", "men", "sen", "u", "biz", "siz", "ular", "uchun",
+    "bilan", "ham", "yoki", "lekin", "ammo", "chunki", "agar", "qanday", "nima", "kim",
+    "qayer", "qachon", "necha", "yaxshi", "yomon", "katta", "kichik", "yangi", "eski", "uzoq",
+    "yaqin", "tez", "sekin", "issiq", "sovuq", "oq", "qora", "qizil", "yashil", "sariq",
+    "kun", "tun", "yil", "oy", "hafta", "soat", "daqiqa", "vaqt", "bugun", "erta",
+    "kecha", "hozir", "keyin", "oldin", "doim", "hech", "juda", "faqat", "yana", "endi",
+    "uy", "maktab", "ish", "kitob", "qalam", "stol", "kursi", "eshik", "deraza", "yo'l",
+    "shahar", "qishloq", "mamlakat", "dunyo", "odam", "bola", "ota", "ona", "aka", "opa",
+    "do'st", "oila", "ism", "til", "so'z", "gap", "savol", "javob", "fikr", "maqsad",
+    "bilim", "ilm", "kuch", "yurak", "ko'z", "qo'l", "oyoq", "bosh", "yuz", "quloq",
+    "bormoq", "kelmoq", "qilmoq", "bo'lmoq", "bermoq", "olmoq", "ko'rmoq", "eshitmoq", "aytmoq", "bilmoq",
+    "o'qimoq", "yozmoq", "ishlamoq", "o'ylamoq", "istamoq", "kutmoq", "topmoq", "boshlamoq", "tugatmoq", "yashamoq",
+    "suv", "non", "osh", "olma", "meva", "daraxt", "gul", "quyosh", "oy", "yulduz",
+    "havo", "yer", "tog'", "dengiz", "daryo", "yomg'ir", "qor", "shamol", "olov", "tosh",
+    "kompyuter", "telefon", "internet", "dastur", "tugma", "ekran", "harf", "raqam", "tezlik", "aniqlik"
+  ],
+  "quotes": [
+    {
+      "text": "Ilm olish har bir inson uchun farzdir.",
+      "source": "hikmat"
+    },
+    {
+      "text": "Mehnat qilgan kishi hech qachon xor bo'lmaydi.",
+      "source": "maqol"
+    },
+    {
+      "text": "Til bilgan el bilar, el bilgan yo'l bilar.",
+      "source": "maqol"
+    }
+  ]
+}

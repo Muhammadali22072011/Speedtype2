@@ -1,0 +1,2807 @@
+{
+ "8008": {
+  "colors": {
+   "--bg-color": "#333a45",
+   "--caret-color": "#f44c7f",
+   "--main-color": "#f44c7f",
+   "--sub-color": "#939eae",
+   "--sub-alt-color": "#2e343d",
+   "--text-color": "#e9ecf0",
+   "--error-color": "#da3333",
+   "--error-extra-color": "#791717",
+   "--colorful-error-color": "#c5da33",
+   "--colorful-error-extra-color": "#849224"
+  },
+  "hasCss": false
+ },
+ "9009": {
+  "colors": {
+   "--bg-color": "#eeebe2",
+   "--caret-color": "#7fa480",
+   "--main-color": "#080909",
+   "--sub-color": "#99947f",
+   "--sub-alt-color": "#d3cfc1",
+   "--text-color": "#080909",
+   "--error-color": "#c87e74",
+   "--error-extra-color": "#a56961",
+   "--colorful-error-color": "#c87e74",
+   "--colorful-error-extra-color": "#a56961"
+  },
+  "hasCss": true
+ },
+ "80s_after_dark": {
+  "colors": {
+   "--bg-color": "#1b1d36",
+   "--caret-color": "#99d6ea",
+   "--main-color": "#fca6d1",
+   "--sub-color": "#99d6ea",
+   "--sub-alt-color": "#17182c",
+   "--text-color": "#e1e7ec",
+   "--error-color": "#fffb85",
+   "--error-extra-color": "#fffb85",
+   "--colorful-error-color": "#fffb85",
+   "--colorful-error-extra-color": "#fffb85"
+  },
+  "hasCss": false
+ },
+ "aether": {
+  "colors": {
+   "--bg-color": "#101820",
+   "--caret-color": "#eedaea",
+   "--main-color": "#eedaea",
+   "--sub-color": "#cf6bdd",
+   "--sub-alt-color": "#292136",
+   "--text-color": "#eedaea",
+   "--error-color": "#ff5253",
+   "--error-extra-color": "#e3002b",
+   "--colorful-error-color": "#ff5253",
+   "--colorful-error-extra-color": "#e3002b"
+  },
+  "hasCss": true
+ },
+ "alduin": {
+  "colors": {
+   "--bg-color": "#1c1c1c",
+   "--caret-color": "#e3e3e3",
+   "--main-color": "#dfd7af",
+   "--sub-color": "#444444",
+   "--sub-alt-color": "#242424",
+   "--text-color": "#f5f3ed",
+   "--error-color": "#af5f5f",
+   "--error-extra-color": "#4d2113",
+   "--colorful-error-color": "#af5f5f",
+   "--colorful-error-extra-color": "#4d2113"
+  },
+  "hasCss": false
+ },
+ "alpine": {
+  "colors": {
+   "--bg-color": "#6c687f",
+   "--caret-color": "#585568",
+   "--main-color": "#ffffff",
+   "--sub-color": "#9994b8",
+   "--sub-alt-color": "#77738c",
+   "--text-color": "#ffffff",
+   "--error-color": "#e32b2b",
+   "--error-extra-color": "#a62626",
+   "--colorful-error-color": "#e32b2b",
+   "--colorful-error-extra-color": "#a62626"
+  },
+  "hasCss": false
+ },
+ "anti_hero": {
+  "colors": {
+   "--bg-color": "#00002e",
+   "--caret-color": "#ffffff",
+   "--main-color": "#ffadad",
+   "--sub-color": "#ff3d8b",
+   "--sub-alt-color": "#060548",
+   "--text-color": "#f1deef",
+   "--error-color": "#8fecff",
+   "--error-extra-color": "#558cab",
+   "--colorful-error-color": "#8fecff",
+   "--colorful-error-extra-color": "#558cab"
+  },
+  "hasCss": false
+ },
+ "arch": {
+  "colors": {
+   "--bg-color": "#0c0d11",
+   "--caret-color": "#7ebab5",
+   "--main-color": "#7ebab5",
+   "--sub-color": "#454864",
+   "--sub-alt-color": "#171a25",
+   "--text-color": "#f6f5f5",
+   "--error-color": "#ff4754",
+   "--error-extra-color": "#b02a33",
+   "--colorful-error-color": "#ff4754",
+   "--colorful-error-extra-color": "#b02a33"
+  },
+  "hasCss": false
+ },
+ "aurora": {
+  "colors": {
+   "--bg-color": "#011926",
+   "--caret-color": "#00e980",
+   "--main-color": "#00e980",
+   "--sub-color": "#245c69",
+   "--sub-alt-color": "#000c13",
+   "--text-color": "#fff",
+   "--error-color": "#b94da1",
+   "--error-extra-color": "#9b3a76",
+   "--colorful-error-color": "#b94da1",
+   "--colorful-error-extra-color": "#9b3a76"
+  },
+  "hasCss": true
+ },
+ "beach": {
+  "colors": {
+   "--bg-color": "#ffeead",
+   "--caret-color": "#ffcc5c",
+   "--main-color": "#96ceb4",
+   "--sub-color": "#ffcc5c",
+   "--sub-alt-color": "#f7dc8f",
+   "--text-color": "#5b7869",
+   "--error-color": "#ff6f69",
+   "--error-extra-color": "#ff6f69",
+   "--colorful-error-color": "#ff6f69",
+   "--colorful-error-extra-color": "#ff6f69"
+  },
+  "hasCss": true
+ },
+ "bento": {
+  "colors": {
+   "--bg-color": "#2d394d",
+   "--caret-color": "#ff7a90",
+   "--main-color": "#ff7a90",
+   "--sub-color": "#4a768d",
+   "--sub-alt-color": "#263041",
+   "--text-color": "#fffaf8",
+   "--error-color": "#ee2a3a",
+   "--error-extra-color": "#f04040",
+   "--colorful-error-color": "#fc2032",
+   "--colorful-error-extra-color": "#f04040"
+  },
+  "hasCss": false
+ },
+ "bingsu": {
+  "colors": {
+   "--bg-color": "#b8a7aa",
+   "--caret-color": "#ebe6ea",
+   "--main-color": "#83616e",
+   "--sub-color": "#48373d",
+   "--sub-alt-color": "#ab989e",
+   "--text-color": "#ebe6ea",
+   "--error-color": "#921341",
+   "--error-extra-color": "#640b2c",
+   "--colorful-error-color": "#921341",
+   "--colorful-error-extra-color": "#640b2c"
+  },
+  "hasCss": true
+ },
+ "bliss": {
+  "colors": {
+   "--bg-color": "#262727",
+   "--caret-color": "#f0d3c9",
+   "--main-color": "#f0d3c9",
+   "--sub-color": "#665957",
+   "--sub-alt-color": "#343231",
+   "--text-color": "#fff",
+   "--error-color": "#bd4141",
+   "--error-extra-color": "#883434",
+   "--colorful-error-color": "#bd4141",
+   "--colorful-error-extra-color": "#883434"
+  },
+  "hasCss": false
+ },
+ "blue_dolphin": {
+  "colors": {
+   "--bg-color": "#003950",
+   "--caret-color": "#00bcd4",
+   "--main-color": "#ffcefb",
+   "--sub-color": "#00e4ff",
+   "--sub-alt-color": "#014961",
+   "--text-color": "#82eaff",
+   "--error-color": "#ffbde6",
+   "--error-extra-color": "#ff8188",
+   "--colorful-error-color": "#d1a5fd",
+   "--colorful-error-extra-color": "#ff8188"
+  },
+  "hasCss": false
+ },
+ "blueberry_dark": {
+  "colors": {
+   "--bg-color": "#212b42",
+   "--caret-color": "#962f7e",
+   "--main-color": "#add7ff",
+   "--sub-color": "#5c7da5",
+   "--sub-alt-color": "#1b2334",
+   "--text-color": "#91b4d5",
+   "--error-color": "#df4576",
+   "--error-extra-color": "#d996ac",
+   "--colorful-error-color": "#df4576",
+   "--colorful-error-extra-color": "#d996ac"
+  },
+  "hasCss": true
+ },
+ "blueberry_light": {
+  "colors": {
+   "--bg-color": "#dae0f5",
+   "--caret-color": "#df4576",
+   "--main-color": "#506477",
+   "--sub-color": "#92a4be",
+   "--sub-alt-color": "#c1c7df",
+   "--text-color": "#678198",
+   "--error-color": "#df4576",
+   "--error-extra-color": "#d996ac",
+   "--colorful-error-color": "#df4576",
+   "--colorful-error-extra-color": "#d996ac"
+  },
+  "hasCss": true
+ },
+ "botanical": {
+  "colors": {
+   "--bg-color": "#7b9c98",
+   "--caret-color": "#abc6c4",
+   "--main-color": "#eaf1f3",
+   "--sub-color": "#495755",
+   "--sub-alt-color": "#72908d",
+   "--text-color": "#eaf1f3",
+   "--error-color": "#f6c9b4",
+   "--error-extra-color": "#f59a71",
+   "--colorful-error-color": "#f6c9b4",
+   "--colorful-error-extra-color": "#f59a71"
+  },
+  "hasCss": false
+ },
+ "bouquet": {
+  "colors": {
+   "--bg-color": "#173f35",
+   "--caret-color": "#eaa09c",
+   "--main-color": "#eaa09c",
+   "--sub-color": "#408e7b",
+   "--sub-alt-color": "#1f4e43",
+   "--text-color": "#e9e0d2",
+   "--error-color": "#d44729",
+   "--error-extra-color": "#8f2f19",
+   "--colorful-error-color": "#d44729",
+   "--colorful-error-extra-color": "#8f2f19"
+  },
+  "hasCss": false
+ },
+ "breeze": {
+  "colors": {
+   "--bg-color": "#e8d5c4",
+   "--caret-color": "#7d67a9",
+   "--main-color": "#7d67a9",
+   "--sub-color": "#3a98b9",
+   "--sub-alt-color": "#f6e6da",
+   "--text-color": "#1b4c5e",
+   "--error-color": "#7d67a9",
+   "--error-extra-color": "#9f3e6d",
+   "--colorful-error-color": "#f9f871",
+   "--colorful-error-extra-color": "#67dfa1"
+  },
+  "hasCss": false
+ },
+ "bushido": {
+  "colors": {
+   "--bg-color": "#242933",
+   "--caret-color": "#ec4c56",
+   "--main-color": "#ec4c56",
+   "--sub-color": "#596172",
+   "--sub-alt-color": "#1c222d",
+   "--text-color": "#f6f0e9",
+   "--error-color": "#ec4c56",
+   "--error-extra-color": "#9b333a",
+   "--colorful-error-color": "#ecdc4c",
+   "--colorful-error-extra-color": "#bdb03d"
+  },
+  "hasCss": false
+ },
+ "cafe": {
+  "colors": {
+   "--bg-color": "#ceb18d",
+   "--caret-color": "#14120f",
+   "--main-color": "#14120f",
+   "--sub-color": "#d4d2d1",
+   "--sub-alt-color": "#bba180",
+   "--text-color": "#14120f",
+   "--error-color": "#c82931",
+   "--error-extra-color": "#ac1823",
+   "--colorful-error-color": "#c82931",
+   "--colorful-error-extra-color": "#ac1823"
+  },
+  "hasCss": false
+ },
+ "camping": {
+  "colors": {
+   "--bg-color": "#faf1e4",
+   "--caret-color": "#618c56",
+   "--main-color": "#618c56",
+   "--sub-color": "#c2b8aa",
+   "--sub-alt-color": "#e7dccb",
+   "--text-color": "#3c403b",
+   "--error-color": "#ad4f4e",
+   "--error-extra-color": "#7e3a39",
+   "--colorful-error-color": "#ad4f4e",
+   "--colorful-error-extra-color": "#7e3a39"
+  },
+  "hasCss": true
+ },
+ "carbon": {
+  "colors": {
+   "--bg-color": "#313131",
+   "--caret-color": "#f66e0d",
+   "--main-color": "#f66e0d",
+   "--sub-color": "#616161",
+   "--sub-alt-color": "#2b2b2b",
+   "--text-color": "#f5e6c8",
+   "--error-color": "#e72d2d",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#e72d2d",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "catppuccin": {
+  "colors": {
+   "--bg-color": "#1e1e2e",
+   "--caret-color": "#f2cdcd",
+   "--main-color": "#cba6f7",
+   "--sub-color": "#7f849c",
+   "--sub-alt-color": "#181825",
+   "--text-color": "#cdd6f4",
+   "--error-color": "#f38ba8",
+   "--error-extra-color": "#eba0ac",
+   "--colorful-error-color": "#f38ba8",
+   "--colorful-error-extra-color": "#eba0ac"
+  },
+  "hasCss": true
+ },
+ "chaos_theory": {
+  "colors": {
+   "--bg-color": "#141221",
+   "--caret-color": "#dde5ed",
+   "--main-color": "#fd77d7",
+   "--sub-color": "#676e8a",
+   "--sub-alt-color": "#1e1d2f",
+   "--text-color": "#dde5ed",
+   "--error-color": "#fd77d7",
+   "--error-extra-color": "#b03c47",
+   "--colorful-error-color": "#ff5869",
+   "--colorful-error-extra-color": "#b03c47"
+  },
+  "hasCss": true
+ },
+ "cheesecake": {
+  "colors": {
+   "--bg-color": "#fdf0d5",
+   "--caret-color": "#892948",
+   "--main-color": "#8e2949",
+   "--sub-color": "#d91c81",
+   "--sub-alt-color": "#f3e2bf",
+   "--text-color": "#3a3335",
+   "--error-color": "#5cf074",
+   "--error-extra-color": "#5cf074",
+   "--colorful-error-color": "#5cf074",
+   "--colorful-error-extra-color": "#5cf074"
+  },
+  "hasCss": true
+ },
+ "cherry_blossom": {
+  "colors": {
+   "--bg-color": "#323437",
+   "--caret-color": "#ffffff",
+   "--main-color": "#d65ccc",
+   "--sub-color": "#787d82",
+   "--sub-alt-color": "#2d2f31",
+   "--text-color": "#d1d0c5",
+   "--error-color": "#ca4754",
+   "--error-extra-color": "#d32738",
+   "--colorful-error-color": "#ec182d",
+   "--colorful-error-extra-color": "#6e0c16"
+  },
+  "hasCss": false
+ },
+ "comfy": {
+  "colors": {
+   "--bg-color": "#4a5b6e",
+   "--caret-color": "#9ec1cc",
+   "--main-color": "#f8cdc6",
+   "--sub-color": "#9ec1cc",
+   "--sub-alt-color": "#425366",
+   "--text-color": "#f5efee",
+   "--error-color": "#c9465e",
+   "--error-extra-color": "#c9465e",
+   "--colorful-error-color": "#c9465e",
+   "--colorful-error-extra-color": "#c9465e"
+  },
+  "hasCss": false
+ },
+ "copper": {
+  "colors": {
+   "--bg-color": "#442f29",
+   "--caret-color": "#c25c42",
+   "--main-color": "#b46a55",
+   "--sub-color": "#7ebab5",
+   "--sub-alt-color": "#50362e",
+   "--text-color": "#e7e0de",
+   "--error-color": "#a32424",
+   "--error-extra-color": "#ec0909",
+   "--colorful-error-color": "#a32424",
+   "--colorful-error-extra-color": "#ec0909"
+  },
+  "hasCss": false
+ },
+ "creamsicle": {
+  "colors": {
+   "--bg-color": "#ff9869",
+   "--caret-color": "#fcfcf8",
+   "--main-color": "#fcfcf8",
+   "--sub-color": "#ff661f",
+   "--sub-alt-color": "#fe8954",
+   "--text-color": "#fcfcf8",
+   "--error-color": "#6a0dad",
+   "--error-extra-color": "#6a0dad",
+   "--colorful-error-color": "#6a0dad",
+   "--colorful-error-extra-color": "#6a0dad"
+  },
+  "hasCss": false
+ },
+ "cy_red": {
+  "colors": {
+   "--bg-color": "#6e2626",
+   "--caret-color": "#541d1d",
+   "--main-color": "#e55050",
+   "--sub-color": "#ff6060",
+   "--sub-alt-color": "#3f1616",
+   "--text-color": "#ffaaaa",
+   "--error-color": "#919fd9",
+   "--error-extra-color": "#4d5d9e",
+   "--colorful-error-color": "#919fd9",
+   "--colorful-error-extra-color": "#4d5d9e"
+  },
+  "hasCss": false
+ },
+ "cyberspace": {
+  "colors": {
+   "--bg-color": "#181c18",
+   "--caret-color": "#00ce7c",
+   "--main-color": "#00ce7c",
+   "--sub-color": "#9578d3",
+   "--sub-alt-color": "#131613",
+   "--text-color": "#c2fbe1",
+   "--error-color": "#ff5f5f",
+   "--error-extra-color": "#d22a2a",
+   "--colorful-error-color": "#ff5f5f",
+   "--colorful-error-extra-color": "#d22a2a"
+  },
+  "hasCss": false
+ },
+ "dark": {
+  "colors": {
+   "--bg-color": "#111",
+   "--caret-color": "#eee",
+   "--main-color": "#eee",
+   "--sub-color": "#444",
+   "--sub-alt-color": "#191919",
+   "--text-color": "#eee",
+   "--error-color": "#da3333",
+   "--error-extra-color": "#791717",
+   "--colorful-error-color": "#da3333",
+   "--colorful-error-extra-color": "#791717"
+  },
+  "hasCss": false
+ },
+ "dark_magic_girl": {
+  "colors": {
+   "--bg-color": "#091f2c",
+   "--caret-color": "#a288d9",
+   "--main-color": "#f5b1cc",
+   "--sub-color": "#93e8d3",
+   "--sub-alt-color": "#071823",
+   "--text-color": "#a288d9",
+   "--error-color": "#e45c96",
+   "--error-extra-color": "#e45c96",
+   "--colorful-error-color": "#00b398",
+   "--colorful-error-extra-color": "#e45c96"
+  },
+  "hasCss": false
+ },
+ "dark_note": {
+  "colors": {
+   "--bg-color": "#1f1f1f",
+   "--caret-color": "#e3dce0",
+   "--main-color": "#f2c17b",
+   "--sub-color": "#768f95",
+   "--sub-alt-color": "#141414",
+   "--text-color": "#d2dff4",
+   "--error-color": "#ff0000",
+   "--error-extra-color": "#588498",
+   "--colorful-error-color": "#ff0000",
+   "--colorful-error-extra-color": "#588498"
+  },
+  "hasCss": true
+ },
+ "darling": {
+  "colors": {
+   "--bg-color": "#fec8cd",
+   "--caret-color": "#ffffff",
+   "--main-color": "#ffffff",
+   "--sub-color": "#a30000",
+   "--sub-alt-color": "#f2babd",
+   "--text-color": "#ffffff",
+   "--error-color": "#2e7dde",
+   "--error-extra-color": "#2e7dde",
+   "--colorful-error-color": "#2e7dde",
+   "--colorful-error-extra-color": "#2e7dde"
+  },
+  "hasCss": false
+ },
+ "deku": {
+  "colors": {
+   "--bg-color": "#058b8c",
+   "--caret-color": "#b63530",
+   "--main-color": "#b63530",
+   "--sub-color": "#255458",
+   "--sub-alt-color": "#0e7d7e",
+   "--text-color": "#f7f2ea",
+   "--error-color": "#b63530",
+   "--error-extra-color": "#530e0e",
+   "--colorful-error-color": "#ddca1f",
+   "--colorful-error-extra-color": "#8f8610"
+  },
+  "hasCss": false
+ },
+ "desert_oasis": {
+  "colors": {
+   "--bg-color": "#fff2d5",
+   "--caret-color": "#3a87fe",
+   "--main-color": "#d19d01",
+   "--sub-color": "#0061fe",
+   "--sub-alt-color": "#eddebc",
+   "--text-color": "#332800",
+   "--error-color": "#76bb40",
+   "--error-extra-color": "#4e7a27",
+   "--colorful-error-color": "#76bb40",
+   "--colorful-error-extra-color": "#4e7a27"
+  },
+  "hasCss": true
+ },
+ "dev": {
+  "colors": {
+   "--bg-color": "#1b2028",
+   "--caret-color": "#4b5975",
+   "--main-color": "#23a9d5",
+   "--sub-color": "#4b5975",
+   "--sub-alt-color": "#151a21",
+   "--text-color": "#ccccb5",
+   "--error-color": "#b81b2c",
+   "--error-extra-color": "#84131f",
+   "--colorful-error-color": "#b81b2c",
+   "--colorful-error-extra-color": "#84131f"
+  },
+  "hasCss": false
+ },
+ "diner": {
+  "colors": {
+   "--bg-color": "#537997",
+   "--caret-color": "#ad5145",
+   "--main-color": "#c3af5b",
+   "--sub-color": "#445c7f",
+   "--sub-alt-color": "#4d6f8b",
+   "--text-color": "#dfdbc8",
+   "--error-color": "#ad5145",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#ad5145",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "dino": {
+  "colors": {
+   "--bg-color": "#ffffff",
+   "--caret-color": "#40d672",
+   "--main-color": "#40d672",
+   "--sub-color": "#d5d5d5",
+   "--sub-alt-color": "#cafad8",
+   "--text-color": "#1d221f",
+   "--error-color": "#ff5f5f",
+   "--error-extra-color": "#d22a2a",
+   "--colorful-error-color": "#ff5f5f",
+   "--colorful-error-extra-color": "#d22a2a"
+  },
+  "hasCss": false
+ },
+ "discord": {
+  "colors": {
+   "--bg-color": "#313338",
+   "--caret-color": "#5a65ea",
+   "--main-color": "#5a65ea",
+   "--sub-color": "#565861",
+   "--sub-alt-color": "#2b2d31",
+   "--text-color": "#dcdee3",
+   "--error-color": "#df4f4b",
+   "--error-extra-color": "#df4f4b",
+   "--colorful-error-color": "#df4f4b",
+   "--colorful-error-extra-color": "#df4f4b"
+  },
+  "hasCss": false
+ },
+ "dmg": {
+  "colors": {
+   "--bg-color": "#dadbdc",
+   "--caret-color": "#384693",
+   "--main-color": "#ae185e",
+   "--sub-color": "#3846b1",
+   "--sub-alt-color": "#bec1d2",
+   "--text-color": "#414141",
+   "--error-color": "#ae185e",
+   "--error-extra-color": "#93335c",
+   "--colorful-error-color": "#80a053",
+   "--colorful-error-extra-color": "#306230"
+  },
+  "hasCss": true
+ },
+ "dollar": {
+  "colors": {
+   "--bg-color": "#e4e4d4",
+   "--caret-color": "#424643",
+   "--main-color": "#6b886b",
+   "--sub-color": "#8a9b69",
+   "--sub-alt-color": "#cbd0bf",
+   "--text-color": "#555a56",
+   "--error-color": "#d60000",
+   "--error-extra-color": "#f68484",
+   "--colorful-error-color": "#ca4754",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "dots": {
+  "colors": {
+   "--bg-color": "#121520",
+   "--caret-color": "#fff",
+   "--main-color": "#fff",
+   "--sub-color": "#676e8a",
+   "--sub-alt-color": "#1b1e2c",
+   "--text-color": "#fff",
+   "--error-color": "#da3333",
+   "--error-extra-color": "#791717",
+   "--colorful-error-color": "#da3333",
+   "--colorful-error-extra-color": "#791717"
+  },
+  "hasCss": true
+ },
+ "dracula": {
+  "colors": {
+   "--bg-color": "#282a36",
+   "--caret-color": "#bd93f9",
+   "--main-color": "#bd93f9",
+   "--sub-color": "#6272a4",
+   "--sub-alt-color": "#20222c",
+   "--text-color": "#f8f8f2",
+   "--error-color": "#ff5555",
+   "--error-extra-color": "#f1fa8c",
+   "--colorful-error-color": "#ff5555",
+   "--colorful-error-extra-color": "#f1fa8c"
+  },
+  "hasCss": true
+ },
+ "drowning": {
+  "colors": {
+   "--bg-color": "#191826",
+   "--caret-color": "#4f85e8",
+   "--main-color": "#4a6fb5",
+   "--sub-color": "#50688c",
+   "--sub-alt-color": "#1e1f2f",
+   "--text-color": "#9393a7",
+   "--error-color": "#be555f",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#be555f",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "dualshot": {
+  "colors": {
+   "--bg-color": "#737373",
+   "--caret-color": "#212222",
+   "--main-color": "#212222",
+   "--sub-color": "#aaaaaa",
+   "--sub-alt-color": "#646464",
+   "--text-color": "#212222",
+   "--error-color": "#c82931",
+   "--error-extra-color": "#ac1823",
+   "--colorful-error-color": "#c82931",
+   "--colorful-error-extra-color": "#ac1823"
+  },
+  "hasCss": true
+ },
+ "earthsong": {
+  "colors": {
+   "--bg-color": "#292521",
+   "--caret-color": "#1298ba",
+   "--main-color": "#509452",
+   "--sub-color": "#f5ae2d",
+   "--sub-alt-color": "#1d1b18",
+   "--text-color": "#e6c7a8",
+   "--error-color": "#7e2a33",
+   "--error-extra-color": "#ff645a",
+   "--colorful-error-color": "#7e2a33",
+   "--colorful-error-extra-color": "#ff645a"
+  },
+  "hasCss": false
+ },
+ "everblush": {
+  "colors": {
+   "--bg-color": "#141b1e",
+   "--caret-color": "#6cbfbf",
+   "--main-color": "#8ccf7e",
+   "--sub-color": "#838887",
+   "--sub-alt-color": "#232a2d",
+   "--text-color": "#dadada",
+   "--error-color": "#e57474",
+   "--error-extra-color": "#ef7e7e",
+   "--colorful-error-color": "#e57474",
+   "--colorful-error-extra-color": "#ef7e7e"
+  },
+  "hasCss": false
+ },
+ "evil_eye": {
+  "colors": {
+   "--bg-color": "#0084c2",
+   "--caret-color": "#f7f2ea",
+   "--main-color": "#f7f2ea",
+   "--sub-color": "#01589f",
+   "--sub-alt-color": "#0c79be",
+   "--text-color": "#171718",
+   "--error-color": "#ca4754",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#ca4754",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "ez_mode": {
+  "colors": {
+   "--bg-color": "#0068c6",
+   "--caret-color": "#4ddb47",
+   "--main-color": "#fa62d5",
+   "--sub-color": "#138bf7",
+   "--sub-alt-color": "#005bac",
+   "--text-color": "#ffffff",
+   "--error-color": "#4ddb47",
+   "--error-extra-color": "#42ba3b",
+   "--colorful-error-color": "#4ddb47",
+   "--colorful-error-extra-color": "#42ba3b"
+  },
+  "hasCss": true
+ },
+ "fire": {
+  "colors": {
+   "--bg-color": "#0f0000",
+   "--caret-color": "#b31313",
+   "--main-color": "#b31313",
+   "--sub-color": "#683434",
+   "--sub-alt-color": "#200a0a",
+   "--text-color": "#ffffff",
+   "--error-color": "#2f3cb6",
+   "--error-extra-color": "#434a8f",
+   "--colorful-error-color": "#2f3cb6",
+   "--colorful-error-extra-color": "#434a8f"
+  },
+  "hasCss": true
+ },
+ "fledgling": {
+  "colors": {
+   "--bg-color": "#3b363f",
+   "--caret-color": "#474747",
+   "--main-color": "#fc6e83",
+   "--sub-color": "#8e5568",
+   "--sub-alt-color": "#332e38",
+   "--text-color": "#e6d5d3",
+   "--error-color": "#f52443",
+   "--error-extra-color": "#bd001c",
+   "--colorful-error-color": "#ff0a2f",
+   "--colorful-error-extra-color": "#000000"
+  },
+  "hasCss": false
+ },
+ "fleuriste": {
+  "colors": {
+   "--bg-color": "#c6b294",
+   "--caret-color": "#8a785b",
+   "--main-color": "#405a52",
+   "--sub-color": "#64374d",
+   "--sub-alt-color": "#b4a389",
+   "--text-color": "#091914",
+   "--error-color": "#990000",
+   "--error-extra-color": "#8a1414",
+   "--colorful-error-color": "#a63a3a",
+   "--colorful-error-extra-color": "#bd4c4c"
+  },
+  "hasCss": false
+ },
+ "floret": {
+  "colors": {
+   "--bg-color": "#00272c",
+   "--caret-color": "#c3bd40",
+   "--main-color": "#ffdd6d",
+   "--sub-color": "#779097",
+   "--sub-alt-color": "#173033",
+   "--text-color": "#e5e5e5",
+   "--error-color": "#8a4000",
+   "--error-extra-color": "#00708d",
+   "--colorful-error-color": "#8a4000",
+   "--colorful-error-extra-color": "#628b96"
+  },
+  "hasCss": false
+ },
+ "froyo": {
+  "colors": {
+   "--bg-color": "#e1dacb",
+   "--caret-color": "#7b7d7d",
+   "--main-color": "#7b7d7d",
+   "--sub-color": "#b29c5e",
+   "--sub-alt-color": "#d3cdc1",
+   "--text-color": "#7b7d7d",
+   "--error-color": "#f28578",
+   "--error-extra-color": "#d56558",
+   "--colorful-error-color": "#f28578",
+   "--colorful-error-extra-color": "#d56558"
+  },
+  "hasCss": true
+ },
+ "frozen_llama": {
+  "colors": {
+   "--bg-color": "#9bf2ea",
+   "--caret-color": "#ffffff",
+   "--main-color": "#6d44a6",
+   "--sub-color": "#b690fd",
+   "--sub-alt-color": "#7fe7dd",
+   "--text-color": "#ffffff",
+   "--error-color": "#e42629",
+   "--error-extra-color": "#e42629",
+   "--colorful-error-color": "#e42629",
+   "--colorful-error-extra-color": "#e42629"
+  },
+  "hasCss": false
+ },
+ "fruit_chew": {
+  "colors": {
+   "--bg-color": "#d6d3d6",
+   "--caret-color": "#b92221",
+   "--main-color": "#5c1e5f",
+   "--sub-color": "#b49cb5",
+   "--sub-alt-color": "#cabfca",
+   "--text-color": "#282528",
+   "--error-color": "#bd2621",
+   "--error-extra-color": "#a62626",
+   "--colorful-error-color": "#bd2621",
+   "--colorful-error-extra-color": "#a62626"
+  },
+  "hasCss": true
+ },
+ "fundamentals": {
+  "colors": {
+   "--bg-color": "#727474",
+   "--caret-color": "#196378",
+   "--main-color": "#7fa482",
+   "--sub-color": "#cac4be",
+   "--sub-alt-color": "#666868",
+   "--text-color": "#131313",
+   "--error-color": "#5e477c",
+   "--error-extra-color": "#413157",
+   "--colorful-error-color": "#5e477c",
+   "--colorful-error-extra-color": "#413157"
+  },
+  "hasCss": true
+ },
+ "future_funk": {
+  "colors": {
+   "--bg-color": "#2e1a47",
+   "--caret-color": "#f7f2ea",
+   "--main-color": "#f7f2ea",
+   "--sub-color": "#c18fff",
+   "--sub-alt-color": "#27173c",
+   "--text-color": "#f7f2ea",
+   "--error-color": "#f04e98",
+   "--error-extra-color": "#bd1c66",
+   "--colorful-error-color": "#f04e98",
+   "--colorful-error-extra-color": "#bd1c66"
+  },
+  "hasCss": true
+ },
+ "github": {
+  "colors": {
+   "--bg-color": "#212830",
+   "--caret-color": "#41ce5c",
+   "--main-color": "#41ce5c",
+   "--sub-color": "#788386",
+   "--sub-alt-color": "#141b23",
+   "--text-color": "#ccdae6",
+   "--error-color": "#c23e3a",
+   "--error-extra-color": "#c23e3a",
+   "--colorful-error-color": "#c23e3a",
+   "--colorful-error-extra-color": "#c23e3a"
+  },
+  "hasCss": false
+ },
+ "godspeed": {
+  "colors": {
+   "--bg-color": "#eae4cf",
+   "--caret-color": "#f4d476",
+   "--main-color": "#9abbcd",
+   "--sub-color": "#ada998",
+   "--sub-alt-color": "#ded9c9",
+   "--text-color": "#646669",
+   "--error-color": "#ca4754",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#ca4754",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "graen": {
+  "colors": {
+   "--bg-color": "#303c36",
+   "--caret-color": "#601420",
+   "--main-color": "#a59682",
+   "--sub-color": "#181d1a",
+   "--sub-alt-color": "#36453c",
+   "--text-color": "#a59682",
+   "--error-color": "#601420",
+   "--error-extra-color": "#5f0715",
+   "--colorful-error-color": "#601420",
+   "--colorful-error-extra-color": "#5f0715"
+  },
+  "hasCss": true
+ },
+ "grand_prix": {
+  "colors": {
+   "--bg-color": "#36475c",
+   "--caret-color": "#c0d036",
+   "--main-color": "#c0d036",
+   "--sub-color": "#5c6c80",
+   "--sub-alt-color": "#42536b",
+   "--text-color": "#c1c7d7",
+   "--error-color": "#fc5727",
+   "--error-extra-color": "#fc5727",
+   "--colorful-error-color": "#fc5727",
+   "--colorful-error-extra-color": "#fc5727"
+  },
+  "hasCss": false
+ },
+ "grape": {
+  "colors": {
+   "--bg-color": "#2c003e",
+   "--caret-color": "#ff8f00",
+   "--main-color": "#ff8f00",
+   "--sub-color": "#6e225e",
+   "--sub-alt-color": "#1f002d",
+   "--text-color": "#fff",
+   "--error-color": "#ff4081",
+   "--error-extra-color": "#bf2054",
+   "--colorful-error-color": "#ff4081",
+   "--colorful-error-extra-color": "#bf2054"
+  },
+  "hasCss": true
+ },
+ "gruvbox_dark": {
+  "colors": {
+   "--bg-color": "#282828",
+   "--caret-color": "#fabd2f",
+   "--main-color": "#d79921",
+   "--sub-color": "#665c54",
+   "--sub-alt-color": "#212121",
+   "--text-color": "#ebdbb2",
+   "--error-color": "#fb4934",
+   "--error-extra-color": "#cc241d",
+   "--colorful-error-color": "#cc241d",
+   "--colorful-error-extra-color": "#9d0006"
+  },
+  "hasCss": false
+ },
+ "gruvbox_light": {
+  "colors": {
+   "--bg-color": "#fbf1c7",
+   "--caret-color": "#689d6a",
+   "--main-color": "#689d6a",
+   "--sub-color": "#a89984",
+   "--sub-alt-color": "#daceae",
+   "--text-color": "#3c3836",
+   "--error-color": "#cc241d",
+   "--error-extra-color": "#9d0006",
+   "--colorful-error-color": "#cc241d",
+   "--colorful-error-extra-color": "#9d0006"
+  },
+  "hasCss": false
+ },
+ "hammerhead": {
+  "colors": {
+   "--bg-color": "#030613",
+   "--caret-color": "#4fcdb9",
+   "--main-color": "#4fcdb9",
+   "--sub-color": "#213c53",
+   "--sub-alt-color": "#0a1928",
+   "--text-color": "#e2f1f5",
+   "--error-color": "#e32b2b",
+   "--error-extra-color": "#a62626",
+   "--colorful-error-color": "#e32b2b",
+   "--colorful-error-extra-color": "#a62626"
+  },
+  "hasCss": false
+ },
+ "hanok": {
+  "colors": {
+   "--bg-color": "#d8d2c3",
+   "--caret-color": "#513a2a",
+   "--main-color": "#513a2a",
+   "--sub-color": "#8b6f5c",
+   "--sub-alt-color": "#cdc0af",
+   "--text-color": "#393b3b",
+   "--error-color": "#ca4754",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#ca4754",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "hedge": {
+  "colors": {
+   "--bg-color": "#415e31",
+   "--caret-color": "#f2efbb",
+   "--main-color": "#6a994e",
+   "--sub-color": "#ede5b4",
+   "--sub-alt-color": "#38502a",
+   "--text-color": "#f7f1d6",
+   "--error-color": "#ca3d3f",
+   "--error-extra-color": "#782832",
+   "--colorful-error-color": "#e76f51",
+   "--colorful-error-extra-color": "#f4a261"
+  },
+  "hasCss": false
+ },
+ "honey": {
+  "colors": {
+   "--bg-color": "#f2aa00",
+   "--caret-color": "#795200",
+   "--main-color": "#fff546",
+   "--sub-color": "#a66b00",
+   "--sub-alt-color": "#e19e00",
+   "--text-color": "#f3eecb",
+   "--error-color": "#df3333",
+   "--error-extra-color": "#6d1f1f",
+   "--colorful-error-color": "#df3333",
+   "--colorful-error-extra-color": "#6d1f1f"
+  },
+  "hasCss": false
+ },
+ "horizon": {
+  "colors": {
+   "--bg-color": "#1c1e26",
+   "--caret-color": "#bbbbbb",
+   "--main-color": "#c4a88a",
+   "--sub-color": "#db886f",
+   "--sub-alt-color": "#17181f",
+   "--text-color": "#bbbbbb",
+   "--error-color": "#d55170",
+   "--error-extra-color": "#ff3d3d",
+   "--colorful-error-color": "#d55170",
+   "--colorful-error-extra-color": "#d55170"
+  },
+  "hasCss": true
+ },
+ "husqy": {
+  "colors": {
+   "--bg-color": "#000000",
+   "--caret-color": "#c58aff",
+   "--main-color": "#c58aff",
+   "--sub-color": "#972fff",
+   "--sub-alt-color": "#1e001e",
+   "--text-color": "#ebd7ff",
+   "--error-color": "#da3333",
+   "--error-extra-color": "#791717",
+   "--colorful-error-color": "#da3333",
+   "--colorful-error-extra-color": "#791717"
+  },
+  "hasCss": false
+ },
+ "iceberg_dark": {
+  "colors": {
+   "--bg-color": "#161821",
+   "--caret-color": "#d2d4de",
+   "--main-color": "#84a0c6",
+   "--sub-color": "#595e76",
+   "--sub-alt-color": "#232531",
+   "--text-color": "#c6c8d1",
+   "--error-color": "#e27878",
+   "--error-extra-color": "#e2a478",
+   "--colorful-error-color": "#e27878",
+   "--colorful-error-extra-color": "#e2a478"
+  },
+  "hasCss": false
+ },
+ "iceberg_light": {
+  "colors": {
+   "--bg-color": "#e8e9ec",
+   "--caret-color": "#262a3f",
+   "--main-color": "#2d539e",
+   "--sub-color": "#adb1c4",
+   "--sub-alt-color": "#ccceda",
+   "--text-color": "#33374c",
+   "--error-color": "#cc517a",
+   "--error-extra-color": "#cc3768",
+   "--colorful-error-color": "#cc517a",
+   "--colorful-error-extra-color": "#cc3768"
+  },
+  "hasCss": false
+ },
+ "incognito": {
+  "colors": {
+   "--bg-color": "#0e0e0e",
+   "--caret-color": "#ff9900",
+   "--main-color": "#ff9900",
+   "--sub-color": "#555555",
+   "--sub-alt-color": "#151515",
+   "--text-color": "#c6c6c6",
+   "--error-color": "#e44545",
+   "--error-extra-color": "#e44545",
+   "--colorful-error-color": "#b13535",
+   "--colorful-error-extra-color": "#b13535"
+  },
+  "hasCss": true
+ },
+ "ishtar": {
+  "colors": {
+   "--bg-color": "#202020",
+   "--caret-color": "#c58940",
+   "--main-color": "#91170c",
+   "--sub-color": "#847869",
+   "--sub-alt-color": "#272727",
+   "--text-color": "#fae1c3",
+   "--error-color": "#bb1e10",
+   "--error-extra-color": "#791717",
+   "--colorful-error-color": "#c5da33",
+   "--colorful-error-extra-color": "#849224"
+  },
+  "hasCss": true
+ },
+ "iv_clover": {
+  "colors": {
+   "--bg-color": "#a0a0a0",
+   "--caret-color": "#8d8d8d",
+   "--main-color": "#573e40",
+   "--sub-color": "#353535",
+   "--sub-alt-color": "#bebebe",
+   "--text-color": "#3b2d3b",
+   "--error-color": "#937173",
+   "--error-extra-color": "#987678",
+   "--colorful-error-color": "#ad8d60",
+   "--colorful-error-extra-color": "#b7976a"
+  },
+  "hasCss": false
+ },
+ "iv_spade": {
+  "colors": {
+   "--bg-color": "#0c0c0c",
+   "--caret-color": "#bebebe",
+   "--main-color": "#b7976a",
+   "--sub-color": "#404040",
+   "--sub-alt-color": "#121212",
+   "--text-color": "#d3c2c3",
+   "--error-color": "#9d7b7d",
+   "--error-extra-color": "#a78587",
+   "--colorful-error-color": "#b7976a",
+   "--colorful-error-extra-color": "#c1a174"
+  },
+  "hasCss": false
+ },
+ "joker": {
+  "colors": {
+   "--bg-color": "#1a0e25",
+   "--caret-color": "#99de1e",
+   "--main-color": "#99de1e",
+   "--sub-color": "#7554a3",
+   "--sub-alt-color": "#14081f",
+   "--text-color": "#e9e2f5",
+   "--error-color": "#e32b2b",
+   "--error-extra-color": "#a62626",
+   "--colorful-error-color": "#e32b2b",
+   "--colorful-error-extra-color": "#a62626"
+  },
+  "hasCss": false
+ },
+ "laser": {
+  "colors": {
+   "--bg-color": "#221b44",
+   "--caret-color": "#009eaf",
+   "--main-color": "#009eaf",
+   "--sub-color": "#b82356",
+   "--sub-alt-color": "#1e173b",
+   "--text-color": "#dbe7e8",
+   "--error-color": "#a8d400",
+   "--error-extra-color": "#668000",
+   "--colorful-error-color": "#a8d400",
+   "--colorful-error-extra-color": "#668000"
+  },
+  "hasCss": false
+ },
+ "lavender": {
+  "colors": {
+   "--bg-color": "#ada6c2",
+   "--caret-color": "#e4e3e9",
+   "--main-color": "#e4e3e9",
+   "--sub-color": "#e4e3e9",
+   "--sub-alt-color": "#a19bb9",
+   "--text-color": "#2f2a41",
+   "--error-color": "#ca4754",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#ca4754",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": true
+ },
+ "leather": {
+  "colors": {
+   "--bg-color": "#a86948",
+   "--caret-color": "#ef6d49",
+   "--main-color": "#ffe4bc",
+   "--sub-color": "#81482b",
+   "--sub-alt-color": "#9a5f3f",
+   "--text-color": "#ffe4bc",
+   "--error-color": "#ca4754",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#ca4754",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "lil_dragon": {
+  "colors": {
+   "--bg-color": "#ebe1ef",
+   "--caret-color": "#212b43",
+   "--main-color": "#8a5bd6",
+   "--sub-color": "#a28db8",
+   "--sub-alt-color": "#dac7e2",
+   "--text-color": "#212b43",
+   "--error-color": "#f794ca",
+   "--error-extra-color": "#f279c2",
+   "--colorful-error-color": "#f794ca",
+   "--colorful-error-extra-color": "#f279c2"
+  },
+  "hasCss": true
+ },
+ "lilac_mist": {
+  "colors": {
+   "--bg-color": "#fffbfe",
+   "--caret-color": "#e099d6",
+   "--main-color": "#b94189",
+   "--sub-color": "#e094c2",
+   "--sub-alt-color": "#ecdcee",
+   "--text-color": "#5c2954",
+   "--error-color": "#ff6f69",
+   "--error-extra-color": "#ff6f69",
+   "--colorful-error-color": "#bc7fc0",
+   "--colorful-error-extra-color": "#bc41b1"
+  },
+  "hasCss": false
+ },
+ "lime": {
+  "colors": {
+   "--bg-color": "#7c878e",
+   "--caret-color": "#93c247",
+   "--main-color": "#93c247",
+   "--sub-color": "#4b5257",
+   "--sub-alt-color": "#737d82",
+   "--text-color": "#bfcfdc",
+   "--error-color": "#ea4221",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#ea4221",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "luna": {
+  "colors": {
+   "--bg-color": "#221c35",
+   "--caret-color": "#f67599",
+   "--main-color": "#f67599",
+   "--sub-color": "#5a3a7e",
+   "--sub-alt-color": "#2f2346",
+   "--text-color": "#ffe3eb",
+   "--error-color": "#efc050",
+   "--error-extra-color": "#c5972c",
+   "--colorful-error-color": "#efc050",
+   "--colorful-error-extra-color": "#c5972c"
+  },
+  "hasCss": false
+ },
+ "macroblank": {
+  "colors": {
+   "--bg-color": "#b2d2c8",
+   "--caret-color": "#766f71",
+   "--main-color": "#c13117",
+   "--sub-color": "#717977",
+   "--sub-alt-color": "#c6ddd3",
+   "--text-color": "#490909",
+   "--error-color": "#c13117",
+   "--error-extra-color": "#fff5f5",
+   "--colorful-error-color": "#fff5f5",
+   "--colorful-error-extra-color": "#ffe9c2"
+  },
+  "hasCss": false
+ },
+ "magic_girl": {
+  "colors": {
+   "--bg-color": "#ffffff",
+   "--caret-color": "#e45c96",
+   "--main-color": "#f5b1cc",
+   "--sub-color": "#93e8d3",
+   "--sub-alt-color": "#f2f2f2",
+   "--text-color": "#00ac8c",
+   "--error-color": "#ffe495",
+   "--error-extra-color": "#e45c96",
+   "--colorful-error-color": "#ffe485",
+   "--colorful-error-extra-color": "#e45c96"
+  },
+  "hasCss": false
+ },
+ "mashu": {
+  "colors": {
+   "--bg-color": "#2b2b2c",
+   "--caret-color": "#76689a",
+   "--main-color": "#76689a",
+   "--sub-color": "#d8a0a6",
+   "--sub-alt-color": "#27242c",
+   "--text-color": "#f1e2e4",
+   "--error-color": "#d44729",
+   "--error-extra-color": "#8f2f19",
+   "--colorful-error-color": "#d44729",
+   "--colorful-error-extra-color": "#8f2f19"
+  },
+  "hasCss": false
+ },
+ "matcha_moccha": {
+  "colors": {
+   "--bg-color": "#523525",
+   "--caret-color": "#7ec160",
+   "--main-color": "#7ec160",
+   "--sub-color": "#9e6749",
+   "--sub-alt-color": "#422b1e",
+   "--text-color": "#ecddcc",
+   "--error-color": "#fb4934",
+   "--error-extra-color": "#cc241d",
+   "--colorful-error-color": "#fb4934",
+   "--colorful-error-extra-color": "#cc241d"
+  },
+  "hasCss": false
+ },
+ "material": {
+  "colors": {
+   "--bg-color": "#263238",
+   "--caret-color": "#80cbc4",
+   "--main-color": "#80cbc4",
+   "--sub-color": "#4c6772",
+   "--sub-alt-color": "#2e3c43",
+   "--text-color": "#e6edf3",
+   "--error-color": "#fb4934",
+   "--error-extra-color": "#cc241d",
+   "--colorful-error-color": "#fb4934",
+   "--colorful-error-extra-color": "#cc241d"
+  },
+  "hasCss": false
+ },
+ "matrix": {
+  "colors": {
+   "--bg-color": "#000000",
+   "--caret-color": "#15ff00",
+   "--main-color": "#15ff00",
+   "--sub-color": "#006500",
+   "--sub-alt-color": "#032000",
+   "--text-color": "#d1ffcd",
+   "--error-color": "#da3333",
+   "--error-extra-color": "#791717",
+   "--colorful-error-color": "#da3333",
+   "--colorful-error-extra-color": "#791717"
+  },
+  "hasCss": false
+ },
+ "menthol": {
+  "colors": {
+   "--bg-color": "#00c18c",
+   "--caret-color": "#99fdd8",
+   "--main-color": "#ffffff",
+   "--sub-color": "#186544",
+   "--sub-alt-color": "#17ae7d",
+   "--text-color": "#ffffff",
+   "--error-color": "#e03c3c",
+   "--error-extra-color": "#b12525",
+   "--colorful-error-color": "#e03c3c",
+   "--colorful-error-extra-color": "#b12525"
+  },
+  "hasCss": false
+ },
+ "metaverse": {
+  "colors": {
+   "--bg-color": "#232323",
+   "--caret-color": "#d82934",
+   "--main-color": "#d82934",
+   "--sub-color": "#5e5e5e",
+   "--sub-alt-color": "#1d1d1d",
+   "--text-color": "#e8e8e8",
+   "--error-color": "#da3333",
+   "--error-extra-color": "#791717",
+   "--colorful-error-color": "#d7da33",
+   "--colorful-error-extra-color": "#737917"
+  },
+  "hasCss": false
+ },
+ "metropolis": {
+  "colors": {
+   "--bg-color": "#0f1f2c",
+   "--caret-color": "#56c3b7",
+   "--main-color": "#56c3b7",
+   "--sub-color": "#326984",
+   "--sub-alt-color": "#0b1822",
+   "--text-color": "#e4edf1",
+   "--error-color": "#d44729",
+   "--error-extra-color": "#8f2f19",
+   "--colorful-error-color": "#d44729",
+   "--colorful-error-extra-color": "#8f2f19"
+  },
+  "hasCss": true
+ },
+ "mexican": {
+  "colors": {
+   "--bg-color": "#f8ad34",
+   "--caret-color": "#eee",
+   "--main-color": "#b12189",
+   "--sub-color": "#333",
+   "--sub-alt-color": "#f9b951",
+   "--text-color": "#eee",
+   "--error-color": "#da3333",
+   "--error-extra-color": "#791717",
+   "--colorful-error-color": "#da3333",
+   "--colorful-error-extra-color": "#791717"
+  },
+  "hasCss": false
+ },
+ "miami": {
+  "colors": {
+   "--bg-color": "#f35588",
+   "--caret-color": "#a3f7bf",
+   "--main-color": "#05dfd7",
+   "--sub-color": "#94294c",
+   "--sub-alt-color": "#db4979",
+   "--text-color": "#f0e9ec",
+   "--error-color": "#fff591",
+   "--error-extra-color": "#b9b269",
+   "--colorful-error-color": "#fff591",
+   "--colorful-error-extra-color": "#b9b269"
+  },
+  "hasCss": false
+ },
+ "miami_nights": {
+  "colors": {
+   "--bg-color": "#18181a",
+   "--caret-color": "#e4609b",
+   "--main-color": "#e4609b",
+   "--sub-color": "#47bac0",
+   "--sub-alt-color": "#0f0f10",
+   "--text-color": "#fff",
+   "--error-color": "#fff591",
+   "--error-extra-color": "#b6af68",
+   "--colorful-error-color": "#fff591",
+   "--colorful-error-extra-color": "#b6af68"
+  },
+  "hasCss": false
+ },
+ "midnight": {
+  "colors": {
+   "--bg-color": "#0b0e13",
+   "--caret-color": "#60759f",
+   "--main-color": "#60759f",
+   "--sub-color": "#394760",
+   "--sub-alt-color": "#141a24",
+   "--text-color": "#9fadc6",
+   "--error-color": "#c27070",
+   "--error-extra-color": "#c28b70",
+   "--colorful-error-color": "#c27070",
+   "--colorful-error-extra-color": "#c28b70"
+  },
+  "hasCss": false
+ },
+ "milkshake": {
+  "colors": {
+   "--bg-color": "#ffffff",
+   "--caret-color": "#212b43",
+   "--main-color": "#212b43",
+   "--sub-color": "#62cfe6",
+   "--sub-alt-color": "#ddeff3",
+   "--text-color": "#212b43",
+   "--error-color": "#f19dac",
+   "--error-extra-color": "#e58c9d",
+   "--colorful-error-color": "#f19dac",
+   "--colorful-error-extra-color": "#e58c9d"
+  },
+  "hasCss": true
+ },
+ "mint": {
+  "colors": {
+   "--bg-color": "#05385b",
+   "--caret-color": "#5cdb95",
+   "--main-color": "#5cdb95",
+   "--sub-color": "#20688a",
+   "--sub-alt-color": "#07324e",
+   "--text-color": "#edf5e1",
+   "--error-color": "#f35588",
+   "--error-extra-color": "#a3385a",
+   "--colorful-error-color": "#f35588",
+   "--colorful-error-extra-color": "#a3385a"
+  },
+  "hasCss": false
+ },
+ "mizu": {
+  "colors": {
+   "--bg-color": "#afcbdd",
+   "--caret-color": "#fcfbf6",
+   "--main-color": "#fcfbf6",
+   "--sub-color": "#85a5bb",
+   "--sub-alt-color": "#9fc1d4",
+   "--text-color": "#1a2633",
+   "--error-color": "#bf616a",
+   "--error-extra-color": "#793e44",
+   "--colorful-error-color": "#bf616a",
+   "--colorful-error-extra-color": "#793e44"
+  },
+  "hasCss": false
+ },
+ "modern_dolch": {
+  "colors": {
+   "--bg-color": "#2d2e30",
+   "--caret-color": "#7eddd3",
+   "--main-color": "#7eddd3",
+   "--sub-color": "#54585c",
+   "--sub-alt-color": "#242527",
+   "--text-color": "#e3e6eb",
+   "--error-color": "#d36a7b",
+   "--error-extra-color": "#994154",
+   "--colorful-error-color": "#d36a7b",
+   "--colorful-error-extra-color": "#994154"
+  },
+  "hasCss": false
+ },
+ "modern_dolch_light": {
+  "colors": {
+   "--bg-color": "#dbdbdb",
+   "--caret-color": "#8fd1c3",
+   "--main-color": "#8fd1c3",
+   "--sub-color": "#a3a2a2",
+   "--sub-alt-color": "#e8e8e8",
+   "--text-color": "#454545",
+   "--error-color": "#ea8a9a",
+   "--error-extra-color": "#e0556d",
+   "--colorful-error-color": "#ea8a9a",
+   "--colorful-error-extra-color": "#e0556d"
+  },
+  "hasCss": false
+ },
+ "modern_ink": {
+  "colors": {
+   "--bg-color": "#ffffff",
+   "--caret-color": "#ff0000",
+   "--main-color": "#ff360d",
+   "--sub-color": "#b7b7b7",
+   "--sub-alt-color": "#ececec",
+   "--text-color": "#000000",
+   "--error-color": "#d70000",
+   "--error-extra-color": "#b00000",
+   "--colorful-error-color": "#000000",
+   "--colorful-error-extra-color": "#000000"
+  },
+  "hasCss": true
+ },
+ "monokai": {
+  "colors": {
+   "--bg-color": "#272822",
+   "--caret-color": "#66d9ef",
+   "--main-color": "#a6e22e",
+   "--sub-color": "#e6db74",
+   "--sub-alt-color": "#1f201b",
+   "--text-color": "#e2e2dc",
+   "--error-color": "#f92672",
+   "--error-extra-color": "#fd971f",
+   "--colorful-error-color": "#f92672",
+   "--colorful-error-extra-color": "#fd971f"
+  },
+  "hasCss": false
+ },
+ "moonlight": {
+  "colors": {
+   "--bg-color": "#191f28",
+   "--caret-color": "#8f744b",
+   "--main-color": "#c69f68",
+   "--sub-color": "#4b5975",
+   "--sub-alt-color": "#141a22",
+   "--text-color": "#ccccb5",
+   "--error-color": "#b81b2c",
+   "--error-extra-color": "#84131f",
+   "--colorful-error-color": "#b81b2c",
+   "--colorful-error-extra-color": "#84131f"
+  },
+  "hasCss": true
+ },
+ "mountain": {
+  "colors": {
+   "--bg-color": "#0f0f0f",
+   "--caret-color": "#f5f5f5",
+   "--main-color": "#e7e7e7",
+   "--sub-color": "#4c4c4c",
+   "--sub-alt-color": "#1a1a1a",
+   "--text-color": "#e7e7e7",
+   "--error-color": "#ac8c8c",
+   "--error-extra-color": "#c49ea0",
+   "--colorful-error-color": "#aca98a",
+   "--colorful-error-extra-color": "#c4c19e"
+  },
+  "hasCss": false
+ },
+ "mr_sleeves": {
+  "colors": {
+   "--bg-color": "#d1d7da",
+   "--caret-color": "#8fadc9",
+   "--main-color": "#daa99b",
+   "--sub-color": "#9a9fa1",
+   "--sub-alt-color": "#bfcbd1",
+   "--text-color": "#1d1d1d",
+   "--error-color": "#bf6464",
+   "--error-extra-color": "#793e44",
+   "--colorful-error-color": "#8fadc9",
+   "--colorful-error-extra-color": "#667c91"
+  },
+  "hasCss": true
+ },
+ "ms_cupcakes": {
+  "colors": {
+   "--bg-color": "#ffffff",
+   "--caret-color": "#303030",
+   "--main-color": "#5ed5f3",
+   "--sub-color": "#d64090",
+   "--sub-alt-color": "#edf8fa",
+   "--text-color": "#0a282f",
+   "--error-color": "#a4dd32",
+   "--error-extra-color": "#90bd34",
+   "--colorful-error-color": "#a4dd32",
+   "--colorful-error-extra-color": "#87b330"
+  },
+  "hasCss": false
+ },
+ "muted": {
+  "colors": {
+   "--bg-color": "#525252",
+   "--caret-color": "#b1e4e3",
+   "--main-color": "#c5b4e3",
+   "--sub-color": "#939eae",
+   "--sub-alt-color": "#494949",
+   "--text-color": "#b1e4e3",
+   "--error-color": "#edc1cd",
+   "--error-extra-color": "#edc1cd",
+   "--colorful-error-color": "#edc1cd",
+   "--colorful-error-extra-color": "#edc1cd"
+  },
+  "hasCss": false
+ },
+ "nautilus": {
+  "colors": {
+   "--bg-color": "#132237",
+   "--caret-color": "#ebb723",
+   "--main-color": "#ebb723",
+   "--sub-color": "#0b4c6c",
+   "--sub-alt-color": "#0e1a29",
+   "--text-color": "#1cbaac",
+   "--error-color": "#da3333",
+   "--error-extra-color": "#791717",
+   "--colorful-error-color": "#da3333",
+   "--colorful-error-extra-color": "#791717"
+  },
+  "hasCss": false
+ },
+ "nebula": {
+  "colors": {
+   "--bg-color": "#212135",
+   "--caret-color": "#78c729",
+   "--main-color": "#be3c88",
+   "--sub-color": "#19b3b8",
+   "--sub-alt-color": "#191928",
+   "--text-color": "#838686",
+   "--error-color": "#ca4754",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#ca4754",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "night_runner": {
+  "colors": {
+   "--bg-color": "#212121",
+   "--caret-color": "#feff04",
+   "--main-color": "#feff04",
+   "--sub-color": "#5c4a9c",
+   "--sub-alt-color": "#1a1a1a",
+   "--text-color": "#e8e8e8",
+   "--error-color": "#da3333",
+   "--error-extra-color": "#791717",
+   "--colorful-error-color": "#da3333",
+   "--colorful-error-extra-color": "#791717"
+  },
+  "hasCss": false
+ },
+ "nord": {
+  "colors": {
+   "--bg-color": "#242933",
+   "--caret-color": "#eceff4",
+   "--main-color": "#88c0d0",
+   "--sub-color": "#929aaa",
+   "--sub-alt-color": "#2e3440",
+   "--text-color": "#d8dee9",
+   "--error-color": "#bf616a",
+   "--error-extra-color": "#793e44",
+   "--colorful-error-color": "#bf616a",
+   "--colorful-error-extra-color": "#793e44"
+  },
+  "hasCss": false
+ },
+ "nord_light": {
+  "colors": {
+   "--bg-color": "#eceff4",
+   "--caret-color": "#8fbcbb",
+   "--main-color": "#8fbcbb",
+   "--sub-color": "#6a7791",
+   "--sub-alt-color": "#d8dee9",
+   "--text-color": "#8fbcbb",
+   "--error-color": "#bf616a",
+   "--error-extra-color": "#793e44",
+   "--colorful-error-color": "#bf616a",
+   "--colorful-error-extra-color": "#793e44"
+  },
+  "hasCss": false
+ },
+ "norse": {
+  "colors": {
+   "--bg-color": "#242425",
+   "--caret-color": "#2b5f6d",
+   "--main-color": "#2b5f6d",
+   "--sub-color": "#505b5e",
+   "--sub-alt-color": "#303333",
+   "--text-color": "#ccc2b1",
+   "--error-color": "#7e2a2a",
+   "--error-extra-color": "#771d1d",
+   "--colorful-error-color": "#ca4754",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "oblivion": {
+  "colors": {
+   "--bg-color": "#313231",
+   "--caret-color": "#a5a096",
+   "--main-color": "#a5a096",
+   "--sub-color": "#5d6263",
+   "--sub-alt-color": "#3a3b3b",
+   "--text-color": "#f7f5f1",
+   "--error-color": "#dd452e",
+   "--error-extra-color": "#9e3423",
+   "--colorful-error-color": "#dd452e",
+   "--colorful-error-extra-color": "#9e3423"
+  },
+  "hasCss": true
+ },
+ "olive": {
+  "colors": {
+   "--bg-color": "#e9e5cc",
+   "--caret-color": "#92946f",
+   "--main-color": "#92946f",
+   "--sub-color": "#b7b39e",
+   "--sub-alt-color": "#d4cfbc",
+   "--text-color": "#373731",
+   "--error-color": "#cf2f2f",
+   "--error-extra-color": "#a22929",
+   "--colorful-error-color": "#cf2f2f",
+   "--colorful-error-extra-color": "#a22929"
+  },
+  "hasCss": false
+ },
+ "olivia": {
+  "colors": {
+   "--bg-color": "#1c1b1d",
+   "--caret-color": "#deaf9d",
+   "--main-color": "#deaf9d",
+   "--sub-color": "#4e3e3e",
+   "--sub-alt-color": "#262223",
+   "--text-color": "#f2efed",
+   "--error-color": "#bf616a",
+   "--error-extra-color": "#793e44",
+   "--colorful-error-color": "#e03d4e",
+   "--colorful-error-extra-color": "#aa2f3b"
+  },
+  "hasCss": false
+ },
+ "onedark": {
+  "colors": {
+   "--bg-color": "#2f343f",
+   "--caret-color": "#61afef",
+   "--main-color": "#61afef",
+   "--sub-color": "#eceff4",
+   "--sub-alt-color": "#262b34",
+   "--text-color": "#98c379",
+   "--error-color": "#e06c75",
+   "--error-extra-color": "#d62436",
+   "--colorful-error-color": "#d62436",
+   "--colorful-error-extra-color": "#ff0019"
+  },
+  "hasCss": false
+ },
+ "our_theme": {
+  "colors": {
+   "--bg-color": "#ce1226",
+   "--caret-color": "#fcd116",
+   "--main-color": "#fcd116",
+   "--sub-color": "#6d0f19",
+   "--sub-alt-color": "#9f1020",
+   "--text-color": "#ffffff",
+   "--error-color": "#fcd116",
+   "--error-extra-color": "#fcd116",
+   "--colorful-error-color": "#1672fc",
+   "--colorful-error-extra-color": "#1672fc"
+  },
+  "hasCss": false
+ },
+ "pale_nimbus": {
+  "colors": {
+   "--bg-color": "#433e4c",
+   "--caret-color": "#9efffd",
+   "--main-color": "#94ffc2",
+   "--sub-color": "#ffaca3",
+   "--sub-alt-color": "#694f5e",
+   "--text-color": "#feffdb",
+   "--error-color": "#ff5c5c",
+   "--error-extra-color": "#ff0000",
+   "--colorful-error-color": "#ff3874",
+   "--colorful-error-extra-color": "#c2386f"
+  },
+  "hasCss": false
+ },
+ "paper": {
+  "colors": {
+   "--bg-color": "#eeeeee",
+   "--caret-color": "#444444",
+   "--main-color": "#444444",
+   "--sub-color": "#b2b2b2",
+   "--sub-alt-color": "#dddddd",
+   "--text-color": "#444444",
+   "--error-color": "#d70000",
+   "--error-extra-color": "#d70000",
+   "--colorful-error-color": "#d70000",
+   "--colorful-error-extra-color": "#d70000"
+  },
+  "hasCss": false
+ },
+ "passion_fruit": {
+  "colors": {
+   "--bg-color": "#7c2142",
+   "--caret-color": "#ffffff",
+   "--main-color": "#f4a3b4",
+   "--sub-color": "#9994b8",
+   "--sub-alt-color": "#833c5e",
+   "--text-color": "#ffffff",
+   "--error-color": "#deb80b",
+   "--error-extra-color": "#deb80b",
+   "--colorful-error-color": "#deb80b",
+   "--colorful-error-extra-color": "#deb80b"
+  },
+  "hasCss": false
+ },
+ "pastel": {
+  "colors": {
+   "--bg-color": "#e0b2bd",
+   "--caret-color": "#fbf4b6",
+   "--main-color": "#fbf4b6",
+   "--sub-color": "#b4e9ff",
+   "--sub-alt-color": "#d29fab",
+   "--text-color": "#6d5c6f",
+   "--error-color": "#ff6961",
+   "--error-extra-color": "#c23b22",
+   "--colorful-error-color": "#ff6961",
+   "--colorful-error-extra-color": "#c23b22"
+  },
+  "hasCss": false
+ },
+ "peach_blossom": {
+  "colors": {
+   "--bg-color": "#292929",
+   "--caret-color": "#616161",
+   "--main-color": "#99b898",
+   "--sub-color": "#616161",
+   "--sub-alt-color": "#2a363b",
+   "--text-color": "#fecea8",
+   "--error-color": "#ff6961",
+   "--error-extra-color": "#e84a5f",
+   "--colorful-error-color": "#ff6961",
+   "--colorful-error-extra-color": "#e84a5f"
+  },
+  "hasCss": false
+ },
+ "peaches": {
+  "colors": {
+   "--bg-color": "#e0d7c1",
+   "--caret-color": "#dd7a5f",
+   "--main-color": "#dd7a5f",
+   "--sub-color": "#e7b28e",
+   "--sub-alt-color": "#e2caaf",
+   "--text-color": "#5f4c41",
+   "--error-color": "#ff6961",
+   "--error-extra-color": "#c23b22",
+   "--colorful-error-color": "#ff6961",
+   "--colorful-error-extra-color": "#c23b22"
+  },
+  "hasCss": false
+ },
+ "phantom": {
+  "colors": {
+   "--bg-color": "#001",
+   "--caret-color": "#bb9af7",
+   "--main-color": "#7aa2f7",
+   "--sub-color": "#414868",
+   "--sub-alt-color": "#24283b",
+   "--text-color": "#c0caf5",
+   "--error-color": "#f7768e",
+   "--error-extra-color": "#db4b4b",
+   "--colorful-error-color": "#ff7a93",
+   "--colorful-error-extra-color": "#ff9e64"
+  },
+  "hasCss": true
+ },
+ "pink_lemonade": {
+  "colors": {
+   "--bg-color": "#f6d992",
+   "--caret-color": "#fcfcf8",
+   "--main-color": "#f6a192",
+   "--sub-color": "#f6b092",
+   "--sub-alt-color": "#f6cc93",
+   "--text-color": "#fcfcf8",
+   "--error-color": "#ff6f69",
+   "--error-extra-color": "#ff6f69",
+   "--colorful-error-color": "#ff6f69",
+   "--colorful-error-extra-color": "#ff6f69"
+  },
+  "hasCss": false
+ },
+ "pulse": {
+  "colors": {
+   "--bg-color": "#181818",
+   "--caret-color": "#17b8bd",
+   "--main-color": "#17b8bd",
+   "--sub-color": "#53565a",
+   "--sub-alt-color": "#121212",
+   "--text-color": "#e5f4f4",
+   "--error-color": "#da3333",
+   "--error-extra-color": "#791717",
+   "--colorful-error-color": "#da3333",
+   "--colorful-error-extra-color": "#791717"
+  },
+  "hasCss": false
+ },
+ "purpleish": {
+  "colors": {
+   "--bg-color": "#1e1e32",
+   "--caret-color": "#7a52cc",
+   "--main-color": "#7a52cc",
+   "--sub-color": "#5c5c99",
+   "--sub-alt-color": "#181829",
+   "--text-color": "#a3a3cc",
+   "--error-color": "#ff6666",
+   "--error-extra-color": "#ff6666",
+   "--colorful-error-color": "#ff6666",
+   "--colorful-error-extra-color": "#ff6666"
+  },
+  "hasCss": false
+ },
+ "rainbow_trail": {
+  "colors": {
+   "--bg-color": "#f5f5f5",
+   "--caret-color": "#0d0d0d",
+   "--main-color": "#363636",
+   "--sub-color": "#4f4f4f",
+   "--sub-alt-color": "#e0e0e0",
+   "--text-color": "#1f1f1f",
+   "--error-color": "#ff0008",
+   "--error-extra-color": "#ff0008",
+   "--colorful-error-color": "#ff0008",
+   "--colorful-error-extra-color": "#ff0008"
+  },
+  "hasCss": true
+ },
+ "red_dragon": {
+  "colors": {
+   "--bg-color": "#1a0b0c",
+   "--caret-color": "#ff3a32",
+   "--main-color": "#ff3a32",
+   "--sub-color": "#e2a528",
+   "--sub-alt-color": "#0e0506",
+   "--text-color": "#4a4d4e",
+   "--error-color": "#771b1f",
+   "--error-extra-color": "#591317",
+   "--colorful-error-color": "#771b1f",
+   "--colorful-error-extra-color": "#591317"
+  },
+  "hasCss": false
+ },
+ "red_samurai": {
+  "colors": {
+   "--bg-color": "#84202c",
+   "--caret-color": "#c79e6e",
+   "--main-color": "#c79e6e",
+   "--sub-color": "#55131b",
+   "--sub-alt-color": "#751d26",
+   "--text-color": "#e2dad0",
+   "--error-color": "#33bbda",
+   "--error-extra-color": "#176b79",
+   "--colorful-error-color": "#33bbda",
+   "--colorful-error-extra-color": "#176779"
+  },
+  "hasCss": false
+ },
+ "repose_dark": {
+  "colors": {
+   "--bg-color": "#2f3338",
+   "--caret-color": "#d6d2bc",
+   "--main-color": "#d6d2bc",
+   "--sub-color": "#8f8e84",
+   "--sub-alt-color": "#3a3c3d",
+   "--text-color": "#d6d2bc",
+   "--error-color": "#ff4a59",
+   "--error-extra-color": "#c43c53",
+   "--colorful-error-color": "#ff4a59",
+   "--colorful-error-extra-color": "#c43c53"
+  },
+  "hasCss": false
+ },
+ "repose_light": {
+  "colors": {
+   "--bg-color": "#efead0",
+   "--caret-color": "#5f605e",
+   "--main-color": "#5f605e",
+   "--sub-color": "#8f8e84",
+   "--sub-alt-color": "#dbd6c4",
+   "--text-color": "#333538",
+   "--error-color": "#c43c53",
+   "--error-extra-color": "#a52632",
+   "--colorful-error-color": "#c43c53",
+   "--colorful-error-extra-color": "#a52632"
+  },
+  "hasCss": false
+ },
+ "retro": {
+  "colors": {
+   "--bg-color": "#dad3c1",
+   "--caret-color": "#1d1b17",
+   "--main-color": "#1d1b17",
+   "--sub-color": "#918b7d",
+   "--sub-alt-color": "#c8c3b3",
+   "--text-color": "#1d1b17",
+   "--error-color": "#bf616a",
+   "--error-extra-color": "#793e44",
+   "--colorful-error-color": "#bf616a",
+   "--colorful-error-extra-color": "#793e44"
+  },
+  "hasCss": false
+ },
+ "retrocast": {
+  "colors": {
+   "--bg-color": "#07737a",
+   "--caret-color": "#88dbdf",
+   "--main-color": "#88dbdf",
+   "--sub-color": "#f3e03b",
+   "--sub-alt-color": "#26858b",
+   "--text-color": "#ffffff",
+   "--error-color": "#ff585d",
+   "--error-extra-color": "#c04455",
+   "--colorful-error-color": "#ff585d",
+   "--colorful-error-extra-color": "#c04455"
+  },
+  "hasCss": true
+ },
+ "rgb": {
+  "colors": {
+   "--bg-color": "#111",
+   "--caret-color": "#eee",
+   "--main-color": "#eee",
+   "--sub-color": "#444",
+   "--sub-alt-color": "#1a1a1a",
+   "--text-color": "#eee",
+   "--error-color": "#eee",
+   "--error-extra-color": "#b3b3b3",
+   "--colorful-error-color": "#eee",
+   "--colorful-error-extra-color": "#b3b3b3"
+  },
+  "hasCss": true
+ },
+ "rose_pine": {
+  "colors": {
+   "--bg-color": "#1f1d27",
+   "--caret-color": "#f6c177",
+   "--main-color": "#9ccfd8",
+   "--sub-color": "#c4a7e7",
+   "--sub-alt-color": "#282533",
+   "--text-color": "#e0def4",
+   "--error-color": "#eb6f92",
+   "--error-extra-color": "#ebbcba",
+   "--colorful-error-color": "#eb6f92",
+   "--colorful-error-extra-color": "#ebbcba"
+  },
+  "hasCss": false
+ },
+ "rose_pine_dawn": {
+  "colors": {
+   "--bg-color": "#fffaf3",
+   "--caret-color": "#ea9d34",
+   "--main-color": "#56949f",
+   "--sub-color": "#c4a7e7",
+   "--sub-alt-color": "#f0e9df",
+   "--text-color": "#286983",
+   "--error-color": "#b4637a",
+   "--error-extra-color": "#d7827e",
+   "--colorful-error-color": "#b4637a",
+   "--colorful-error-extra-color": "#d7827e"
+  },
+  "hasCss": false
+ },
+ "rose_pine_moon": {
+  "colors": {
+   "--bg-color": "#2a273f",
+   "--caret-color": "#f6c177",
+   "--main-color": "#9ccfd8",
+   "--sub-color": "#c4a7e7",
+   "--sub-alt-color": "#211f32",
+   "--text-color": "#e0def4",
+   "--error-color": "#eb6f92",
+   "--error-extra-color": "#ebbcba",
+   "--colorful-error-color": "#eb6f92",
+   "--colorful-error-extra-color": "#ebbcba"
+  },
+  "hasCss": false
+ },
+ "rudy": {
+  "colors": {
+   "--bg-color": "#1a2b3e",
+   "--caret-color": "#af8f5c",
+   "--main-color": "#af8f5c",
+   "--sub-color": "#3a506c",
+   "--sub-alt-color": "#152231",
+   "--text-color": "#c9c8bf",
+   "--error-color": "#bf616a",
+   "--error-extra-color": "#793e44",
+   "--colorful-error-color": "#bf616a",
+   "--colorful-error-extra-color": "#793e44"
+  },
+  "hasCss": false
+ },
+ "ryujinscales": {
+  "colors": {
+   "--bg-color": "#081426",
+   "--caret-color": "#ef6d49",
+   "--main-color": "#f17754",
+   "--sub-color": "#ffbc90",
+   "--sub-alt-color": "#040e1d",
+   "--text-color": "#ffe4bc",
+   "--error-color": "#ca4754",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#ca4754",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "serika": {
+  "colors": {
+   "--bg-color": "#e1e1e3",
+   "--caret-color": "#e2b714",
+   "--main-color": "#e2b714",
+   "--sub-color": "#aaaeb3",
+   "--sub-alt-color": "#d1d3d8",
+   "--text-color": "#323437",
+   "--error-color": "#da3333",
+   "--error-extra-color": "#791717",
+   "--colorful-error-color": "#da3333",
+   "--colorful-error-extra-color": "#791717"
+  },
+  "hasCss": false
+ },
+ "serika_dark": {
+  "colors": {
+   "--bg-color": "#323437",
+   "--caret-color": "#e2b714",
+   "--main-color": "#e2b714",
+   "--sub-color": "#646669",
+   "--sub-alt-color": "#2c2e31",
+   "--text-color": "#d1d0c5",
+   "--error-color": "#ca4754",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#ca4754",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "sewing_tin": {
+  "colors": {
+   "--bg-color": "#241963",
+   "--caret-color": "#fbdb8c",
+   "--main-color": "#f2ce83",
+   "--sub-color": "#446ad5",
+   "--sub-alt-color": "#2a277a",
+   "--text-color": "#ffffff",
+   "--error-color": "#c6915e",
+   "--error-extra-color": "#c6915e",
+   "--colorful-error-color": "#c6915e",
+   "--colorful-error-extra-color": "#c6915e"
+  },
+  "hasCss": true
+ },
+ "sewing_tin_light": {
+  "colors": {
+   "--bg-color": "#ffffff",
+   "--caret-color": "#fbdb8c",
+   "--main-color": "#2d2076",
+   "--sub-color": "#385eca",
+   "--sub-alt-color": "#c8cedf",
+   "--text-color": "#2d2076",
+   "--error-color": "#f2ce83",
+   "--error-extra-color": "#f2ce83",
+   "--colorful-error-color": "#f2ce83",
+   "--colorful-error-extra-color": "#f2ce83"
+  },
+  "hasCss": true
+ },
+ "shadow": {
+  "colors": {
+   "--bg-color": "#000",
+   "--caret-color": "#eee",
+   "--main-color": "#eee",
+   "--sub-color": "#444",
+   "--sub-alt-color": "#171717",
+   "--text-color": "#eee",
+   "--error-color": "#fff",
+   "--error-extra-color": "#d8d8d8",
+   "--colorful-error-color": "#fff",
+   "--colorful-error-extra-color": "#d8d8d8"
+  },
+  "hasCss": true
+ },
+ "shoko": {
+  "colors": {
+   "--bg-color": "#ced7e0",
+   "--caret-color": "#81c4dd",
+   "--main-color": "#81c4dd",
+   "--sub-color": "#7599b1",
+   "--sub-alt-color": "#b7cada",
+   "--text-color": "#3b4c58",
+   "--error-color": "#bf616a",
+   "--error-extra-color": "#793e44",
+   "--colorful-error-color": "#bf616a",
+   "--colorful-error-extra-color": "#793e44"
+  },
+  "hasCss": false
+ },
+ "slambook": {
+  "colors": {
+   "--bg-color": "#fffdde",
+   "--caret-color": "#367e18",
+   "--main-color": "#03001c",
+   "--sub-color": "#1c82adc4",
+   "--sub-alt-color": "#c6dce4",
+   "--text-color": "#13005a",
+   "--error-color": "#f900bf",
+   "--error-extra-color": "#ce1212",
+   "--colorful-error-color": "#ce1212",
+   "--colorful-error-extra-color": "#3ec70b"
+  },
+  "hasCss": false
+ },
+ "snes": {
+  "colors": {
+   "--bg-color": "#bfbec2",
+   "--caret-color": "#523793",
+   "--main-color": "#553d94",
+   "--sub-color": "#9f8ad4",
+   "--sub-alt-color": "#b5b0c2",
+   "--text-color": "#2e2e2e",
+   "--error-color": "#ca4754",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#ca4754",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": true
+ },
+ "soaring_skies": {
+  "colors": {
+   "--bg-color": "#fff9f2",
+   "--caret-color": "#1e107a",
+   "--main-color": "#55c6f0",
+   "--sub-color": "#1e107a",
+   "--sub-alt-color": "#e5ddd4",
+   "--text-color": "#1d1e1e",
+   "--error-color": "#fb5745",
+   "--error-extra-color": "#b03c30",
+   "--colorful-error-color": "#fb5745",
+   "--colorful-error-extra-color": "#b03c30"
+  },
+  "hasCss": false
+ },
+ "solarized_dark": {
+  "colors": {
+   "--bg-color": "#002b36",
+   "--caret-color": "#dc322f",
+   "--main-color": "#859900",
+   "--sub-color": "#2aa198",
+   "--sub-alt-color": "#00222b",
+   "--text-color": "#268bd2",
+   "--error-color": "#d33682",
+   "--error-extra-color": "#9b225c",
+   "--colorful-error-color": "#d33682",
+   "--colorful-error-extra-color": "#9b225c"
+  },
+  "hasCss": false
+ },
+ "solarized_light": {
+  "colors": {
+   "--bg-color": "#fdf6e3",
+   "--caret-color": "#dc322f",
+   "--main-color": "#859900",
+   "--sub-color": "#2aa198",
+   "--sub-alt-color": "#e2d8be",
+   "--text-color": "#181819",
+   "--error-color": "#d33682",
+   "--error-extra-color": "#9b225c",
+   "--colorful-error-color": "#d33682",
+   "--colorful-error-extra-color": "#9b225c"
+  },
+  "hasCss": false
+ },
+ "solarized_osaka": {
+  "colors": {
+   "--bg-color": "#00141a",
+   "--caret-color": "#b58900",
+   "--main-color": "#859900",
+   "--sub-color": "#2aa198",
+   "--sub-alt-color": "#00222b",
+   "--text-color": "#eee8d5",
+   "--error-color": "#dc322f",
+   "--error-extra-color": "#9b225c",
+   "--colorful-error-color": "#d33682",
+   "--colorful-error-extra-color": "#9b225c"
+  },
+  "hasCss": true
+ },
+ "sonokai": {
+  "colors": {
+   "--bg-color": "#2c2e34",
+   "--caret-color": "#f38c71",
+   "--main-color": "#9ed072",
+   "--sub-color": "#e7c664",
+   "--sub-alt-color": "#232429",
+   "--text-color": "#e2e2e3",
+   "--error-color": "#fc5d7c",
+   "--error-extra-color": "#ecac6a",
+   "--colorful-error-color": "#fc5d7c",
+   "--colorful-error-extra-color": "#ecac6a"
+  },
+  "hasCss": false
+ },
+ "spiderman": {
+  "colors": {
+   "--bg-color": "#0d1219",
+   "--caret-color": "#e23636",
+   "--main-color": "#e23636",
+   "--sub-color": "#0476f2",
+   "--sub-alt-color": "#0b1c2e",
+   "--text-color": "#f0f0f0",
+   "--error-color": "#0476f2",
+   "--error-extra-color": "#0353a8",
+   "--colorful-error-color": "#0476f2",
+   "--colorful-error-extra-color": "#0353a8"
+  },
+  "hasCss": false
+ },
+ "stealth": {
+  "colors": {
+   "--bg-color": "#010203",
+   "--caret-color": "#e25303",
+   "--main-color": "#383e42",
+   "--sub-color": "#5e676e",
+   "--sub-alt-color": "#121212",
+   "--text-color": "#383e42",
+   "--error-color": "#e25303",
+   "--error-extra-color": "#73280c",
+   "--colorful-error-color": "#e25303",
+   "--colorful-error-extra-color": "#73280c"
+  },
+  "hasCss": true
+ },
+ "strawberry": {
+  "colors": {
+   "--bg-color": "#f37f83",
+   "--caret-color": "#fcfcf8",
+   "--main-color": "#fcfcf8",
+   "--sub-color": "#e53c58",
+   "--sub-alt-color": "#ef6e77",
+   "--text-color": "#fcfcf8",
+   "--error-color": "#fcd23f",
+   "--error-extra-color": "#d7ae1e",
+   "--colorful-error-color": "#fcd23f",
+   "--colorful-error-extra-color": "#d7ae1e"
+  },
+  "hasCss": false
+ },
+ "striker": {
+  "colors": {
+   "--bg-color": "#124883",
+   "--caret-color": "#d7dcda",
+   "--main-color": "#d7dcda",
+   "--sub-color": "#0f2d4e",
+   "--sub-alt-color": "#104176",
+   "--text-color": "#d6dbd9",
+   "--error-color": "#fb4934",
+   "--error-extra-color": "#cc241d",
+   "--colorful-error-color": "#fb4934",
+   "--colorful-error-extra-color": "#cc241d"
+  },
+  "hasCss": false
+ },
+ "suisei": {
+  "colors": {
+   "--bg-color": "#3b4a62",
+   "--caret-color": "#bef0ff",
+   "--main-color": "#bef0ff",
+   "--sub-color": "#fe9841",
+   "--sub-alt-color": "#313e55",
+   "--text-color": "#dbdeeb",
+   "--error-color": "#ed2939",
+   "--error-extra-color": "#ce122c",
+   "--colorful-error-color": "#ed2939",
+   "--colorful-error-extra-color": "#ce122c"
+  },
+  "hasCss": true
+ },
+ "sunset": {
+  "colors": {
+   "--bg-color": "#211e24",
+   "--caret-color": "#ffca99",
+   "--main-color": "#f79777",
+   "--sub-color": "#5b578e",
+   "--sub-alt-color": "#161319",
+   "--text-color": "#f4e0c9",
+   "--error-color": "#66a1ff",
+   "--error-extra-color": "#376ca4",
+   "--colorful-error-color": "#66a1ff",
+   "--colorful-error-extra-color": "#376ca4"
+  },
+  "hasCss": true
+ },
+ "superuser": {
+  "colors": {
+   "--bg-color": "#262a33",
+   "--caret-color": "#43ffaf",
+   "--main-color": "#43ffaf",
+   "--sub-color": "#526777",
+   "--sub-alt-color": "#1f232c",
+   "--text-color": "#e5f7ef",
+   "--error-color": "#ff5f5f",
+   "--error-extra-color": "#d22a2a",
+   "--colorful-error-color": "#ff5f5f",
+   "--colorful-error-extra-color": "#d22a2a"
+  },
+  "hasCss": false
+ },
+ "sweden": {
+  "colors": {
+   "--bg-color": "#0058a3",
+   "--caret-color": "#b5b5b5",
+   "--main-color": "#ffcc02",
+   "--sub-color": "#57abdb",
+   "--sub-alt-color": "#024f8e",
+   "--text-color": "#ffffff",
+   "--error-color": "#e74040",
+   "--error-extra-color": "#a22f2f",
+   "--colorful-error-color": "#f56674",
+   "--colorful-error-extra-color": "#e33546"
+  },
+  "hasCss": false
+ },
+ "tangerine": {
+  "colors": {
+   "--bg-color": "#ffede0",
+   "--caret-color": "#5d8500",
+   "--main-color": "#fe5503",
+   "--sub-color": "#ff9562",
+   "--sub-alt-color": "#fdd3bf",
+   "--text-color": "#3d1705",
+   "--error-color": "#7fb500",
+   "--error-extra-color": "#5f8700",
+   "--colorful-error-color": "#7fb500",
+   "--colorful-error-extra-color": "#5f8700"
+  },
+  "hasCss": false
+ },
+ "taro": {
+  "colors": {
+   "--bg-color": "#b3baff",
+   "--caret-color": "#00e9e5",
+   "--main-color": "#130f1a",
+   "--sub-color": "#6f6c91",
+   "--sub-alt-color": "#a3a7df",
+   "--text-color": "#130f1a",
+   "--error-color": "#ffe23e",
+   "--error-extra-color": "#fff1c3",
+   "--colorful-error-color": "#ffe23e",
+   "--colorful-error-extra-color": "#fff1c3"
+  },
+  "hasCss": true
+ },
+ "terminal": {
+  "colors": {
+   "--bg-color": "#191a1b",
+   "--caret-color": "#79a617",
+   "--main-color": "#79a617",
+   "--sub-color": "#48494b",
+   "--sub-alt-color": "#141516",
+   "--text-color": "#e7eae0",
+   "--error-color": "#a61717",
+   "--error-extra-color": "#731010",
+   "--colorful-error-color": "#a61717",
+   "--colorful-error-extra-color": "#731010"
+  },
+  "hasCss": false
+ },
+ "terra": {
+  "colors": {
+   "--bg-color": "#0c100e",
+   "--caret-color": "#89c559",
+   "--main-color": "#89c559",
+   "--sub-color": "#436029",
+   "--sub-alt-color": "#0f1d18",
+   "--text-color": "#f0edd1",
+   "--error-color": "#d3ca78",
+   "--error-extra-color": "#89844d",
+   "--colorful-error-color": "#d3ca78",
+   "--colorful-error-extra-color": "#89844d"
+  },
+  "hasCss": false
+ },
+ "terrazzo": {
+  "colors": {
+   "--bg-color": "#f1e5da",
+   "--caret-color": "#e0794e",
+   "--main-color": "#e0794e",
+   "--sub-color": "#688e8f",
+   "--sub-alt-color": "#e3d3c6",
+   "--text-color": "#023e3b",
+   "--error-color": "#a01034",
+   "--error-extra-color": "#a01034",
+   "--colorful-error-color": "#a01034",
+   "--colorful-error-extra-color": "#a01034"
+  },
+  "hasCss": true
+ },
+ "terror_below": {
+  "colors": {
+   "--bg-color": "#0b1e1a",
+   "--caret-color": "#66ac92",
+   "--main-color": "#66ac92",
+   "--sub-color": "#015c53",
+   "--sub-alt-color": "#041715",
+   "--text-color": "#dceae5",
+   "--error-color": "#bf616a",
+   "--error-extra-color": "#793e44",
+   "--colorful-error-color": "#bf616a",
+   "--colorful-error-extra-color": "#793e44"
+  },
+  "hasCss": false
+ },
+ "tiramisu": {
+  "colors": {
+   "--bg-color": "#cfc6b9",
+   "--caret-color": "#7d5448",
+   "--main-color": "#c0976f",
+   "--sub-color": "#c0976f",
+   "--sub-alt-color": "#d0bca7",
+   "--text-color": "#7d5448",
+   "--error-color": "#e9632d",
+   "--error-extra-color": "#e9632d",
+   "--colorful-error-color": "#e9632d",
+   "--colorful-error-extra-color": "#e9632d"
+  },
+  "hasCss": false
+ },
+ "trackday": {
+  "colors": {
+   "--bg-color": "#464d66",
+   "--caret-color": "#475782",
+   "--main-color": "#e0513e",
+   "--sub-color": "#5c7eb9",
+   "--sub-alt-color": "#3d4359",
+   "--text-color": "#cfcfcf",
+   "--error-color": "#e44e4e",
+   "--error-extra-color": "#fd3f3f",
+   "--colorful-error-color": "#ff2e2e",
+   "--colorful-error-extra-color": "#bb2525"
+  },
+  "hasCss": true
+ },
+ "trance": {
+  "colors": {
+   "--bg-color": "#00021b",
+   "--caret-color": "#e51376",
+   "--main-color": "#e51376",
+   "--sub-color": "#3c4c79",
+   "--sub-alt-color": "#18214c",
+   "--text-color": "#fff",
+   "--error-color": "#02d3b0",
+   "--error-extra-color": "#3f887c",
+   "--colorful-error-color": "#02d3b0",
+   "--colorful-error-extra-color": "#3f887c"
+  },
+  "hasCss": true
+ },
+ "tron_orange": {
+  "colors": {
+   "--bg-color": "#0d1c1c",
+   "--caret-color": "#f0e800",
+   "--main-color": "#f0e800",
+   "--sub-color": "#ff6600",
+   "--sub-alt-color": "#9c9191",
+   "--text-color": "#ffffff",
+   "--error-color": "#ff0000",
+   "--error-extra-color": "#ff0000",
+   "--colorful-error-color": "#ff0000",
+   "--colorful-error-extra-color": "#ff0000"
+  },
+  "hasCss": false
+ },
+ "vaporwave": {
+  "colors": {
+   "--bg-color": "#a4a7ea",
+   "--caret-color": "#28cafe",
+   "--main-color": "#e368da",
+   "--sub-color": "#7c7faf",
+   "--sub-alt-color": "#989bd9",
+   "--text-color": "#f1ebf1",
+   "--error-color": "#573ca9",
+   "--error-extra-color": "#3d2b77",
+   "--colorful-error-color": "#28cafe",
+   "--colorful-error-extra-color": "#25a9ce"
+  },
+  "hasCss": false
+ },
+ "vesper": {
+  "colors": {
+   "--bg-color": "#101010",
+   "--caret-color": "#99ffe4",
+   "--main-color": "#ffc799",
+   "--sub-color": "#a0a0a0",
+   "--sub-alt-color": "#1c1c1c",
+   "--text-color": "#ffffff",
+   "--error-color": "#ff8080",
+   "--error-extra-color": "#b25959",
+   "--colorful-error-color": "#ff8080",
+   "--colorful-error-extra-color": "#b25959"
+  },
+  "hasCss": false
+ },
+ "vesper_light": {
+  "colors": {
+   "--bg-color": "#ffffff",
+   "--caret-color": "#067a6e",
+   "--main-color": "#fb7100",
+   "--sub-color": "#a0a0a0",
+   "--sub-alt-color": "#fff8f4",
+   "--text-color": "#000000",
+   "--error-color": "#ed2839",
+   "--error-extra-color": "#ff6c72",
+   "--colorful-error-color": "#ed2839",
+   "--colorful-error-extra-color": "#ff6c72"
+  },
+  "hasCss": false
+ },
+ "viridescent": {
+  "colors": {
+   "--bg-color": "#2c3333",
+   "--caret-color": "#f0d3c9",
+   "--main-color": "#95d5b2",
+   "--sub-color": "#84a98c",
+   "--sub-alt-color": "#232828",
+   "--text-color": "#e9f5db",
+   "--error-color": "#ff4646",
+   "--error-extra-color": "#ab2f2f",
+   "--colorful-error-color": "#bd4141",
+   "--colorful-error-extra-color": "#883434"
+  },
+  "hasCss": false
+ },
+ "voc": {
+  "colors": {
+   "--bg-color": "#190618",
+   "--caret-color": "#e0caac",
+   "--main-color": "#e0caac",
+   "--sub-color": "#4c1e48",
+   "--sub-alt-color": "#2c0c28",
+   "--text-color": "#eeeae4",
+   "--error-color": "#af3735",
+   "--error-extra-color": "#7e2a29",
+   "--colorful-error-color": "#af3735",
+   "--colorful-error-extra-color": "#7e2a29"
+  },
+  "hasCss": false
+ },
+ "vscode": {
+  "colors": {
+   "--bg-color": "#1e1e1e",
+   "--caret-color": "#569cd6",
+   "--main-color": "#007acc",
+   "--sub-color": "#4d4d4d",
+   "--sub-alt-color": "#191919",
+   "--text-color": "#d4d4d4",
+   "--error-color": "#f44747",
+   "--error-extra-color": "#f44747",
+   "--colorful-error-color": "#f44747",
+   "--colorful-error-extra-color": "#f44747"
+  },
+  "hasCss": false
+ },
+ "watermelon": {
+  "colors": {
+   "--bg-color": "#1f4437",
+   "--caret-color": "#d6686f",
+   "--main-color": "#d6686f",
+   "--sub-color": "#3e7a65",
+   "--sub-alt-color": "#244d3f",
+   "--text-color": "#cdc6bc",
+   "--error-color": "#c82931",
+   "--error-extra-color": "#ac1823",
+   "--colorful-error-color": "#c82931",
+   "--colorful-error-extra-color": "#ac1823"
+  },
+  "hasCss": false
+ },
+ "wavez": {
+  "colors": {
+   "--bg-color": "#1c292f",
+   "--caret-color": "#6bde3b",
+   "--main-color": "#6bde3b",
+   "--sub-color": "#1f5e6b",
+   "--sub-alt-color": "#1b3238",
+   "--text-color": "#e9efe6",
+   "--error-color": "#ca4754",
+   "--error-extra-color": "#7e2a33",
+   "--colorful-error-color": "#ca4754",
+   "--colorful-error-extra-color": "#7e2a33"
+  },
+  "hasCss": false
+ },
+ "witch_girl": {
+  "colors": {
+   "--bg-color": "#f3dbda",
+   "--caret-color": "#afc5bd",
+   "--main-color": "#56786a",
+   "--sub-color": "#ddb4a7",
+   "--sub-alt-color": "#e7c8be",
+   "--text-color": "#56786a",
+   "--error-color": "#b29a91",
+   "--error-extra-color": "#b29a91",
+   "--colorful-error-color": "#b29a91",
+   "--colorful-error-extra-color": "#b29a91"
+  },
+  "hasCss": false
+ }
+}

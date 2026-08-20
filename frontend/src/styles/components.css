@@ -1,0 +1,913 @@
+/*
+ * Слой 3 — общие компоненты и их состояния.
+ *
+ * Почему отдельным файлом, а не в monkeytype.css. Там лежит разметка теста
+ * и каркас страницы — то, на что целятся 52 файла тем. Здесь то, что
+ * повторяется на всех страницах: кнопки, поля, обратная связь, таблицы,
+ * состояния. Разница не в стиле, а в причине правки: первый файл правят,
+ * когда меняется тест, этот — когда меняется поведение элемента.
+ *
+ * Подключается последним, поэтому при равном весе селекторов выигрывает он.
+ * Файлы тем и funbox грузятся во время работы, то есть ещё позже, и по-прежнему
+ * перебивают всё.
+ *
+ * Каждый компонент описан по шести состояниям: обычное, наведение, нажатие,
+ * фокус с клавиатуры, отключено, активное. До этого файла :active не было
+ * вовсе, :focus-visible стоял на одной кнопке, disabled — на одной.
+ */
+
+/*
+ * Классы is-hover, is-press, is-focus — принудительные состояния. Нужны
+ * странице /styleguide: показать наведение, нажатие и фокус рядом, не наводя
+ * мышь на каждый элемент по очереди. Они перечислены через запятую вместе
+ * с настоящими псевдоклассами, а не описаны отдельно, — поэтому оформление
+ * у них общее и разъехаться не может. В рабочем интерфейсе не используются.
+ */
+
+/* ============ Крючки тем ============ */
+
+/*
+ * 26 файлов тем из 52 задают --themable-button-text на конкретных пунктах
+ * меню: [data-nav-item="settings"], [data-nav-item="login"], а восемь ещё
+ * и на header[data-focused]. Это переменные базовых стилей monkeytype —
+ * пока их никто не читает, половина цветных меню в этих темах не работает.
+ *
+ * Подставляем их здесь, а не в :root: переменная, объявленная на корне,
+ * подставится один раз на корне, и правило темы, написанное для одного
+ * пункта, до неё не дотянется. Второй аргумент var() — наше значение
+ * по умолчанию из слоя 2.
+ */
+[data-nav-item] {
+  color: var(--themable-button-text, var(--nav-fg));
+  background-color: var(--themable-button-bg, transparent);
+}
+
+[data-nav-item]:hover,
+[data-nav-item].is-hover {
+  color: var(--themable-button-hover-text, var(--nav-fg-hover));
+  background-color: var(--themable-button-hover-bg, transparent);
+}
+
+[data-nav-item].active {
+  color: var(--themable-button-text, var(--nav-fg-active));
+}
+
+[data-nav-item].active:hover {
+  color: var(--themable-button-hover-text, var(--nav-fg-active));
+}
+
+/* Фокус с клавиатуры виден и тогда, когда тема перекрасила пункт */
+[data-nav-item]:focus-visible,
+[data-nav-item].is-focus {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+  background-color: var(--surface-raised);
+}
+
+[data-nav-item]:active {
+  transform: translateY(var(--state-press-offset));
+}
+
+/* ============ Кнопка ============ */
+
+.button:active:not(:disabled),
+.button.is-press {
+  transform: translateY(var(--state-press-offset));
+}
+
+.button:focus-visible,
+.button.is-focus {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/*
+ * Отключённая кнопка не должна отзываться на наведение: без этого правила
+ * она бледная, но всё равно подсвечивается под курсором и выглядит рабочей.
+ */
+.button:disabled,
+.button[aria-disabled="true"] {
+  opacity: var(--state-disabled-opacity);
+  cursor: not-allowed;
+}
+
+.button:disabled:hover,
+.button[aria-disabled="true"]:hover {
+  background-color: var(--surface-raised);
+  color: var(--fg-muted);
+  transform: none;
+}
+
+/* Опасное действие: удалить результаты, выйти из аккаунта. Красным
+   становится не сразу, а под курсором — иначе кнопка кричит постоянно */
+.button.danger:hover:not(:disabled) {
+  background-color: var(--surface-danger);
+  color: var(--fg-on-solid);
+}
+
+/* Только иконка. Квадрат по высоте обычной кнопки, чтобы ряды совпадали */
+.button.iconButton {
+  padding: var(--space-10);
+  aspect-ratio: 1;
+}
+
+/* ============ Текстовая кнопка ============ */
+
+.textButton {
+  color: var(--themable-button-text, var(--fg-muted-readable));
+}
+
+.textButton:hover:not(:disabled),
+.textButton.is-hover {
+  color: var(--themable-button-hover-text, var(--fg-main));
+}
+
+.textButton:active:not(:disabled) {
+  transform: translateY(var(--state-press-offset));
+}
+
+.textButton:focus-visible,
+.textButton.is-focus {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
+}
+
+.textButton.active {
+  color: var(--fg-accent);
+}
+
+.textButton:disabled {
+  opacity: var(--state-disabled-opacity);
+  cursor: not-allowed;
+}
+
+/* ============ Поля ввода ============ */
+
+.input:hover:not(:disabled):not(:focus) {
+  background-color: var(--surface-raised);
+  color: var(--fg-main);
+}
+
+.input:focus,
+.input:focus-visible,
+.input.is-focus {
+  outline: var(--focus-ring);
+  outline-offset: 0;
+}
+
+.input:disabled {
+  opacity: var(--state-disabled-opacity);
+  cursor: not-allowed;
+}
+
+.input[aria-invalid="true"] {
+  outline: var(--border-width-thick) solid var(--border-error-color);
+}
+
+/* ============ Полоса прогресса ============ */
+
+/*
+ * Одна полоса на таймер, гонку и любой другой прогресс. До неё их было
+ * две — .timerBar и #race .track — с разными высотами и скруглениями.
+ */
+.progressBar {
+  width: 100%;
+  height: var(--space-6);
+  background-color: var(--surface-raised);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.progressBar .fill {
+  height: 100%;
+  background-color: var(--surface-accent);
+  border-radius: inherit;
+  transition: width var(--progress-duration) var(--ease-linear);
+}
+
+.progressBar.danger .fill {
+  background-color: var(--surface-danger);
+}
+
+/* ============ Показатели по ходу теста ============ */
+
+/*
+ * Три места, куда попадают таймер и живая скорость: мелкая строка сверху,
+ * крупные цифры над словами и такие же под ними. Какое из них занято,
+ * решают настройки timerStyle и liveSpeedStyle — то есть пустых блоков
+ * в разметке всегда больше, чем занятых.
+ *
+ * Пустой блок всё равно занимал место: сверху набегало 95px из мелкой
+ * строки и крупных цифр, снизу — ноль, и центром экрана оказывалась
+ * не строка слов, а промежуток под ней. Слова уезжали вниз, а когда
+ * появлялась живая скорость — прыгали обратно вверх.
+ *
+ * Поэтому: пустой блок не занимает ничего, занятый резервирует ровно
+ * одну строку своего кегля. Тогда слова стоят на месте, а цифры — по центру
+ * над ними и под ними.
+ */
+#liveStatsMini:empty,
+#liveStatsTextTop:empty,
+#liveStatsTextBottom:empty {
+  display: none;
+}
+
+/*
+ * Строка режимов, показатели и слова стоят вплотную — как у них: от строки
+ * «russian» до первой строки слов 57px. При зазоре в 16px показатели
+ * оказывались отдельным этажом посреди пустоты, и слова уезжали вниз.
+ */
+#typingTest {
+  gap: var(--space-8);
+}
+
+/* Кнопка перезапуска не липнет к последней строке: у них между ними
+   около 40px, и это единственное место, где зазор больше общего */
+#restartButton {
+  margin-top: var(--space-32);
+}
+
+#liveStatsTextTop,
+#liveStatsTextBottom {
+  justify-content: center;
+  /* Тот же кегль, что у слов: цифра крупнее текста спорит с ним за внимание,
+     а смотреть человек должен на слова */
+  font-size: var(--font-size-2xl);
+  /* Межстрочный — число без единиц, поэтому в высоту его переводим умножением */
+  min-height: calc(var(--leading-tight) * 1em);
+  line-height: var(--leading-tight);
+}
+
+#liveStatsMini {
+  justify-content: center;
+  min-height: 0;
+}
+
+/* ============ Значок ============ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-8);
+  border-radius: var(--radius-pill);
+  background-color: var(--surface-raised);
+  color: var(--fg-muted-readable);
+  font-size: var(--font-size-2xs);
+  white-space: nowrap;
+}
+
+.badge.accent {
+  background-color: var(--surface-accent);
+  color: var(--fg-on-solid);
+}
+
+.badge.danger {
+  background-color: var(--surface-danger);
+  color: var(--fg-on-solid);
+}
+
+.badge svg {
+  width: 0.8em;
+  height: 0.8em;
+}
+
+/* ============ Карточка ============ */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-raised);
+}
+
+.card > .cardTitle {
+  color: var(--fg-accent);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ============ Уведомление ============ */
+
+/*
+ * Угол экрана, поверх модалок. У monkeytype уведомления въезжают сбоку —
+ * повторяем, но длительность берём из токена, поэтому «меньше движения»
+ * гасит и её.
+ */
+#notifications {
+  position: fixed;
+  top: var(--space-16);
+  right: var(--space-16);
+  z-index: var(--z-notification);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  max-width: min(24rem, calc(100vw - var(--space-32)));
+  pointer-events: none;
+}
+
+.notification {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  padding: var(--space-10) var(--space-12);
+  border-radius: var(--radius-md);
+  border-left: var(--border-width-thick) solid var(--border-accent-color);
+  background-color: var(--surface-raised);
+  color: var(--fg-main);
+  font-size: var(--font-size-md);
+  box-shadow: var(--shadow-modal);
+  pointer-events: auto;
+  animation: notificationIn var(--duration-base) var(--ease-standard);
+}
+
+.notification.error {
+  border-left-color: var(--border-error-color);
+}
+
+.notification.success {
+  border-left-color: var(--border-accent-color);
+}
+
+.notification svg {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  margin-top: 0.15em;
+}
+
+.notification .close {
+  margin-left: auto;
+  color: var(--fg-muted);
+  cursor: pointer;
+}
+
+.notification .close:hover {
+  color: var(--fg-main);
+}
+
+@keyframes notificationIn {
+  from {
+    opacity: 0;
+    transform: translateX(var(--space-16));
+  }
+}
+
+/* ============ Пусто, грузится, сломалось ============ */
+
+/*
+ * Три состояния одного места: списка результатов, таблицы лидеров, истории.
+ * Раньше на пустом списке не было ничего — и пустота читалась как поломка.
+ */
+.emptyState,
+.errorState,
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-40) var(--space-16);
+  text-align: center;
+  color: var(--fg-muted-readable);
+  font-size: var(--font-size-md);
+}
+
+.emptyState svg,
+.errorState svg,
+.loadingState svg {
+  width: var(--space-24);
+  height: var(--space-24);
+  opacity: var(--state-dim-opacity);
+}
+
+.errorState {
+  color: var(--fg-error);
+}
+
+.emptyState .hint,
+.errorState .hint {
+  font-size: var(--font-size-2xs);
+  color: var(--fg-muted);
+}
+
+/* ============ Таблица ============ */
+
+.table tr:focus-within td {
+  background-color: var(--surface-raised);
+}
+
+.table td.numeric,
+.table th.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============ Полоса прокрутки ============ */
+
+/*
+ * У monkeytype полоса окрашена в цвет темы — на тёмных темах системная
+ * светлая полоса светится сбоку белым. Первое правило понимают Firefox
+ * и новые Chrome, второе — вебкитовские браузеры.
+ */
+* {
+  scrollbar-color: var(--fg-muted) transparent;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: var(--space-8);
+  height: var(--space-8);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--fg-muted);
+  border-radius: var(--radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--fg-main);
+}
+
+/* ============ Брейкпоинты ============ */
+
+/*
+ * Семь ступеней monkeytype: 331, 426, 721, 849, 1105, 1361, 1617 (замер 458).
+ * Ступень — минимальная ширина, с которой действует раскладка, поэтому
+ * в max-width стоит число на пиксель меньше.
+ *
+ * Работают пять: две верхние (--bp-xl, --bp-2xl) у них расширяют колонку
+ * контента, а у нас её ширина закреплена на 1024px — правило было бы пустым.
+ * Объявлены они всё равно: числа должны лежать в одном месте.
+ */
+
+/* до --bp-lg (1105px): поля страницы ужимаются, контент упирается в края */
+@media (max-width: 1104px) {
+  #app {
+    padding: var(--space-24);
+  }
+}
+
+/*
+ * до --bp-md (849px): настройки складываются в одну колонку.
+ * Колонка с названием занимает до 18rem — ниже этой ширины значению
+ * остаётся слишком мало места. У monkeytype на этой же ступени панель
+ * режимов превращается в модалку.
+ */
+@media (max-width: 848px) {
+  .setting {
+    grid-template-columns: 1fr;
+  }
+
+  .setControl,
+  .setValues {
+    justify-content: flex-start;
+  }
+
+  #result .stats {
+    gap: var(--space-24);
+  }
+}
+
+/* до --bp-sm (721px): экранная клавиатура и подпись логотипа лишние,
+   слова и таблицы мельчают */
+@media (max-width: 720px) {
+  #keymap {
+    display: none;
+  }
+
+  [data-ui-element="logoSubtext"] {
+    display: none;
+  }
+
+  #words {
+    font-size: var(--font-size-lg);
+  }
+
+  #result .stats .group .bottom {
+    font-size: var(--font-size-2xl);
+  }
+
+  /* Перенос сработает, только когда содержимое перестанет помещаться
+     в строку. Сейчас, при семи иконках, не срабатывает. */
+  header {
+    flex-wrap: wrap;
+  }
+
+  /* Четыре колонки на телефоне не разложить: таблица прокручивается
+     внутри своей обёртки, поэтому ширину задаём поменьше — чтобы влезало
+     хотя бы три колонки без движения пальцем. */
+  .tableScroll .table {
+    min-width: 26rem;
+    font-size: var(--font-size-xs);
+  }
+
+  .leaderboardTable {
+    min-width: 34rem;
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* до --bp-xs (426px): шапка и футер прижимаются, крупные цифры мельчают */
+@media (max-width: 425px) {
+  #app {
+    padding: var(--space-16);
+    gap: var(--space-24);
+  }
+
+  nav {
+    gap: var(--space-2);
+  }
+
+  [data-nav-item] {
+    width: var(--space-32);
+    height: var(--space-32);
+    padding: var(--space-6);
+  }
+
+  footer {
+    gap: var(--space-8);
+    font-size: var(--font-size-4xs);
+  }
+
+  #liveStatsTextTop,
+  #liveStatsTextBottom,
+  #liveStats {
+    font-size: var(--font-size-xl);
+  }
+
+  #result .stats .group .bottom {
+    font-size: var(--font-size-xl);
+  }
+}
+
+/* до --bp-2xs (331px): самый узкий экран, на котором ещё можно печатать */
+@media (max-width: 330px) {
+  [data-ui-element="logo"] [data-ui-element="logoText"] {
+    font-size: var(--font-size-lg);
+  }
+
+  #testConfig {
+    font-size: var(--font-size-4xs);
+    padding: var(--space-4) var(--space-6);
+  }
+
+  footer .right {
+    margin-left: 0;
+  }
+}
+
+/* ============ Панель фильтров ============ */
+
+/*
+ * Тот же вид, что у #testConfig на странице теста: полоса кнопок на
+ * приподнятой подложке. Отдельный класс, а не id теста, — панель нужна
+ * лидерборду и профилю, а целиться в чужой id значит склеить две страницы.
+ */
+.configBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  width: fit-content;
+  margin: 0 auto var(--space-8);
+  padding: var(--space-6) var(--space-12);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-raised);
+  font-size: var(--font-size-xs);
+}
+
+/* Кнопки панели красят только буквы: подложка уже под ними */
+.configBar .button {
+  gap: var(--space-6);
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--fg-muted-readable);
+  white-space: nowrap;
+}
+
+.configBar .button svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+.configBar .button:hover:not(:disabled) {
+  background-color: transparent;
+  color: var(--fg-main);
+}
+
+.configBar .button.active {
+  background-color: transparent;
+  color: var(--fg-accent);
+}
+
+/* ============ Крутилка ============ */
+
+/*
+ * Кружок вместо слова «загрузка…»: текст на месте будущего списка
+ * читается как результат, а не как ожидание.
+ */
+.spinner {
+  width: var(--space-24);
+  height: var(--space-24);
+  border: var(--border-width-thick) solid var(--surface-raised);
+  border-top-color: var(--fg-accent);
+  border-radius: 50%;
+  animation: spinnerTurn 0.8s linear infinite;
+}
+
+@keyframes spinnerTurn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============ Страницы ============ */
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-12);
+  font-size: var(--font-size-xs);
+}
+
+.pager .button {
+  padding: var(--space-4) var(--space-10);
+  border-radius: var(--radius-sm);
+}
+
+/* ============ Лидерборд ============ */
+
+.leaderboardTable {
+  min-width: 44rem;
+}
+
+.leaderboardTable .playerCell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.avatar {
+  width: var(--space-24);
+  height: var(--space-24);
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+
+.avatarEmpty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--surface-raised);
+  color: var(--fg-muted);
+}
+
+.avatarEmpty svg {
+  width: 55%;
+  height: 55%;
+}
+
+/* Своя строка — тем же цветом, что и всё «своё» в интерфейсе */
+.leaderboardTable tr.me td {
+  background-color: var(--surface-raised);
+  color: var(--fg-accent);
+}
+
+/* Своей строки нет на этой странице — показываем её отдельно снизу */
+.selfTable {
+  margin-top: var(--space-4);
+  border-top: var(--border-width-thick) solid var(--border-color);
+}
+
+/* ============ Профиль ============ */
+
+.profileHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.avatar.big {
+  width: var(--space-64);
+  height: var(--space-64);
+}
+
+.historyTable {
+  min-width: 42rem;
+}
+
+/* Источник цитаты на экране результата */
+.quoteSource {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.quoteSource svg {
+  width: 0.8em;
+  height: 0.8em;
+}
+
+@media (max-width: 720px) {
+  .leaderboardTable {
+    min-width: 34rem;
+    font-size: var(--font-size-2xs);
+  }
+
+  .historyTable {
+    min-width: 32rem;
+    font-size: var(--font-size-2xs);
+  }
+}
+
+/* ============ Модалки ============ */
+
+/*
+ * Общая основа для «своего времени», «своего текста» и подтверждений.
+ * Оформление берётся от пикеров — у них одинаковые .picker и .box,
+ * чтобы не заводить второй набор правил на то же самое.
+ */
+.modal .box {
+  max-width: 34rem;
+}
+
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.modalLabel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.modalText {
+  resize: vertical;
+  min-height: 8rem;
+  line-height: var(--leading-normal, 1.5);
+  font-family: var(--font);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-8);
+}
+
+.modal .error:empty {
+  display: none;
+}
+
+/* ============ Уведомления ============ */
+
+/*
+ * Раньше ошибки печатались в разметку страницы: на экране результата
+ * их не было видно вовсе, а на странице теста они замещали слова.
+ */
+#notifications {
+  position: fixed;
+  top: var(--space-16);
+  right: var(--space-16);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  max-width: min(24rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.notification {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-raised);
+  color: var(--fg-main);
+  font-size: var(--font-size-xs);
+  box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 25%);
+  cursor: pointer;
+  pointer-events: auto;
+  animation: notificationIn 0.125s ease;
+}
+
+.notification svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.notification.error {
+  color: var(--fg-error);
+}
+
+.notification.success {
+  color: var(--fg-accent);
+}
+
+@keyframes notificationIn {
+  from {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============ Пикеры: плашки тем, семейства, редактор цветов ============ */
+
+/*
+ * Тема в списке показана собой: подложка её фоном, буквы её текстом.
+ * Наведение и выбор не должны это перекрашивать — иначе плашка перестаёт
+ * показывать тему. Поэтому здесь заливка снимается, а состояние видно
+ * по рамке.
+ */
+.pickerItem[style] {
+  border: var(--border-width-thick) solid transparent;
+}
+
+.pickerItem[style]:hover,
+.pickerItem[style].cursor {
+  border-color: var(--border-accent-color);
+  background-color: inherit;
+  color: inherit;
+}
+
+/* Точка основного цвета темы — по ней видно, чем будет краситься текст */
+.themeDot {
+  width: var(--space-10);
+  height: var(--space-10);
+  border-radius: 50%;
+  margin-left: auto;
+  flex: none;
+}
+
+/* Заголовок семейства в списке языков: english над english_1k и остальными */
+.pickerGroup {
+  padding: var(--space-8) var(--space-4) var(--space-2);
+  font-size: var(--font-size-2xs);
+  text-transform: lowercase;
+  position: sticky;
+  top: 0;
+  background-color: var(--surface-raised);
+  z-index: 1;
+}
+
+/* Редактор своей темы: десять полей цвета в две колонки */
+.customColors {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-8);
+  margin-top: var(--space-12);
+}
+
+.customColor {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: var(--font-size-md);
+  color: var(--fg-muted-readable);
+  cursor: pointer;
+}
+
+.customColor input[type="color"] {
+  width: var(--space-32);
+  height: var(--space-24);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  cursor: pointer;
+}
+
+.customActions {
+  display: flex;
+  gap: var(--space-8);
+  margin-top: var(--space-16);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 425px) {
+  .customColors {
+    grid-template-columns: 1fr;
+  }
+}

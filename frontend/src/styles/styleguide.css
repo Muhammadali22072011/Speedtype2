@@ -1,0 +1,174 @@
+/*
+ * Оформление страницы /styleguide. Подключается самой страницей, а она
+ * грузится лениво — в основную сборку эти правила не попадают.
+ *
+ * Здесь можно всё, что нельзя в остальном интерфейсе: сетки под образцы,
+ * подписи под каждым состоянием. Но цвета и отступы — те же токены:
+ * страница, показывающая систему мимо системы, врала бы.
+ */
+
+#styleguide .sgSubtitle {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--fg-main);
+  margin: var(--space-24) 0 var(--space-8);
+}
+
+#styleguide .sgNote {
+  margin-bottom: var(--space-12);
+}
+
+/* Образцы цвета в ряд */
+
+#styleguide .sgSwatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+  margin: var(--space-12) 0;
+}
+
+#styleguide .sgChip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  font-size: var(--font-size-2xs);
+  min-width: 7rem;
+}
+
+#styleguide .sgSwatch {
+  display: inline-block;
+  width: var(--space-24);
+  height: var(--space-24);
+  border-radius: var(--radius-sm);
+  /* Граница нужна светлым цветам на светлом фоне: без неё образец
+     сливается с фоном и выглядит пустым местом */
+  border: var(--border-width) solid var(--border-strong-color);
+}
+
+#styleguide .sgSwatch.big {
+  width: 100%;
+  height: var(--space-40);
+}
+
+#styleguide .sgRadius {
+  display: inline-block;
+  width: var(--space-40);
+  height: var(--space-40);
+  background-color: var(--surface-raised);
+}
+
+/* Таблицы токенов */
+
+#styleguide .sgTable {
+  font-size: var(--font-size-2xs);
+}
+
+#styleguide .sgTable code {
+  font-size: inherit;
+}
+
+#styleguide .sgActive td {
+  background-color: var(--surface-raised);
+  color: var(--fg-accent);
+}
+
+#styleguide .sgTwo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--space-24);
+}
+
+/* Шкалы */
+
+#styleguide .sgScale {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+#styleguide .sgScaleRow {
+  display: grid;
+  grid-template-columns: 12rem 5rem 1fr;
+  align-items: center;
+  gap: var(--space-12);
+  font-size: var(--font-size-2xs);
+}
+
+#styleguide .sgBar {
+  display: inline-block;
+  height: var(--space-12);
+  background-color: var(--surface-accent);
+  border-radius: var(--radius-sm);
+}
+
+#styleguide .sgTypeRow {
+  display: grid;
+  grid-template-columns: 1fr 12rem 1fr;
+  align-items: baseline;
+  gap: var(--space-12);
+  font-size: var(--font-size-2xs);
+}
+
+/* Полоса, которая едет при наведении: длительность видно, а не только читаешь */
+
+#styleguide .sgMotion {
+  display: inline-block;
+  width: var(--space-12);
+  height: var(--space-12);
+  background-color: var(--surface-accent);
+  border-radius: var(--radius-circle);
+  transition-property: transform;
+  transition-timing-function: var(--ease-standard);
+}
+
+#styleguide .sgScaleRow:hover .sgMotion {
+  transform: translateX(4rem);
+}
+
+/* Компоненты по состояниям */
+
+#styleguide .sgComponent {
+  margin-bottom: var(--space-24);
+}
+
+#styleguide .sgStates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-16);
+  align-items: flex-start;
+}
+
+#styleguide .sgState {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+#styleguide .sgStateLabel {
+  font-size: var(--font-size-4xs);
+}
+
+#styleguide .sgStateBody {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-12);
+  border-radius: var(--radius-md);
+  /* Клетка образца отделена от фона страницы, иначе прозрачные компоненты
+     не видно вовсе */
+  border: var(--border);
+  min-height: var(--space-64);
+}
+
+/* Пункт меню в стайлгайде — не ссылка, а span: переходить ему некуда */
+#styleguide [data-nav-item] {
+  cursor: default;
+}
+
+@media (max-width: 720px) {
+  #styleguide .sgScaleRow,
+  #styleguide .sgTypeRow {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+}
