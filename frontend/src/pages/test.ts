@@ -498,7 +498,14 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
         item("eraser", `стирать ${s.deleteOnError === "word" ? "слово" : "букву"}`, "deleteOnError"),
       );
     }
-    if (s.layout !== "qwerty") parts.push(item("keyboard", `раскладка ${s.layout}`, "layout"));
+    // Индикатор раскладки — только когда раскладка НЕ подбирается по языку.
+    // У них он и означает «эмулирую другую раскладку»; при значении по
+    // умолчанию показывать нечего. Значение "default" появилось, когда
+    // раскладку привязали к языку, а условие осталось от старого "qwerty" —
+    // из-за этого в строке режимов висело буквальное «раскладка default».
+    if (s.layout !== "default" && s.layout !== "qwerty") {
+      parts.push(item("keyboard", `раскладка ${s.layout.replace(/_/g, " ")}`, "layout"));
+    }
 
     noticeEl.innerHTML = parts.join("");
   }
