@@ -17,7 +17,6 @@ import {
 } from "../core/funbox";
 import { configureSound, playClick, playError, playTimeWarning } from "../core/sound";
 import { navigate, type PageContext } from "../router";
-import { showResult } from "./result";
 import {
   getSettings,
   modeValue,
@@ -30,7 +29,14 @@ import {
 import { openCommandline, setRestartHook } from "../ui/commandline";
 import { escapeHtml, formatSpeed, speedUnitLabel } from "../ui/format";
 import { icon } from "../ui/icons";
-import { flashKey, highlightNext, loadLayout, mirrorMap, renderKeymap } from "../ui/keymap";
+import {
+  flashKey,
+  highlightNext,
+  loadLayout,
+  mirrorMap,
+  renderKeymap,
+  resolveLayoutName,
+} from "../ui/keymap";
 import { askNumber, askText, notify } from "../ui/modal";
 import { openFunboxPicker, openLanguagePicker } from "../ui/pickers";
 import { applyThemeByName, pickRandomTheme } from "../state/themes";
@@ -77,7 +83,7 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
       <button id="restartButton" aria-label="Начать заново" title="начать заново">
         ${icon("rotate")}
       </button>
-      <div id="keymap" hidden></div>
+      <div id="keymap" data-ui-element="keymap" hidden></div>
     </div>
   `;
 
@@ -272,7 +278,7 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
       return;
     }
 
-    const layout = await loadLayout(s.layout);
+    const layout = await loadLayout(resolveLayoutName(s.layout, s.language));
     mirror = layout ? mirrorMap(layout) : null;
   }
 
@@ -305,7 +311,11 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
       return;
     }
 
-    const layout = await loadLayout(s.keymapLayout || s.layout);
+    // «по языку» — поведение по умолчанию: на русском тексте латинская
+    // клавиатура бесполезна, подсвечивать на ней нечего
+    const layout = await loadLayout(
+      resolveLayoutName(s.keymapLayout || s.layout, s.language),
+    );
     if (!layout) {
       keymapEl.hidden = true;
       return;
@@ -1245,6 +1255,11 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
     submitting = true;
     stopPaceCaret();
     setFocused(false);
+
+    // Экран результата грузится отдельным чанком в момент, когда тест
+    // закончился. Статическим импортом его оплачивали все, кто открыл
+    // главную, — включая тех, кто до конца теста не дошёл.
+    const { showResult } = await import("./result");
 
     await showResult({
       container: testEl,
