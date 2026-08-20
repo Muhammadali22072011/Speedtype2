@@ -42,7 +42,7 @@ root.innerHTML = `
          служит доступным именем. Подпись «На главную» его не содержала,
          а это расхождение имени с текстом — WCAG 2.5.3. -->
     <a href="/" data-ui-element="logo">
-      ${icon("keyboard")}
+      ${icon("logo")}
       <span data-ui-element="logoText">speedtype</span>
       <span data-ui-element="logoSubtext">тренажёр печати</span>
     </a>
@@ -161,6 +161,7 @@ registerRoute("/leaderboard", (ctx) =>
   import("./pages/leaderboard").then((m) => m.leaderboardPage(ctx)),
 );
 registerRoute("/profile", (ctx) => import("./pages/profile").then((m) => m.profilePage(ctx)));
+registerRoute("/account", (ctx) => import("./pages/account").then((m) => m.accountPage(ctx)));
 registerRoute("/settings", (ctx) => import("./pages/settings").then((m) => m.settingsPage(ctx)));
 
 // Текстовые страницы: их задача — привести человека из поиска и довести
