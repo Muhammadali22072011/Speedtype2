@@ -389,10 +389,15 @@ nav {
   );
 }
 
+/*
+ * Обычный блок, а не flex-обёртка. У них так же, и это не вкусовщина:
+ * flex делает своих детей блочными, поэтому и .word, и буквы внутри
+ * получали display: block в вычисленных стилях. Слова переносятся сами,
+ * как обычный инлайн-поток, — разметка склеивается join("") без пробелов,
+ * так что лишних зазоров между словами inline-block не даёт.
+ */
 #words {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
+  display: block;
   width: 100%;
   height: fit-content;
   user-select: none;
@@ -414,7 +419,10 @@ nav {
   margin: 0.25em 0.3em;
   line-height: 1em;
   border-bottom: var(--border-width-thick) solid transparent;
-  display: flex;
+  display: inline-block;
+  /* Слово не рвётся посередине при переносе строки */
+  white-space: nowrap;
+  vertical-align: top;
 }
 
 #words .word letter {
