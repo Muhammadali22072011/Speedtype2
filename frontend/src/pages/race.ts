@@ -196,6 +196,13 @@ function joinRoom(container: HTMLElement, code: string): () => void {
       case "finish":
         statusEl.textContent = "гонка окончена";
         break;
+
+      // Сервер спрашивает, живы ли мы, когда мы долго молчим. Ответ нужен
+      // ему, чтобы не держать в комнате оборванное соединение: молчащий
+      // участник иначе блокировал бы и старт, и финиш для всех остальных.
+      case "ping":
+        send({ type: "pong" });
+        break;
     }
   });
 
@@ -268,16 +275,19 @@ function joinRoom(container: HTMLElement, code: string): () => void {
       const now = performance.now();
       if (now - lastSent > 200 || engine!.finished) {
         lastSent = now;
+        // Шлём число верных символов, а не свою скорость: wpm и прогресс
+        // теперь считает сервер по собственным часам и длине текста.
+        // Раньше браузер присылал готовый wpm, и сервер рассылал его
+        // остальным как истину — подделывалось одной строкой в консоли.
         send({
           type: "progress",
-          progress: stats.progress,
-          wpm: stats.wpm,
+          chars: stats.correctChars,
           accuracy: stats.accuracy,
         });
       }
 
       if (engine!.finished) {
-        send({ type: "done", wpm: stats.wpm, accuracy: stats.accuracy });
+        send({ type: "done", chars: stats.correctChars, accuracy: stats.accuracy });
         void api.submitResult(engine!.summary).catch(() => undefined);
         unsubscribe?.();
       }
