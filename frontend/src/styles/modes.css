@@ -20,7 +20,17 @@
   position: relative;
 }
 
-#words.typed-effect-dots .word.typed letter::after {
+/*
+ * Точка рисуется через ::before, а не ::after, и это не вкусовщина.
+ * На ::after сидит подсказка опечатки (#words.indicate-below … [data-typed]).
+ * Вес у обоих селекторов одинаковый (1,3,1), подсказка объявлена ниже
+ * по файлу — значит она выигрывала весь блок целиком: буква оставалась
+ * прозрачной от эффекта точек, а на её месте показывался мелкий текст
+ * подсказки. Со стороны это выглядело как чужое маленькое слово, повисшее
+ * поверх строки. У элемента один ::after, поэтому две функции на нём
+ * ужиться не могут — разводим по разным псевдоэлементам.
+ */
+#words.typed-effect-dots .word.typed letter::before {
   content: "\00B7";
   position: absolute;
   inset: 0;
@@ -200,59 +210,55 @@
  * Выравнивание влево, а не по центру, как у них: владелец просил влево,
  * и это решение осознанное, не расхождение по недосмотру.
  */
-#typingTest #liveStatsTextTop,
-#typingTest #liveStatsTextBottom {
+#typingTest #liveStatsTextTop {
   position: relative;
   z-index: -1;
   height: 0;
-  /* min-height обязателен явным нулём: в components.css у этих же блоков
+  /* min-height обязателен явным нулём: в components.css у этого блока
      стоит min-height под прежний мелкий кегль, а min-height перебивает
      height. Без этой строки блок занимал 160px и раздвигал страницу,
      хотя height: 0 стоял. */
   min-height: 0;
   display: flex;
   justify-content: flex-start;
+  align-items: flex-end;
   /* Их inner-обёртка: flex, gap 0.5ch, leading-none */
   gap: 0.5ch;
   line-height: 1;
   font-size: 4rem;
+  /* Их bottom-5: блок нулевой высоты, содержимое растёт вверх */
+  transform: translateY(-1.25rem);
   color: var(--fg-accent);
   pointer-events: none;
   transition: opacity var(--transition);
 }
 
-/* Верхний растёт вверх от нулевой высоты, нижний — вниз.
-   Смещения их же: bottom-5 сверху, top-4 снизу. */
-#liveStatsTextTop {
-  align-items: flex-end;
-  transform: translateY(-1.25rem);
-}
-
-#liveStatsTextBottom {
-  align-items: flex-start;
-  transform: translateY(1rem);
-}
+/*
+ * Нижние показатели крупными НЕ делаем, и это осознанное расхождение.
+ * У них живая скорость при стиле text такая же огромная, как таймер, —
+ * но их блок отцентрован, а наш по просьбе владельца прижат влево.
+ * Влево огромное число уезжает из-под текста и ложится поверх слов:
+ * при 1900px «0 wpm» вырастало до 160px и перекрывало первую строку.
+ * Поэтому крупный кегль оставлен только таймеру, а нижние показатели
+ * живут со своим прежним размером из components.css.
+ */
 
 /* Их брейкпоинты дословно, tailwind.css:21-27 — sm 721, md 849, lg 1105,
    xl 1361. Ниже 721 остаётся базовые 4rem. */
 @media (min-width: 721px) {
-  #typingTest #liveStatsTextTop,
-  #typingTest #liveStatsTextBottom { font-size: 6rem; }
+  #typingTest #liveStatsTextTop { font-size: 6rem; }
 }
 
 @media (min-width: 849px) {
-  #typingTest #liveStatsTextTop,
-  #typingTest #liveStatsTextBottom { font-size: 7rem; }
+  #typingTest #liveStatsTextTop { font-size: 7rem; }
 }
 
 @media (min-width: 1105px) {
-  #typingTest #liveStatsTextTop,
-  #typingTest #liveStatsTextBottom { font-size: 8rem; }
+  #typingTest #liveStatsTextTop { font-size: 8rem; }
 }
 
 @media (min-width: 1361px) {
-  #typingTest #liveStatsTextTop,
-  #typingTest #liveStatsTextBottom { font-size: 10rem; }
+  #typingTest #liveStatsTextTop { font-size: 10rem; }
 }
 
 #liveStatsMini .value,
@@ -343,6 +349,12 @@
   gap: var(--space-4);
 }
 
+/* Ряд всегда разделён на две половины — их разводят формы split и alice.
+   Для остальных форм contents убирает обёртку из потока, и ряд сплошной. */
+.keymapHalf {
+  display: contents;
+}
+
 .keymapKey {
   display: grid;
   place-items: center;
@@ -360,6 +372,16 @@
 
 .keymapSpace { width: 10rem; }
 
+/* Обе подписи лежат в одной ячейке грида: клавиша не должна растягиваться
+   вдвое от того, что вторая подпись скрыта. */
+.keymapLegend {
+  grid-area: 1 / 1;
+}
+
+.keymapLegendShift {
+  visibility: hidden;
+}
+
 .keymapKey.next {
   background-color: var(--surface-accent);
   color: var(--fg-on-solid);
@@ -376,15 +398,38 @@
   color: var(--fg-on-solid);
 }
 
-/* Формы клавиатуры */
-#keymap.keymap-staggered .keymapRow:nth-child(2) { margin-left: var(--space-16); }
-#keymap.keymap-staggered .keymapRow:nth-child(3) { margin-left: var(--space-24); }
-#keymap.keymap-staggered .keymapRow:nth-child(4) { margin-left: 2.25rem; }
-#keymap.keymap-split .keymapKey:nth-child(6) { margin-right: var(--space-32); }
+/* Формы клавиатуры.
+   staggered и alice повторяют обычную клавиатуру со сдвигом рядов,
+   matrix — ортолинейную, где ряды стоят ровно друг под другом. */
+#keymap.keymap-staggered [data-row="row2"],
+#keymap.keymap-alice [data-row="row2"] { margin-left: var(--space-16); }
+#keymap.keymap-staggered [data-row="row3"],
+#keymap.keymap-alice [data-row="row3"] { margin-left: var(--space-24); }
+#keymap.keymap-staggered [data-row="row4"],
+#keymap.keymap-alice [data-row="row4"] { margin-left: 2.25rem; }
+
+/* split и alice разводят половины рядов; alice ещё и разворачивает их
+   под углом, как одноимённые клавиатуры */
+#keymap.keymap-split .keymapHalf,
+#keymap.keymap-alice .keymapHalf {
+  display: flex;
+  gap: var(--space-4);
+}
+
+#keymap.keymap-split .keymapRow,
+#keymap.keymap-alice .keymapRow { gap: var(--space-32); }
+
+#keymap.keymap-alice .keymapHalf:first-child { transform: rotate(-6deg); }
+#keymap.keymap-alice .keymapHalf:last-child { transform: rotate(6deg); }
 
 /* Подписи клавиш */
 #keymap.legend-blank .keymapKey span { visibility: hidden; }
 #keymap.legend-uppercase .keymapKey span { text-transform: uppercase; }
+
+/* dynamic: пока Shift зажат, клавиша показывает верхний символ.
+   Класс is-shifted вешает страница теста. */
+#keymap.legend-dynamic.is-shifted .keymapLegend { visibility: hidden; }
+#keymap.legend-dynamic.is-shifted .keymapLegendShift { visibility: visible; }
 
 /* ============ Страница настроек ============ */
 
