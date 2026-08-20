@@ -77,8 +77,10 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
         <div id="focusHint" hidden>${icon("cursor")} нажмите сюда или любую клавишу</div>
       </div>
       <div id="liveStatsTextBottom"></div>
-      <input id="wordsInput" autocomplete="off" autocapitalize="off" autocorrect="off"
-             spellcheck="false" aria-label="Поле ввода теста" tabindex="0">
+      <!-- textarea, а не input: у monkeytype так же. input физически не может
+           хранить перенос строки, а он нужен своему тексту и коду -->
+      <textarea id="wordsInput" autocomplete="off" autocapitalize="off" autocorrect="off"
+                spellcheck="false" aria-label="Поле ввода теста" tabindex="0"></textarea>
       <div id="capsWarning" hidden>${icon("bolt")} Caps Lock</div>
       <button id="restartButton" aria-label="Начать заново" title="начать заново">
         ${icon("rotate")}
@@ -109,7 +111,7 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
   const wordsEl = container.querySelector<HTMLElement>("#words")!;
   const caretEl = container.querySelector<HTMLElement>("#caret")!;
   const focusEl = container.querySelector<HTMLElement>("#focusHint")!;
-  const inputEl = container.querySelector<HTMLInputElement>("#wordsInput")!;
+  const inputEl = container.querySelector<HTMLTextAreaElement>("#wordsInput")!;
   const keymapEl = container.querySelector<HTMLElement>("#keymap")!;
   // Подсказки клавиш живут над футером, а не внутри теста — как у них.
   // Блок общий на всё приложение, поэтому ищем его в документе.

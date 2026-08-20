@@ -646,7 +646,8 @@
   align-self: center;
   display: grid;
   place-items: center;
-  padding: var(--space-8) var(--space-32);
+  /* Их отступ 16px по вертикали; было 8px, и кнопка выходила вдвое ниже */
+  padding: var(--space-16) var(--space-32);
   border-radius: var(--radius-md);
   color: var(--fg-muted);
   transition: color var(--transition), background-color var(--transition);
@@ -657,6 +658,24 @@
 #restartButton:hover {
   color: var(--fg-main);
   background-color: var(--surface-raised);
+}
+
+/*
+ * Нажатое состояние. У них (buttons.scss:65, 96, 140) залитая кнопка на
+ * :active получает заливку sub и текст цветом фона, а текстовая — просто
+ * уходит в sub. В наших файлах правил :active не было вовсе, и нажатие
+ * ничем не отзывалось: у monkeytype это заметная часть отклика.
+ */
+#restartButton:active {
+  background-color: var(--surface-muted);
+  color: var(--fg-on-solid);
+}
+
+#testConfig .button:active,
+header [data-nav-item]:active,
+footer .textButton:active {
+  color: var(--fg-muted);
+  background-color: transparent;
 }
 
 #restartButton:focus-visible {
