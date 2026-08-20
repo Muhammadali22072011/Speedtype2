@@ -184,17 +184,75 @@
   transition: opacity var(--transition);
 }
 
-#liveStatsTextTop,
-#liveStatsTextBottom {
+/*
+ * Крупный таймер и крупные показатели. Значения сняты с их исходника —
+ * components/pages/test/live-stats/styles.tsx:
+ *   text-[4rem] sm:text-[6rem] md:text-[7rem] lg:text-[8rem] xl:text-[10rem]
+ *   pointer-events-none relative z-[-1] grid h-0 text-center
+ *
+ * Главное здесь не кегль, а `height: 0` и `z-index: -1`: блок не занимает
+ * высоты и лежит ЗА словами. Это и делает их главную узнаваемой. У нас
+ * таймер был 3xl в обычном потоке и раздвигал страницу отдельной строкой.
+ *
+ * z-index: -1 работает, только пока у #words нет своего фона. Сейчас его
+ * нет — проверено. Появится — таймер пропадёт за ним.
+ *
+ * Выравнивание влево, а не по центру, как у них: владелец просил влево,
+ * и это решение осознанное, не расхождение по недосмотру.
+ */
+#typingTest #liveStatsTextTop,
+#typingTest #liveStatsTextBottom {
+  position: relative;
+  z-index: -1;
+  height: 0;
+  /* min-height обязателен явным нулём: в components.css у этих же блоков
+     стоит min-height под прежний мелкий кегль, а min-height перебивает
+     height. Без этой строки блок занимал 160px и раздвигал страницу,
+     хотя height: 0 стоял. */
+  min-height: 0;
   display: flex;
-  align-items: baseline;
-  /* Слева, вровень с началом строки слов, — как стояло до того, как
-     сюда добавили раскладку. По центру таймер отрывается от текста. */
   justify-content: flex-start;
-  gap: var(--space-24);
-  font-size: var(--font-size-3xl);
+  /* Их inner-обёртка: flex, gap 0.5ch, leading-none */
+  gap: 0.5ch;
+  line-height: 1;
+  font-size: 4rem;
   color: var(--fg-accent);
+  pointer-events: none;
   transition: opacity var(--transition);
+}
+
+/* Верхний растёт вверх от нулевой высоты, нижний — вниз.
+   Смещения их же: bottom-5 сверху, top-4 снизу. */
+#liveStatsTextTop {
+  align-items: flex-end;
+  transform: translateY(-1.25rem);
+}
+
+#liveStatsTextBottom {
+  align-items: flex-start;
+  transform: translateY(1rem);
+}
+
+/* Их брейкпоинты дословно, tailwind.css:21-27 — sm 721, md 849, lg 1105,
+   xl 1361. Ниже 721 остаётся базовые 4rem. */
+@media (min-width: 721px) {
+  #typingTest #liveStatsTextTop,
+  #typingTest #liveStatsTextBottom { font-size: 6rem; }
+}
+
+@media (min-width: 849px) {
+  #typingTest #liveStatsTextTop,
+  #typingTest #liveStatsTextBottom { font-size: 7rem; }
+}
+
+@media (min-width: 1105px) {
+  #typingTest #liveStatsTextTop,
+  #typingTest #liveStatsTextBottom { font-size: 8rem; }
+}
+
+@media (min-width: 1361px) {
+  #typingTest #liveStatsTextTop,
+  #typingTest #liveStatsTextBottom { font-size: 10rem; }
 }
 
 #liveStatsMini .value,
@@ -212,15 +270,22 @@
 }
 
 /* Цвет таймера из настроек. Класс скрипт вешает на сам блок, а не на
-   значение внутри, поэтому и целимся в блок. */
+   значение внутри, поэтому и целимся в блок — без пробела.
+   Раньше здесь стоял `#liveStatsTextTop .timer-sub`, с пробелом: селектор
+   ждал класс на потомке, а он на самом блоке, и настройка «цвет таймера»
+   на крупный таймер не действовала совсем. Нижний блок дописан к тем же
+   правилам — под него правила были, а строк не было. */
 #liveStatsMini.timer-sub,
-#liveStatsTextTop .timer-sub { color: var(--fg-muted); }
+#liveStatsTextTop.timer-sub,
+#liveStatsTextBottom.timer-sub { color: var(--fg-muted); }
 
 #liveStatsMini.timer-text,
-#liveStatsTextTop .timer-text { color: var(--fg-main); }
+#liveStatsTextTop.timer-text,
+#liveStatsTextBottom.timer-text { color: var(--fg-main); }
 
 #liveStatsMini.timer-black,
-#liveStatsTextTop .timer-black { color: #000; }
+#liveStatsTextTop.timer-black,
+#liveStatsTextBottom.timer-black { color: #000; }
 
 /* Показатели гонки — там разметка прежняя, одним блоком */
 #liveStats .value.mini { font-size: var(--font-size-base); }
@@ -244,8 +309,9 @@
 
 /* ============ Предупреждения и результат ============ */
 
-#capsWarning,
-.failed {
+/* Разбор слов и тепловая карта уехали в styles/result.css */
+
+#capsWarning {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -254,67 +320,10 @@
   font-size: var(--font-size-sm);
 }
 
-#capsWarning svg,
-.failed svg {
+#capsWarning svg {
   width: 0.9rem;
   height: 0.9rem;
 }
-
-.wordsHistory {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-6);
-  font-size: var(--font-size-sm);
-  color: var(--fg-muted);
-}
-
-.wordsHistory .ok { color: var(--fg-main); }
-.wordsHistory .bad { color: var(--fg-error); text-decoration: underline; }
-
-/*
- * Тепловая карта скорости: пять ступеней от медленного к быстрому.
- * Включается кнопкой в разборе и настройкой burstHeatmap. Цвета только
- * из темы — своих здесь быть не должно, иначе на светлой теме получится
- * нечитаемо.
- */
-.wordsHistory.heat .heat-0 { color: var(--fg-error); }
-.wordsHistory.heat .heat-1 { color: var(--fg-error-extra); }
-.wordsHistory.heat .heat-2 { color: var(--fg-muted); }
-.wordsHistory.heat .heat-3 { color: var(--fg-main); }
-.wordsHistory.heat .heat-4 { color: var(--fg-accent); }
-
-.historyTools {
-  display: flex;
-  gap: var(--space-8);
-  flex-wrap: wrap;
-  margin-bottom: var(--space-8);
-  font-size: var(--font-size-2xs);
-}
-
-.historyTools .button {
-  padding: var(--space-4) var(--space-10);
-  border-radius: var(--radius-sm);
-}
-
-.heatLegend {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  margin-top: var(--space-8);
-  font-size: var(--font-size-2xs);
-}
-
-.heatLegend span {
-  width: var(--space-16);
-  height: var(--space-6);
-  border-radius: var(--radius-sm);
-}
-
-.heatLegend .heat-0 { background-color: var(--fg-error); }
-.heatLegend .heat-1 { background-color: var(--fg-error-extra); }
-.heatLegend .heat-2 { background-color: var(--fg-muted); }
-.heatLegend .heat-3 { background-color: var(--fg-main); }
-.heatLegend .heat-4 { background-color: var(--fg-accent); }
 
 /* ============ Клавиатура на экране ============ */
 
@@ -1070,31 +1079,6 @@ button:disabled {
 body.typing #testModesNotice {
   opacity: 0;
   pointer-events: none;
-}
-
-/* ============ Экран результата ============ */
-
-#result .stats .group .bottom.testType,
-#result .stats .group .bottom.chars {
-  font-size: 1.1rem;
-  white-space: nowrap;
-}
-
-#result .stats .group .bottom.chars {
-  cursor: help;
-}
-
-#result .actions .button {
-  padding: var(--space-10) 1.2rem;
-}
-
-#result .actions .button svg {
-  width: 1.1rem;
-  height: 1.1rem;
-}
-
-#resultWordsHistory .wordsHistory {
-  justify-content: center;
 }
 
 /* ============ Funbox: memory ============ */

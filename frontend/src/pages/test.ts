@@ -17,6 +17,7 @@ import {
 } from "../core/funbox";
 import { configureSound, playClick, playError, playTimeWarning } from "../core/sound";
 import { navigate, type PageContext } from "../router";
+import { showResult } from "./result";
 import {
   getSettings,
   modeValue,
@@ -27,7 +28,7 @@ import {
   type TestMode,
 } from "../state/settings";
 import { openCommandline, setRestartHook } from "../ui/commandline";
-import { escapeHtml, formatDuration } from "../ui/format";
+import { escapeHtml, formatSpeed, speedUnitLabel } from "../ui/format";
 import { icon } from "../ui/icons";
 import { flashKey, highlightNext, loadLayout, mirrorMap, renderKeymap } from "../ui/keymap";
 import { askNumber, askText, notify } from "../ui/modal";
@@ -53,15 +54,6 @@ const MEMORY_SECONDS = 3;
  * они уже отсоединены от документа.
  */
 let presetWords: string[] | null = null;
-
-/** Множители перевода wpm в выбранную единицу. */
-const SPEED_UNITS: Record<string, { factor: number; label: string }> = {
-  wpm: { factor: 1, label: "wpm" },
-  cpm: { factor: 5, label: "cpm" },
-  wps: { factor: 1 / 60, label: "wps" },
-  cps: { factor: 5 / 60, label: "cps" },
-  wph: { factor: 60, label: "wph" },
-};
 
 export async function testPage({ container }: PageContext): Promise<() => void> {
   container.innerHTML = `
@@ -521,7 +513,7 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
     try {
       paceStats ??= await api.myStats();
       const speed = `${Math.round(paceStats.avg_wpm)} ${
-        SPEED_UNITS[s.typingSpeedUnit]?.label ?? "wpm"
+        speedUnitLabel()
       }`;
       const accuracy = `${Math.round(paceStats.avg_accuracy)}%`;
 
@@ -575,6 +567,19 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
     // «Своё» значение подсвечено, когда оно не из списка
     const custom = textModes && !values.includes(active);
 
+    // Длины цитаты — их порядок: all первым, дальше по возрастанию.
+    // Группа показывается только в режиме цитаты и заменяет собой
+    // группу времени/числа слов: у цитаты своего количества нет.
+    const quoteLengths: Array<[string, string]> = [
+      ["all", "все"],
+      ["short", "короткая"],
+      ["medium", "средняя"],
+      ["long", "длинная"],
+      ["thicc", "огромная"],
+    ];
+
+    // Три отдельные карточки, как у них, вместо одной с пустыми
+    // разделителями: переключатели текста, режимы, значения режима.
     configEl.innerHTML = `
       ${
         s.mode === "zen"
@@ -588,8 +593,7 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
                        data-toggle="numbers"${textModes ? "" : " disabled"}>
                  ${icon("hashtag")} цифры
                </button>
-             </div>
-             <div class="divider"></div>`
+             </div>`
       }
       <div class="group">
         ${modes
@@ -603,8 +607,7 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
       </div>
       ${
         textModes
-          ? `<div class="divider"></div>
-             <div class="group">
+          ? `<div class="group">
                ${values
                  .map(
                    (v) =>
@@ -619,9 +622,21 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
           : ""
       }
       ${
+        s.mode === "quote"
+          ? `<div class="group">
+               ${quoteLengths
+                 .map(
+                   ([key, label]) =>
+                     `<button class="button${s.quoteLength === key ? " active" : ""}"
+                              data-quote-length="${key}">${label}</button>`,
+                 )
+                 .join("")}
+             </div>`
+          : ""
+      }
+      ${
         s.mode === "custom"
-          ? `<div class="divider"></div>
-             <div class="group">
+          ? `<div class="group">
                <button class="button" data-custom-text>${icon("alignLeft")} изменить</button>
              </div>`
           : ""
@@ -633,7 +648,7 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
     const button = (event.target as HTMLElement).closest<HTMLElement>("button");
     if (!button) return;
 
-    const { mode, value, toggle } = button.dataset;
+    const { mode, value, toggle, quoteLength } = button.dataset;
     const s = getSettings();
 
     // Своё значение времени или числа слов
@@ -660,7 +675,8 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
       return;
     }
 
-    if (mode) updateSettings({ mode: mode as TestMode });
+    if (quoteLength) updateSettings({ quoteLength });
+    else if (mode) updateSettings({ mode: mode as TestMode });
     else if (value) {
       updateSettings(s.mode === "time" ? { timeValue: +value } : { wordsValue: +value });
     } else if (toggle === "punctuation") updateSettings({ punctuation: !s.punctuation });
@@ -875,13 +891,6 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
 
   // ---------- показатели ----------
 
-  function formatSpeed(wpm: number): string {
-    const s = getSettings();
-    const unit = SPEED_UNITS[s.typingSpeedUnit] ?? SPEED_UNITS["wpm"]!;
-    const value = wpm * unit.factor;
-    return s.alwaysShowDecimalPlaces ? value.toFixed(2) : String(Math.round(value));
-  }
-
   /**
    * Живые показатели. Раскладка повторяет monkeytype, а не собирает всё
    * в одну строку над словами:
@@ -900,7 +909,7 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
         ? String(Math.ceil(stats.remaining))
         : `${engine.wordIndex}/${engine.words.length}`;
 
-    const unit = SPEED_UNITS[s.typingSpeedUnit]?.label ?? "wpm";
+    const unit = speedUnitLabel();
     const values: Array<[style: string, html: string]> = [
       [s.liveSpeedStyle, `${formatSpeed(stats.wpm)}<span class="label">${unit}</span>`],
       [s.liveAccStyle, `${stats.accuracy.toFixed(0)}<span class="label">%</span>`],
@@ -1105,8 +1114,13 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
         const batches = await Promise.all(
           languages.map((language) =>
             api
-              .words(language, perLanguage, s.punctuation, s.numbers)
+              .words(language, perLanguage, {
+                punctuation: s.punctuation,
+                numbers: s.numbers,
+                lazy: s.lazyMode,
+              })
               .then((r) => r.words)
+              // Один недоступный язык не должен ронять весь текст
               .catch(() => [] as string[]),
           ),
         );
@@ -1119,21 +1133,24 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
         if (s.repeatQuotes === "typing" && lastQuote !== null) {
           words = [...lastQuote];
         } else {
-          const response = await api.text(s.language, count, "quote");
+          // Цитаты берём из файлов monkeytype: там 87 языков и разметка
+          // по длине, без которой настройка «длина цитаты» бессмысленна
+          const response = await api.quote(s.language, s.quoteLength);
           words = response.words;
           lastQuote = [...words];
           quoteSource = response.source;
         }
       } else {
-        // zipf просит у сервера выборку, смещённую к началу словаря:
-        // файлы monkeytype отсортированы по убыванию частоты слова
-        const response = await api.words(
-          s.language,
-          count,
-          s.punctuation,
-          s.numbers,
-          s.funbox.includes("zipf"),
-        );
+        // Всё, что меняет сам список слов, делает сервер: у него и словари,
+        // и таблица британских написаний
+        const response = await api.words(s.language, count, {
+          punctuation: s.punctuation,
+          numbers: s.numbers,
+          // zipf: выборка, смещённая к началу частотного словаря
+          zipf: s.funbox.includes("zipf"),
+          british: s.britishEnglish,
+          lazy: s.lazyMode,
+        });
         words = response.words;
         quoteSource = null;
       }
@@ -1218,480 +1235,25 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
     inputEl.focus();
   }
 
+  /**
+   * Тест окончен — дальше рисует экран результата. Он живёт в pages/result.ts:
+   * набор и результат правятся по разным поводам, и держать их в одном файле
+   * значит спотыкаться о чужие правки.
+   */
   async function finishTest(): Promise<void> {
     if (!engine || submitting) return;
     submitting = true;
     stopPaceCaret();
     setFocused(false);
 
-    const s = getSettings();
-    const summary = engine.summary;
-
-    /**
-     * Прошлый рекорд спрашиваем до сохранения. После него в статистике уже
-     * лежит нынешний результат, и показать, что было раньше, нечем —
-     * а плашка рекорда без старого значения ничего не сообщает.
-     */
-    let before: Stats | null = null;
-    if (getToken() && s.showPb) {
-      try {
-        before = await api.myStats();
-      } catch {
-        // Не критично: просто не покажем ни рекорд, ни «сегодня»
-      }
-    }
-
-    let saved: Result | null = null;
-    let message = "";
-    /** Обрыв связи, а не отказ сервера: такую отправку можно повторить. */
-    let retryable = false;
-
-    async function trySave(): Promise<void> {
-      if (!s.resultSaving) {
-        message = "сохранение выключено в настройках";
-        return;
-      }
-      if (summary.failed) {
-        message = summary.failReason;
-        return;
-      }
-
-      try {
-        saved = await api.submitResult(summary);
-        message = "";
-        retryable = false;
-      } catch (error) {
-        message = error instanceof ApiError ? error.message : "Сервер недоступен";
-        // 4xx повторять бессмысленно: сервер понял запрос и отказал
-        retryable = !(error instanceof ApiError) || error.status >= 500;
-        // Текстом внизу результата такое легко пропустить
-        notify(message, "error");
-      }
-    }
-
-    await trySave();
-
-    const previousBest = before && before.tests > 0 ? before.best_wpm : null;
-    const isBest =
-      saved !== null &&
-      getToken() !== null &&
-      s.showPb &&
-      (previousBest === null || Math.round(summary.wpm) > Math.round(previousBest));
-
-    // Место в дневном лидерборде — тот же эндпоинт, что и на самой странице
-    let dailyRank: number | null = null;
-    if (saved && getToken()) {
-      try {
-        dailyRank = (await api.leaderboardMe({ period: "daily" })).rank;
-      } catch {
-        // Не критично — просто не покажем строку про место
-      }
-    }
-
-    if (disposed) return;
-
-    const unit = SPEED_UNITS[s.typingSpeedUnit]?.label ?? "wpm";
-    const other = otherText();
-    // Сегодняшнее время: то, что было до теста, плюс он сам — второй запрос
-    // ради одного числа не нужен
-    const todaySeconds = before ? before.time_today + summary.elapsed : null;
-
-    testEl.innerHTML = `
-      <div id="result">
-        ${summary.failed ? `<div class="failed">${icon("xmark")} ${escapeHtml(summary.failReason)}</div>` : ""}
-        ${
-          isBest
-            ? `<div class="personalBest" aria-label="${
-                previousBest === null
-                  ? "первый сохранённый результат"
-                  : `прошлый рекорд — ${Math.round(previousBest)} ${unit}`
-              }" data-balloon-pos="down">${icon("crown")} новый личный рекорд${
-                previousBest === null
-                  ? ""
-                  : ` <span class="was">было ${Math.round(previousBest)}</span>`
-              }</div>`
-            : ""
-        }
-        <div class="stats">
-          <div class="group">
-            <div class="top">${unit}</div>
-            <div class="bottom">${formatSpeed(summary.wpm)}</div>
-          </div>
-          <div class="group">
-            <div class="top">точность</div>
-            <div class="bottom">${summary.accuracy.toFixed(0)}%</div>
-          </div>
-          <div class="group small">
-            <div class="top">raw</div>
-            <div class="bottom">${formatSpeed(summary.raw)}</div>
-          </div>
-          <div class="group small">
-            <div class="top">ровность</div>
-            <div class="bottom">${summary.consistency.toFixed(0)}%</div>
-          </div>
-          <div class="group small">
-            <div class="top">тип теста</div>
-            <div class="bottom testType">${escapeHtml(testTypeText(summary))}</div>
-          </div>
-          ${
-            other
-              ? `<div class="group small">
-                   <div class="top">прочее</div>
-                   <div class="bottom testType">${escapeHtml(other)}</div>
-                 </div>`
-              : ""
-          }
-          <div class="group small">
-            <div class="top">символы</div>
-            <div class="bottom chars"
-                 aria-label="верные / неверные / лишние / пропущенные"
-                 data-balloon-pos="up">${charBreakdown(summary)}</div>
-          </div>
-          <div class="group small">
-            <div class="top">время</div>
-            <div class="bottom">${summary.elapsed.toFixed(1)}с${
-              summary.afkSeconds > 0
-                ? `<span class="afk" aria-label="время без нажатий" data-balloon-pos="up">afk ${summary.afkSeconds}с</span>`
-                : ""
-            }</div>
-          </div>
-          ${
-            todaySeconds !== null
-              ? `<div class="group small">
-                   <div class="top">сегодня</div>
-                   <div class="bottom">${formatDuration(todaySeconds)}</div>
-                 </div>`
-              : ""
-          }
-          ${
-            dailyRank !== null
-              ? `<div class="group small">
-                   <div class="top">за сутки</div>
-                   <div class="bottom">${dailyRank} место</div>
-                 </div>`
-              : ""
-          }
-        </div>
-        ${
-          quoteSource && s.mode === "quote"
-            ? `<p class="quoteSource sub">${icon("quote")} ${escapeHtml(quoteSource)}</p>`
-            : ""
-        }
-        <div class="chart">${renderChart(summary.wpmSamples, s.startGraphsAtZero)}</div>
-        <div id="resultWordsHistory"${s.alwaysShowWordsHistory ? "" : " hidden"}>
-          ${renderWordsHistory()}
-        </div>
-        <div id="saveNote"></div>
-        ${
-          getToken()
-            ? ""
-            : `<p class="sub center">
-                 <a href="/login" class="main">войдите</a>, чтобы результат попал в лидерборд
-               </p>`
-        }
-        <div class="actions">
-          <button class="button" id="again" aria-label="следующий тест" data-balloon-pos="down">
-            ${icon("chevronRight")}
-          </button>
-          <button class="button" id="repeat" aria-label="повторить тот же текст" data-balloon-pos="down">
-            ${icon("sync")}
-          </button>
-          <button class="button" id="practise" aria-label="практика ошибочных слов" data-balloon-pos="down">
-            ${icon("triangleExclamation")}
-          </button>
-          <button class="button" id="toggleHistory" aria-label="разбор слов" data-balloon-pos="down">
-            ${icon("alignLeft")}
-          </button>
-          <button class="button" id="shot" aria-label="картинка результата" data-balloon-pos="down">
-            ${icon("save")}
-          </button>
-          <a class="button" href="/leaderboard" aria-label="лидерборд" data-balloon-pos="down">
-            ${icon("crown")}
-          </a>
-        </div>
-      </div>
-    `;
-
-    const noteEl = testEl.querySelector<HTMLElement>("#saveNote")!;
-
-    /** Подпись о сохранении, а при обрыве связи — кнопка повтора. */
-    function drawNote(): void {
-      if (saved) {
-        noteEl.className = "sub center";
-        noteEl.textContent = getToken()
-          ? "результат сохранён"
-          : "сохранено как гостевой — войдите, чтобы попасть в лидерборд";
-        return;
-      }
-
-      noteEl.className = "center saveFailed";
-      noteEl.innerHTML = `
-        <span class="error">${escapeHtml(message)}</span>
-        ${
-          retryable
-            ? `<button class="button" id="retrySave">${icon("sync")} повторить</button>`
-            : ""
-        }
-      `;
-
-      noteEl.querySelector<HTMLElement>("#retrySave")?.addEventListener("click", () => {
-        noteEl.innerHTML = `<span class="sub">отправляем…</span>`;
-        void trySave().then(drawNote);
-      });
-    }
-
-    drawNote();
-
-    // Слова прошлого теста нужны для «повторить» и «практики» — сам движок
-    // к этому моменту уже будет заменён новым
-    const wordsOfThisTest = engine.words.map((w) => w.target);
-    const missedWords = engine.words
-      .filter((w) => w.done && w.typed !== w.target)
-      .map((w) => w.target);
-
-    // Без обёртки в слушатель прилетел бы Event вместо списка слов
-    testEl.querySelector<HTMLElement>("#again")?.addEventListener("click", () => restart());
-
-    testEl.querySelector<HTMLElement>("#repeat")?.addEventListener("click", () => {
-      restart(wordsOfThisTest);
+    await showResult({
+      container: testEl,
+      summary: engine.summary,
+      words: engine.words,
+      quoteSource,
+      isDisposed: () => disposed,
+      restart,
     });
-
-    const practise = testEl.querySelector<HTMLButtonElement>("#practise");
-    if (practise) {
-      practise.disabled = missedWords.length === 0;
-      practise.addEventListener("click", () => {
-        // Слова с ошибками повторяем по кругу, пока не наберётся полный тест
-        const target = Math.max(missedWords.length, modeValue(getSettings()));
-        const words = Array.from(
-          { length: target },
-          (_, i) => missedWords[i % missedWords.length]!,
-        );
-        restart(words);
-      });
-    }
-
-    testEl.querySelector<HTMLElement>("#toggleHistory")?.addEventListener("click", () => {
-      const history = testEl.querySelector<HTMLElement>("#resultWordsHistory");
-      if (history) history.hidden = !history.hidden;
-    });
-
-    testEl.querySelector<HTMLElement>("#shot")?.addEventListener("click", () => {
-      saveResultCard(summary, unit);
-    });
-
-    // Копирование слов и тепловая карта скоростей — обе кнопки живут
-    // внутри разбора, поэтому слушатель один на весь блок
-    testEl.querySelector<HTMLElement>("#resultWordsHistory")?.addEventListener("click", (event) => {
-      const copyButton = (event.target as HTMLElement).closest<HTMLElement>("button[data-copy]");
-      if (copyButton) {
-        void copyWords(copyButton.dataset["copy"]!, copyButton);
-        return;
-      }
-
-      if ((event.target as HTMLElement).closest("[data-heatmap]")) {
-        testEl.querySelector<HTMLElement>(".wordsHistory")?.classList.toggle("heat");
-        const legend = testEl.querySelector<HTMLElement>(".heatLegend");
-        if (legend) legend.hidden = !legend.hidden;
-      }
-    });
-  }
-
-  /** Копирование разбора: все слова, только ошибочные или то, что набрано. */
-  async function copyWords(what: string, button: HTMLElement): Promise<void> {
-    if (!engine) return;
-
-    const done = engine.words.filter((w) => w.done);
-    const words =
-      what === "missed"
-        ? done.filter((w) => w.typed !== w.target).map((w) => w.target)
-        : what === "typed"
-          ? done.map((w) => w.typed)
-          : done.map((w) => w.target);
-
-    try {
-      await navigator.clipboard.writeText(words.join(" "));
-      const was = button.getAttribute("aria-label") ?? "";
-      button.setAttribute("aria-label", "скопировано");
-      setTimeout(() => button.setAttribute("aria-label", was), 1200);
-    } catch {
-      // Буфер обмена может быть закрыт политикой браузера — молча выходим
-    }
-  }
-
-  /**
-   * Картинка результата: рисуем сами на canvas.
-   *
-   * Библиотеки снимка DOM весят под сотню килобайт и всё равно не знают
-   * про наши переменные тем. А показать человек хочет ровно то же самое —
-   * скорость, точность, режим и цвета своей темы.
-   */
-  function saveResultCard(
-    summary: {
-      wpm: number;
-      raw: number;
-      accuracy: number;
-      consistency: number;
-      mode: string;
-      modeValue: number;
-      language: string;
-    },
-    unit: string,
-  ): void {
-    const css = getComputedStyle(document.documentElement);
-    const colors = {
-      bg: css.getPropertyValue("--bg-color").trim() || "#111",
-      main: css.getPropertyValue("--main-color").trim() || "#e2b714",
-      text: css.getPropertyValue("--text-color").trim() || "#eee",
-      sub: css.getPropertyValue("--sub-color").trim() || "#888",
-    };
-
-    const canvas = document.createElement("canvas");
-    canvas.width = 1200;
-    canvas.height = 630;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    ctx.fillStyle = colors.bg;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = colors.sub;
-    ctx.font = "32px Roboto Mono, monospace";
-    ctx.fillText("speedtype", 80, 100);
-    ctx.fillText(testTypeText(summary), 80, 150);
-
-    ctx.fillStyle = colors.main;
-    ctx.font = "bold 180px Roboto Mono, monospace";
-    ctx.fillText(formatSpeed(summary.wpm), 80, 380);
-
-    ctx.fillStyle = colors.sub;
-    ctx.font = "48px Roboto Mono, monospace";
-    ctx.fillText(unit, 80, 450);
-
-    ctx.fillStyle = colors.text;
-    ctx.font = "56px Roboto Mono, monospace";
-    ctx.fillText(`${summary.accuracy.toFixed(0)}% точность`, 620, 300);
-    ctx.fillText(`${formatSpeed(summary.raw)} raw`, 620, 380);
-    ctx.fillText(`${summary.consistency.toFixed(0)}% ровность`, 620, 460);
-
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "speedtype.png";
-      link.click();
-      URL.revokeObjectURL(url);
-    });
-  }
-
-  /** Строка «прочее»: funbox и режимы, которые не влезли в тип теста. */
-  function otherText(): string {
-    const s = getSettings();
-    const parts: string[] = [];
-
-    if (s.funbox.length > 0) parts.push(s.funbox.join(", ").replace(/_/g, " "));
-    if (s.lazyMode) parts.push("без диакритики");
-    if (s.blindMode) parts.push("слепой режим");
-
-    return parts.join(" · ");
-  }
-
-  /** «время 30 english пунктуация» — как в их строке test type. */
-  function testTypeText(summary: { mode: string; modeValue: number; language: string }): string {
-    const names: Record<string, string> = {
-      time: "время",
-      words: "слова",
-      quote: "цитата",
-      zen: "zen",
-      custom: "свой текст",
-    };
-    const s = getSettings();
-
-    const parts = [names[summary.mode] ?? summary.mode];
-
-    // У цитаты, zen и своего текста числового значения нет: у первых двух
-    // длина известна только по факту, у zen её нет вовсе
-    if (summary.mode === "time" || summary.mode === "words") {
-      parts.push(String(summary.modeValue));
-    }
-    // В zen язык ни при чём — текста из словаря там не бывает
-    if (summary.mode !== "zen") parts.push(summary.language.replace(/_/g, " "));
-    if (s.punctuation) parts.push("пунктуация");
-    if (s.numbers) parts.push("цифры");
-    if (s.difficulty !== "normal") parts.push(s.difficulty === "expert" ? "эксперт" : "мастер");
-
-    return parts.join(" ");
-  }
-
-  /**
-   * Четыре числа вместо двух: верные, неверные, лишние, пропущенные.
-   * Лишние и пропущенные входят в incorrectChars — вычитаем их, чтобы
-   * разбивка читалась так же, как у monkeytype, а сумма сходилась.
-   */
-  function charBreakdown(summary: {
-    correctChars: number;
-    incorrectChars: number;
-    extraChars: number;
-    missedChars: number;
-  }): string {
-    const wrong = Math.max(0, summary.incorrectChars - summary.extraChars - summary.missedChars);
-    return `${summary.correctChars}/${wrong}/${summary.extraChars}/${summary.missedChars}`;
-  }
-
-  /**
-   * Разбор слов: три кнопки копирования, тепловая карта скоростей и её
-   * легенда — как у monkeytype. Тепло берём из burst каждого слова:
-   * движок его уже считает, отдельных замеров не нужно.
-   */
-  function renderWordsHistory(): string {
-    if (!engine) return "";
-
-    const done = engine.words.filter((w) => w.done);
-    if (done.length === 0) return "";
-
-    const bursts = done.map((w) => w.burst).filter((b) => b > 0);
-    const fastest = Math.max(1, ...bursts);
-    const slowest = Math.min(...bursts, fastest);
-
-    /** Пять ступеней от медленного к быстрому — как у их тепловой карты. */
-    function heatLevel(burst: number): number {
-      if (burst <= 0 || fastest === slowest) return 2;
-      return Math.min(4, Math.floor(((burst - slowest) / (fastest - slowest)) * 5));
-    }
-
-    const words = done
-      .map(
-        (w) =>
-          `<span class="${w.typed === w.target ? "ok" : "bad"} heat-${heatLevel(w.burst)}"
-                 aria-label="${Math.round(w.burst)} wpm" data-balloon-pos="up">${escapeHtml(
-                   w.target,
-                 )}</span>`,
-      )
-      .join(" ");
-
-    const legend = [0, 1, 2, 3, 4]
-      .map((level) => `<span class="heat-${level}"></span>`)
-      .join("");
-
-    return `
-      <div class="historyTools">
-        <button class="button" data-copy="all" aria-label="скопировать слова" data-balloon-pos="up">
-          ${icon("copy")} слова
-        </button>
-        <button class="button" data-copy="missed" aria-label="скопировать слова с ошибками" data-balloon-pos="up">
-          ${icon("copy")} ошибки
-        </button>
-        <button class="button" data-copy="typed" aria-label="скопировать набранное" data-balloon-pos="up">
-          ${icon("copy")} набрано
-        </button>
-        <button class="button" data-heatmap aria-label="тепловая карта скорости" data-balloon-pos="up">
-          ${icon("chart")} тепло
-        </button>
-      </div>
-      <div class="wordsHistory${getSettings().burstHeatmap ? " heat" : ""}">${words}</div>
-      <div class="heatLegend sub"${getSettings().burstHeatmap ? "" : " hidden"}>
-        медленно ${legend} быстро
-      </div>`;
   }
 
   /**
@@ -1901,45 +1463,4 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
     hintEl.innerHTML = "";
     hintEl.hidden = true;
   };
-}
-
-/** График скорости по секундам — простой svg, без библиотек. */
-function renderChart(samples: readonly number[], fromZero: boolean): string {
-  if (samples.length < 2) {
-    return `<p class="sub" style="text-align:center">тест слишком короткий для графика</p>`;
-  }
-
-  const width = 800;
-  const height = 200;
-  const padding = 32;
-
-  const max = Math.max(...samples, 1);
-  const min = fromZero ? 0 : Math.min(...samples);
-  const span = max - min || 1;
-  const step = (width - padding * 2) / (samples.length - 1);
-
-  const x = (i: number): number => padding + i * step;
-  const y = (v: number): number => height - padding - ((v - min) / span) * (height - padding * 2);
-
-  const line = samples.map((v, i) => `${x(i)},${y(v)}`).join(" ");
-  const area = `${padding},${height - padding} ${line} ${x(samples.length - 1)},${height - padding}`;
-
-  let grid = "";
-  for (let i = 0; i <= 4; i += 1) {
-    const gy = padding + (i * (height - padding * 2)) / 4;
-    grid +=
-      `<line x1="${padding}" y1="${gy}" x2="${width - padding}" y2="${gy}"
-             stroke="var(--sub-alt-color)" stroke-width="1"/>` +
-      `<text x="${padding - 8}" y="${gy + 4}" text-anchor="end" font-size="11"
-             fill="var(--sub-color)">${Math.round(max - (i * span) / 4)}</text>`;
-  }
-
-  return `
-    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
-      ${grid}
-      <polygon points="${area}" fill="var(--main-color)" opacity="0.12"/>
-      <polyline points="${line}" fill="none" stroke="var(--main-color)"
-                stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-    </svg>
-  `;
 }
