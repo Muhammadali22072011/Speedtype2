@@ -61,6 +61,17 @@ const MEMORY_SECONDS = 3;
  */
 let presetWords: string[] | null = null;
 
+/**
+ * Уборка за той копией страницы, которая жива прямо сейчас.
+ *
+ * Живёт на уровне модуля, а не в замыкании, потому что restart() не
+ * перезапускает тест, а пересоздаёт страницу целиком — и копий за сессию
+ * бывает много. Роутер получает функцию уборки только от первой из них;
+ * без этой ссылки он убирал бы за копией, которой давно нет, а живая
+ * оставалась бы с подписками на document и window.
+ */
+let activeDispose: (() => void) | null = null;
+
 export async function testPage({ container }: PageContext): Promise<() => void> {
   container.innerHTML = `
     <!-- data-ui-element нужен файлам тем: две из 52 целятся именно в него,
@@ -1287,6 +1298,18 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
    */
   function restart(words?: string[]): void {
     presetWords = words ?? null;
+    /*
+     * Уборка обязательна. Разметку container.innerHTML = "" сносит, но
+     * подписки прошлой копии висят на document и window и переживают её:
+     * keydown на документе, blur и focus на окне, подписка на настройки,
+     * таймеры каретки и памяти.
+     *
+     * Без этой строки каждый рестарт с экрана результата добавлял копию,
+     * и число обработчиков росло треугольником — 1, 3, 6, 10. Одно
+     * нажатие tab уходило во все копии сразу, каждая шла на сервер за
+     * своим текстом: замером ловили семь одновременных запросов /api/words.
+     */
+    dispose();
     container.innerHTML = "";
     void testPage({ container, params: new URLSearchParams() });
   }
@@ -1392,8 +1415,20 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
     }
   }
 
+  /**
+   * legendStyle: dynamic — пока Shift зажат, клавиши показывают верхний
+   * символ. Отдельный слушатель, а не ветка в onKeydown: нужен и keyup,
+   * до которого onKeydown не доходит.
+   */
+  function syncShiftLegend(event: KeyboardEvent): void {
+    if (getSettings().keymapLegendStyle !== "dynamic") return;
+    keymapEl.classList.toggle("is-shifted", event.shiftKey);
+  }
+
   wrapperEl.addEventListener("click", () => inputEl.focus());
   document.addEventListener("keydown", onKeydown);
+  document.addEventListener("keydown", syncShiftLegend);
+  document.addEventListener("keyup", syncShiftLegend);
 
   container.querySelector<HTMLElement>("#restartButton")?.addEventListener("click", () => {
     void startTest();
@@ -1417,7 +1452,11 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
 
   // Окно потеряло фокус целиком — слова тоже гасим, иначе подсказка
   // висит поверх чёткого текста
-  const onWindowBlur = (): void => showFocusHint(true);
+  const onWindowBlur = (): void => {
+    showFocusHint(true);
+    // Уход из вкладки с зажатым Shift не даёт keyup — подписи залипли бы
+    keymapEl.classList.remove("is-shifted");
+  };
   window.addEventListener("blur", onWindowBlur);
 
   /*
@@ -1466,12 +1505,18 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
   presetWords = null;
   await startTest(preset ? { words: preset } : {});
 
-  return () => {
+  /**
+   * Уборка за этой копией страницы. Вынесена в именованную функцию, потому
+   * что звать её нужно из двух мест: роутер зовёт при уходе со страницы,
+   * restart() — перед тем, как пересоздать страницу.
+   */
+  function dispose(): void {
     disposed = true;
     engine?.dispose();
     unsubscribe?.();
     offSettings();
     stopPaceCaret();
+    stopMemory();
     setRestartHook(null);
     setFocused(false);
     document.getElementById("timerBar")?.remove();
@@ -1480,11 +1525,25 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
     window.removeEventListener("blur", onWindowBlur);
     window.removeEventListener("focus", onWindowFocus);
     document.removeEventListener("keydown", onKeydown);
+    document.removeEventListener("keydown", syncShiftLegend);
+    document.removeEventListener("keyup", syncShiftLegend);
     document.body.classList.remove(...FUNBOX_BODY_CLASSES);
     document.getElementById("scanline")?.remove();
     document.querySelectorAll("link[data-funbox]").forEach((el) => el.remove());
     // Подсказки клавиш общие на всё приложение — уходя, за собой убираем
     hintEl.innerHTML = "";
     hintEl.hidden = true;
+  }
+
+  // Эта копия страницы теперь живая. Ссылку держим на уровне модуля:
+  // restart() пересоздаёт страницу, и роутер, получивший функцию уборки
+  // от ПЕРВОЙ копии, иначе убирал бы за давно умершей, а живую не трогал.
+  activeDispose = dispose;
+
+  // Роутеру отдаём не саму dispose, а обёртку: она убирает ту копию,
+  // которая жива на момент ухода со страницы, какой бы по счёту та ни была.
+  return () => {
+    activeDispose?.();
+    activeDispose = null;
   };
 }
