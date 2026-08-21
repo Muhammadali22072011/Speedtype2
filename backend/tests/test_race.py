@@ -19,9 +19,7 @@ from app.db.session import Base, get_db
 from app.main import app
 from app.models import Language, Word
 from app.services.rooms import (
-    BURST_ALLOWANCE,
     EMPTY_ROOM_TTL,
-    MAX_CHARS_PER_SECOND,
     Player,
     Room,
     RoomRegistry,
@@ -92,9 +90,8 @@ def test_невозможный_рывок_не_засчитывается():
     player = Player(id="a", name="a")
     player.accept_chars(20, now=1001.0, started_at=1000.0)
 
-    # За секунду физически нельзя набрать больше 25 символов плюс запас
-    невозможно = 20 + MAX_CHARS_PER_SECOND + BURST_ALLOWANCE + 100
-    assert player.accept_chars(невозможно, now=1002.0, started_at=1000.0) is False
+    # Тысяча символов за одну секунду — за пределами любого разумного порога
+    assert player.accept_chars(1020, now=1002.0, started_at=1000.0) is False
     assert player.chars == 20, "счётчик обязан остаться прежним"
 
 

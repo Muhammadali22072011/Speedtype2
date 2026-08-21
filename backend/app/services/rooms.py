@@ -18,6 +18,8 @@ import time
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
+from app.services.anticheat import burst_exceeds_limit
+
 RoomState = Literal["waiting", "countdown", "racing", "finished"]
 
 COUNTDOWN_SECONDS = 5
@@ -34,14 +36,13 @@ STRAGGLER_SECONDS = 60
 #: POST, и без срока такие комнаты копились бы в памяти до перезапуска.
 EMPTY_ROOM_TTL = 600
 
-#: Физический потолок набора. 300 wpm по определению wpm — это ровно
-#: 25 символов в секунду; тот же порог стоит в античите обычного теста.
-#: Прирост выше этого не засчитываем.
-MAX_CHARS_PER_SECOND = 25
-
-#: Запас на рывок и на задержку сети: сообщения приходят неровно, и после
-#: паузы в канале одно сообщение честно принесёт накопленное за секунду-две.
-BURST_ALLOWANCE = 40
+#: Запас на неровность сети.
+#:
+#: Сообщения о прогрессе приходят с дрожанием, и короткий интервал между
+#: двумя из них сам по себе не признак накрутки: честный игрок мог просто
+#: попасть в паузу канала. Прибавляем секунду к измеренному интервалу —
+#: то есть прощаем ровно один секундный рывок.
+BURST_GRACE_SECONDS = 1.0
 
 
 @dataclass
@@ -91,9 +92,12 @@ class Player:
             # либо попытка занизить, чтобы потом «разогнаться»
             return False
 
-        since = now - (self.last_chars_at or started_at)
-        allowed = MAX_CHARS_PER_SECOND * max(since, 0.0) + BURST_ALLOWANCE
-        if chars - self.chars > allowed:
+        # Порог берём из античита обычного теста, а не свой. Одна общая
+        # граница нужна затем, чтобы через гонку нельзя было протащить то,
+        # что не проходит обычной проверкой: иначе лидерборд пришлось бы
+        # защищать дважды и разными числами.
+        since = max(now - (self.last_chars_at or started_at), 0.0)
+        if burst_exceeds_limit(chars - self.chars, since + BURST_GRACE_SECONDS):
             return False
 
         self.chars = chars
