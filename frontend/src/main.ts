@@ -29,7 +29,7 @@ import { openCustomThemePicker, openThemePicker } from "./ui/pickers";
  * данные monkeytype, значит исходники должны быть доступны из интерфейса,
  * а не только из файла в репозитории.
  */
-const GITHUB_URL = "https://github.com/izzatullaev/speedtype2";
+const GITHUB_URL = "https://github.com/Muhammadali22072011/Speedtype2";
 
 /** Версия одна на проект, источник — package.json, подставляет vite. */
 const VERSION = __APP_VERSION__;
