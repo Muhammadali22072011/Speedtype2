@@ -37,7 +37,8 @@ import {
   renderKeymap,
   resolveLayoutName,
 } from "../ui/keymap";
-import { askNumber, askText, notify } from "../ui/modal";
+import { askNumber, askText } from "../ui/modal";
+import { notify } from "../ui/notify";
 import { openFunboxPicker, openLanguagePicker } from "../ui/pickers";
 import { applyThemeByName, pickRandomTheme } from "../state/themes";
 

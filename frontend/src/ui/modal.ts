@@ -167,29 +167,7 @@ export function confirmAction(options: {
 
 // ---------- уведомления ----------
 
-/**
- * Всплывающее уведомление в углу. До этого ошибки печатались прямо
- * в разметку страницы — на экране результата их было попросту не видно.
- */
-export function notify(text: string, kind: "info" | "error" | "success" = "info"): void {
-  let host = document.getElementById("notifications");
-  if (!host) {
-    host = document.createElement("div");
-    host.id = "notifications";
-    document.body.appendChild(host);
-  }
-
-  const item = document.createElement("div");
-  item.className = `notification ${kind}`;
-  item.innerHTML = `
-    ${icon(kind === "error" ? "triangleExclamation" : kind === "success" ? "check" : "info")}
-    <span>${escapeHtml(text)}</span>
-  `;
-
-  host.appendChild(item);
-
-  // Уходит само; клик убирает раньше
-  const remove = (): void => item.remove();
-  item.addEventListener("click", remove);
-  setTimeout(remove, kind === "error" ? 6000 : 3500);
-}
+// Уведомления переехали в ui/notify.ts — там единственная реализация,
+// с role="status", aria-live и кнопкой закрытия. Здесь была вторая, без
+// доступности: пользователь с экранным диктором тост не слышал. Дубль
+// снят, чтобы не расходились ни поведение, ни стиль.
