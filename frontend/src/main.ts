@@ -8,7 +8,7 @@ import "./styles/modes.css";
 // селекторов выигрывает файл, подключённый ниже
 import "./styles/components.css";
 
-import { getToken, onAuthChange, setToken } from "./api/client";
+import { api, ApiError, getToken, onAuthChange, setToken } from "./api/client";
 import { installCommandlineHotkey, openCommandline } from "./ui/commandline";
 import { testPage } from "./pages/test";
 import { navigate, onRender, registerRoute, render, startRouter } from "./router";
@@ -129,7 +129,7 @@ function renderNav(): void {
 
   navEl.innerHTML = `
     <a data-nav-item="test" href="/" aria-label="тест" data-balloon-pos="down">${icon("keyboard")}</a>
-    <a data-nav-item="race" href="/race" aria-label="онлайн" data-balloon-pos="down">${icon("users")}</a>
+    <button data-nav-item="race" id="onlineBtn" aria-label="онлайн" data-balloon-pos="down">${icon("users")}</button>
     <a data-nav-item="leaderboards" href="/leaderboard" aria-label="лидерборд" data-balloon-pos="down">${icon("crown")}</a>
     <a data-nav-item="about" href="/about" aria-label="о проекте" data-balloon-pos="down">${icon("info")}</a>
     <a data-nav-item="settings" href="/settings" aria-label="настройки" data-balloon-pos="down">${icon("gear")}</a>
@@ -142,11 +142,106 @@ function renderNav(): void {
     }
   `;
 
+  // Онлайн — не отдельная страница, а панель поверх главной. Клик по
+  // пункту навигации открывает компактный вход (создать/войти), а не уводит
+  // на /race: сама комната по-прежнему живёт по /race?code=… и делится ссылкой.
+  navEl.querySelector<HTMLElement>("#onlineBtn")?.addEventListener("click", openRacePanel);
+
   navEl.querySelector<HTMLElement>("#logout")?.addEventListener("click", () => {
     setToken(null);
     renderNav();
     navigate("/");
   });
+}
+
+/**
+ * Вход в онлайн-гонку панелью поверх главной, а не отдельной страницей.
+ * Оформление берём у модалок (.picker/.box) — панель не занимает места
+ * в обычном виде теста и всплывает только по клику. Сама комната остаётся
+ * маршрутом /race?code=…: в неё заходят по ссылке, которой делятся с друзьями.
+ */
+function openRacePanel(): void {
+  // Две панели разом не открываем — вторая молча ляжет поверх первой
+  if (document.querySelector(".racePanel")) return;
+
+  const overlay = document.createElement("div");
+  overlay.className = "picker modal racePanel";
+  overlay.innerHTML = `
+    <div class="box" role="dialog" aria-label="онлайн-гонка">
+      <div class="pickerHead">
+        <h2>${icon("users")} онлайн-гонка</h2>
+        <button type="button" class="button" data-close aria-label="закрыть"
+                data-balloon-pos="left">${icon("xmark")}</button>
+      </div>
+      <div class="modalBody raceEntry">
+        <button class="button raceEntryCreate" data-create>${icon("flag")} создать комнату</button>
+        <p class="sub raceEntryOr">или войдите по коду</p>
+        <input class="input raceEntryCode" data-code placeholder="код комнаты"
+               maxlength="5" autocomplete="off" aria-label="код комнаты">
+        <button class="button" data-join>${icon("arrowRight")} войти</button>
+      </div>
+      <p class="error" data-error></p>
+    </div>
+  `;
+
+  const errorEl = overlay.querySelector<HTMLElement>("[data-error]")!;
+  const codeEl = overlay.querySelector<HTMLInputElement>("[data-code]")!;
+
+  function close(): void {
+    overlay.remove();
+    document.removeEventListener("keydown", onKey, true);
+  }
+
+  function onKey(event: KeyboardEvent): void {
+    if (event.key !== "Escape") return;
+    // Гасим esc, иначе он долетит до страницы теста и откроет там командную
+    // строку поверх уже закрывшейся панели
+    event.preventDefault();
+    event.stopPropagation();
+    close();
+  }
+
+  function go(code: string): void {
+    close();
+    navigate(`/race?code=${code}`);
+  }
+
+  overlay.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement;
+    if (target === overlay || target.closest("[data-close]")) close();
+  });
+
+  overlay.querySelector<HTMLElement>("[data-create]")?.addEventListener("click", async (event) => {
+    const button = event.currentTarget as HTMLButtonElement;
+    button.disabled = true;
+    const s = getSettings();
+    try {
+      const room = await api.createRoom(s.language, s.wordsValue, s.punctuation, s.numbers);
+      go(room.code);
+    } catch (error) {
+      button.disabled = false;
+      errorEl.textContent =
+        error instanceof ApiError ? error.message : "Не удалось создать комнату";
+    }
+  });
+
+  const join = (): void => {
+    const value = codeEl.value.trim().toUpperCase();
+    if (value.length < 4) {
+      errorEl.textContent = "Код состоит из 5 символов";
+      return;
+    }
+    go(value);
+  };
+
+  overlay.querySelector<HTMLElement>("[data-join]")?.addEventListener("click", join);
+  codeEl.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") join();
+  });
+
+  document.addEventListener("keydown", onKey, true);
+  document.body.appendChild(overlay);
+  codeEl.focus();
 }
 
 // Страница теста нужна сразу, поэтому её импорт статический. Остальные
