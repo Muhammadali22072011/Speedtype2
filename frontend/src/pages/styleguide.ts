@@ -25,8 +25,13 @@ interface ColorToken {
   name: string;
   from: string;
   role: string;
-  /** На каком фоне считать контраст. null — сам является фоном. */
+  /** На каком фоне считать контраст. Не задан — сам является фоном. */
   on?: string;
+  /**
+   * Порог WCAG для этой пары. 4.5 — обычный текст, 3 — крупный текст
+   * и всё, что текстом не является: границы, каретки, заливки.
+   */
+  min?: number;
 }
 
 const THEME_COLORS = [
@@ -55,7 +60,7 @@ const SURFACES: ColorToken[] = [
 
 const TEXT: ColorToken[] = [
   { name: "--fg-main", from: "--text-color", role: "основной текст", on: "--surface-page" },
-  { name: "--fg-muted", from: "--sub-color", role: "ненабранные буквы, крупные подписи", on: "--surface-page" },
+  { name: "--fg-muted", from: "--sub-color", role: "ненабранные буквы, крупные подписи", on: "--surface-page" , min: 3 },
   {
     name: "--fg-muted-readable",
     from: "color-mix(--sub-color 45%, --text-color)",
@@ -64,18 +69,18 @@ const TEXT: ColorToken[] = [
   },
   { name: "--fg-accent", from: "--main-color", role: "цифры, активный пункт", on: "--surface-page" },
   { name: "--fg-on-solid", from: "--bg-color", role: "текст поверх заливки", on: "--surface-accent" },
-  { name: "--fg-error", from: "--error-color", role: "ошибки", on: "--surface-page" },
-  { name: "--fg-error-extra", from: "--error-extra-color", role: "лишние буквы", on: "--surface-page" },
-  { name: "--fg-error-vivid", from: "--colorful-error-color", role: "ошибка в ярком режиме", on: "--surface-page" },
+  { name: "--fg-error", from: "--error-color", role: "ошибки", on: "--surface-page" , min: 3 },
+  { name: "--fg-error-extra", from: "--error-extra-color", role: "лишние буквы", on: "--surface-page" , min: 3 },
+  { name: "--fg-error-vivid", from: "--colorful-error-color", role: "ошибка в ярком режиме", on: "--surface-page" , min: 3 },
 ];
 
 const BORDERS: ColorToken[] = [
-  { name: "--border-color", from: "--sub-alt-color", role: "обычная граница", on: "--surface-page" },
-  { name: "--border-strong-color", from: "--sub-color", role: "заметная граница", on: "--surface-page" },
-  { name: "--border-accent-color", from: "--main-color", role: "граница акцента", on: "--surface-page" },
-  { name: "--border-error-color", from: "--error-color", role: "граница ошибки", on: "--surface-page" },
-  { name: "--caret-fg", from: "--caret-color", role: "каретка", on: "--surface-page" },
-  { name: "--caret-pace-fg", from: "--sub-color", role: "догоняющая каретка", on: "--surface-page" },
+  { name: "--border-color", from: "--sub-alt-color", role: "обычная граница", on: "--surface-page", min: 3 },
+  { name: "--border-strong-color", from: "--sub-color", role: "заметная граница", on: "--surface-page", min: 3 },
+  { name: "--border-accent-color", from: "--main-color", role: "граница акцента", on: "--surface-page", min: 3 },
+  { name: "--border-error-color", from: "--error-color", role: "граница ошибки", on: "--surface-page", min: 3 },
+  { name: "--caret-fg", from: "--caret-color", role: "каретка", on: "--surface-page", min: 3 },
+  { name: "--caret-pace-fg", from: "--sub-color", role: "догоняющая каретка", on: "--surface-page", min: 3 },
 ];
 
 const SPACES = [
@@ -171,7 +176,14 @@ function colorRows(probe: HTMLElement, tokens: ColorToken[]): string {
       const value = readColor(probe, t.name);
       const on = t.on ? readColor(probe, t.on) : null;
       const ratio = on ? contrastRatio(value, on) : 0;
-      const mark = on ? `${ratio.toFixed(2)} <span class="badge">${level(ratio)}</span>` : "—";
+      const min = t.min ?? 4.5;
+      // Порог у пары свой: 4.5 — обычный текст, 3 — крупный текст, границы
+      // и каретки. Судить границу по мерке основного текста значит ругаться
+      // на то, что у monkeytype сделано намеренно
+      const badge = ratio >= min ? "badge accent" : "badge danger";
+      const mark = on
+        ? `${ratio.toFixed(2)} <span class="${badge}">${level(ratio)}</span> <span class="sub">порог ${min}</span>`
+        : "—";
 
       return `
         <tr>

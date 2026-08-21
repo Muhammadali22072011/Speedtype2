@@ -68,7 +68,11 @@ export function notify(text: string, kind: NotifyKind = "info", ms?: number): ()
     element.remove();
   };
 
-  element.querySelector<HTMLElement>(".close")?.addEventListener("click", remove);
+  // Закрывается и кнопкой, и кликом по телу. Кнопка — явная и с aria-label,
+  // клик по телу — как вели себя прежние тосты со страницы теста: их свели
+  // сюда, и поведение сохраняем, чтобы привыкшие к нему не заметили перемены.
+  // Оба зовут один remove(), повторный вызов безвреден.
+  element.addEventListener("click", remove);
   container().appendChild(element);
 
   const lifetime = ms ?? LIFETIME[kind];

@@ -55,13 +55,13 @@ export const SETTINGS: readonly SettingSpec[] = [
   { key: "mode", group: "test", label: "режим", hint: "время, слова или цитата", kind: "select", values: ["time", "words", "quote", "zen", "custom"], restart: true, done: true },
   { key: "timeValue", group: "test", label: "длительность", hint: "секунд в режиме времени", kind: "select", values: ["15", "30", "60", "120"], restart: true, done: true },
   { key: "wordsValue", group: "test", label: "количество слов", hint: "слов в режиме слов", kind: "select", values: ["10", "25", "50", "100"], restart: true, done: true },
-  { key: "quoteLength", group: "test", label: "длина цитаты", hint: "короткая, средняя, длинная", kind: "select", values: ["short", "medium", "long", "thicc", "all"], restart: true, done: false },
+  { key: "quoteLength", group: "test", label: "длина цитаты", hint: "короткая, средняя, длинная", kind: "select", values: ["short", "medium", "long", "thicc", "all"], restart: true, done: true },
   { key: "language", group: "test", label: "язык", hint: "словарь из 432 языков", kind: "picker", picker: "language", restart: true, done: true },
   { key: "punctuation", group: "test", label: "пунктуация", hint: "знаки препинания и заглавные", kind: "toggle", restart: true, done: true },
   { key: "numbers", group: "test", label: "цифры", hint: "подмешивать числа в текст", kind: "toggle", restart: true, done: true },
   { key: "difficulty", group: "test", label: "сложность", hint: "обычная, эксперт, мастер", kind: "select", values: ["normal", "expert", "master"], restart: true, done: true },
-  { key: "britishEnglish", group: "test", label: "британский английский", hint: "colour вместо color", kind: "toggle", restart: true, done: false },
-  { key: "lazyMode", group: "test", label: "без диакритики", hint: "убирать надстрочные знаки", kind: "toggle", restart: true, done: false },
+  { key: "britishEnglish", group: "test", label: "британский английский", hint: "colour вместо color", kind: "toggle", restart: true, done: true },
+  { key: "lazyMode", group: "test", label: "без диакритики", hint: "убирать надстрочные знаки", kind: "toggle", restart: true, done: true },
   { key: "repeatQuotes", group: "test", label: "повторять цитату", hint: "та же цитата при рестарте", kind: "select", values: ["off", "typing"], restart: true, done: true },
   { key: "funbox", group: "test", label: "funbox", hint: "модификаторы правил и вида", kind: "picker", picker: "funbox", restart: true, done: true },
 
@@ -137,8 +137,11 @@ export const SETTINGS: readonly SettingSpec[] = [
   { key: "keymapLegendStyle", group: "keymap", label: "подписи клавиш", hint: "строчные, прописные, пустые", kind: "select", values: ["lowercase", "uppercase", "blank", "dynamic"], done: true },
   { key: "keymapKeys", group: "keymap", label: "ряды клавиш", hint: "минимум, с цифрами, всё", kind: "select", values: ["minimal", "minimal_numrow", "full"], done: true },
   { key: "keymapSize", group: "keymap", label: "размер клавиатуры", hint: "масштаб на экране", kind: "number", min: 0.5, max: 3.5, step: 0.25, done: true },
-  { key: "layout", group: "keymap", label: "раскладка набора", hint: "239 раскладок на выбор", kind: "picker", picker: "layout", restart: true, done: true },
-  { key: "keymapLayout", group: "keymap", label: "раскладка на экране", hint: "какую рисовать клавиатуру", kind: "picker", picker: "layout", done: true },
+  // Раскладка одна, а не две. Клавиатура на экране идёт за ней же, а по
+  // умолчанию — за языком текста: на русских словах латинская клавиатура
+  // бесполезна, подсвечивать на ней нечего. Отдельная «раскладка на экране»
+  // была лишней строкой, которая почти всегда повторяла первую.
+  { key: "layout", group: "keymap", label: "раскладка", hint: "по языку или одна из 239", kind: "picker", picker: "layout", restart: true, done: true },
 
   // ---------- звук ----------
   { key: "soundOnClick", group: "sound", label: "звук нажатия", hint: "21 набор щелчков клавиш", kind: "select", values: ["off", "1", "2", "3", "4", "5", "6", "7", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26"], done: true },

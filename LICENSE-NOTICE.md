@@ -9,10 +9,11 @@
 |---|---|---|
 | Цвета тем | `frontend/src/ts/constants/themes.ts` | 187 тем → `backend/app/data/themes.json` |
 | CSS-эффекты тем | `frontend/static/themes/*.css` | 52 файла, без изменений |
+| CSS-эффекты funbox | `frontend/static/funbox/*.css` | 15 файлов, без изменений |
 | Словари языков | `frontend/static/languages/*.json` | 432 файла, без изменений |
 | Цитаты | `frontend/static/quotes/*.json` | 87 файлов |
 | Раскладки клавиатуры | `frontend/static/layouts/*.json` | 239 файлов |
-| Звуки нажатий | `frontend/static/sounds/` | 26 файлов |
+| Звуки нажатий | `frontend/static/sounds/` | 20 наборов щелчков, 4 набора ошибки, 2 отдельных звука |
 | Имена CSS-классов и структура разметки | `frontend/src/styles/test.scss` | `#words`, `.word`, `letter`, `#caret` |
 
 Словари на 400 тысяч слов и больше не копировались — они весят по 3 МБ и в тесте

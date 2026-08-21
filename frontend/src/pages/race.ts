@@ -6,9 +6,11 @@
 import { api, ApiError, getToken } from "../api/client";
 import { TypingEngine } from "../core/engine";
 import { navigate, type PageContext } from "../router";
+import { configureSound, playClick, playError } from "../core/sound";
 import { getSettings } from "../state/settings";
 import { escapeHtml } from "../ui/format";
 import { icon } from "../ui/icons";
+import { createWordsView } from "../ui/words";
 
 interface RacePlayer {
   id: string;
@@ -50,11 +52,11 @@ function renderLobby(container: HTMLElement): void {
       <h2>${icon("users")} онлайн-гонка</h2>
       <p class="sub">создайте комнату и пришлите код друзьям — текст у всех будет одинаковый</p>
 
-      <div class="form" style="margin:1.5rem 0">
+      <div class="form raceForm">
         <button class="button" id="create">${icon("flag")} создать комнату</button>
-        <p class="sub" style="text-align:center; font-size:0.8rem">или</p>
-        <input class="input" id="code" placeholder="код комнаты" maxlength="5"
-               autocomplete="off" style="text-transform:uppercase; text-align:center">
+        <p class="sub raceOr">или</p>
+        <input class="input raceCode" id="code" placeholder="код комнаты" maxlength="5"
+               autocomplete="off">
         <button class="button" id="join">${icon("arrowRight")} войти</button>
         <p class="error" id="error"></p>
       </div>
@@ -94,28 +96,30 @@ function renderLobby(container: HTMLElement): void {
 
 function joinRoom(container: HTMLElement, code: string): () => void {
   container.innerHTML = `
-    <div id="race">
-      <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap">
+    <div id="race" class="raceRoom" data-state="waiting">
+      <div class="raceHead">
         <h2>комната ${escapeHtml(code)}</h2>
-        <button class="button" id="copy" style="padding:0.35rem 0.6rem">${icon("copy")} код</button>
+        <button class="button raceCopy" id="copy">${icon("copy")} код</button>
         <span class="sub" id="status">подключение…</span>
       </div>
 
-      <div id="countdown" hidden></div>
+      <div id="countdown" class="raceCountdown" hidden></div>
 
-      <div class="players" id="players"></div>
+      <div class="players raceTracks" id="players"></div>
 
       <div id="raceTest" hidden>
-        <div id="liveStats"></div>
+        <div id="liveStats" class="raceLive"></div>
         <div id="wordsWrapper">
           <div id="words"></div>
-          <div id="caret" class="hidden"></div>
+          <div id="caret"></div>
         </div>
         <input id="wordsInput" autocomplete="off" autocapitalize="off" autocorrect="off"
                spellcheck="false" aria-label="Поле ввода гонки">
       </div>
 
-      <div id="raceActions" style="display:flex; gap:0.75rem; justify-content:center">
+      <div id="raceResults" class="raceResults" hidden></div>
+
+      <div id="raceActions" class="raceActions">
         <button class="button" id="ready">${icon("check")} готов</button>
         <a class="button" href="/race">${icon("xmark")} выйти</a>
       </div>
@@ -138,6 +142,18 @@ function joinRoom(container: HTMLElement, code: string): () => void {
 
   let socket: WebSocket | null = null;
   let engine: TypingEngine | null = null;
+
+  /**
+   * Слова и каретка рисуются общим кодом с тестом. Раньше у гонки была
+   * своя урезанная копия: каретка висела с классом hidden, стиль каретки,
+   * подсветка, лента и показ опечаток не работали вовсе.
+   */
+  const view = createWordsView({
+    wrapper: wrapperEl,
+    words: wordsEl,
+    caret: caretEl,
+    engine: () => engine,
+  });
   let unsubscribe: (() => void) | null = null;
   let myId = "";
   let ready = false;
@@ -212,6 +228,10 @@ function joinRoom(container: HTMLElement, code: string): () => void {
 
   function renderRoom(room: RoomView): void {
     currentRoom = room;
+
+    // Состояние на корне: по нему css решает, что показывать
+    container.querySelector<HTMLElement>("#race")?.setAttribute("data-state", room.state);
+    if (room.state === "finished") showResults(room);
     statusEl.textContent =
       { waiting: "ждём игроков", countdown: "приготовиться", racing: "гонка идёт", finished: "финиш" }[
         room.state
@@ -259,6 +279,10 @@ function joinRoom(container: HTMLElement, code: string): () => void {
     testEl.hidden = false;
     readyEl.hidden = true;
 
+    // Звук нажатий тот же, что на тесте, и по тем же настройкам
+    const s = getSettings();
+    configureSound({ click: s.soundOnClick, error: s.soundOnError, volume: s.soundVolume });
+
     engine = new TypingEngine({
       mode: "words",
       modeValue: currentRoom.words.length,
@@ -267,7 +291,7 @@ function joinRoom(container: HTMLElement, code: string): () => void {
     });
 
     unsubscribe = engine.subscribe(() => {
-      renderWords();
+      view.render();
       const stats = engine!.stats;
       liveEl.innerHTML = `<span class="value">${Math.round(stats.wpm)}<span class="label">wpm</span></span>`;
 
@@ -288,60 +312,57 @@ function joinRoom(container: HTMLElement, code: string): () => void {
 
       if (engine!.finished) {
         send({ type: "done", chars: stats.correctChars, accuracy: stats.accuracy });
-        void api.submitResult(engine!.summary).catch(() => undefined);
+
+        // Результат гонки сохраняется как обычный. Ошибку показываем:
+        // раньше здесь стоял молчаливый catch, и человек был уверен, что
+        // результат в истории, хотя его там не было
+        void api.submitResult(engine!.summary).catch((error: unknown) => {
+          errorEl.textContent =
+            error instanceof ApiError
+              ? `результат не сохранён: ${error.message}`
+              : "результат не сохранён — сервер недоступен";
+        });
+
         unsubscribe?.();
       }
     });
 
-    renderWords();
+    view.applyLook();
+    view.render();
     inputEl.focus();
   }
 
-  function renderWords(): void {
-    if (!engine) return;
+  /** Итог гонки: кто где финишировал. */
+  function showResults(room: RoomView): void {
+    const resultsEl = container.querySelector<HTMLElement>("#raceResults");
+    if (!resultsEl) return;
 
-    const parts: string[] = [];
-    for (let index = 0; index < engine.words.length; index += 1) {
-      const word = engine.words[index]!;
-      const states = engine.charStates(index);
+    const finished = [...room.players]
+      .filter((p) => p.finished)
+      .sort((a, b) => (a.place ?? 99) - (b.place ?? 99));
 
-      const letters = states
-        .map((state, i) => {
-          const char = i < word.target.length ? word.target[i]! : word.typed[i]!;
-          const cls = state === "pending" ? "" : ` class="${state}"`;
-          return `<letter${cls}>${escapeHtml(char)}</letter>`;
-        })
-        .join("");
+    if (finished.length === 0) return;
 
-      const error = word.done && word.typed !== word.target;
-      parts.push(`<div class="word${error ? " error" : ""}" data-wordindex="${index}">${letters}</div>`);
-    }
-
-    wordsEl.innerHTML = parts.join("");
-    moveCaret();
-  }
-
-  function moveCaret(): void {
-    if (!engine) return;
-
-    const wordEl = wordsEl.querySelector<HTMLElement>(`.word[data-wordindex="${engine.wordIndex}"]`);
-    if (!wordEl) {
-      caretEl.classList.add("hidden");
-      return;
-    }
-
-    const word = engine.words[engine.wordIndex]!;
-    const letters = wordEl.querySelectorAll<HTMLElement>("letter");
-    const target = letters[word.typed.length];
-    const anchor = target ?? letters[letters.length - 1] ?? wordEl;
-
-    const box = wrapperEl.getBoundingClientRect();
-    const rect = anchor.getBoundingClientRect();
-
-    caretEl.classList.remove("hidden");
-    caretEl.style.left = `${(target ? rect.left : rect.right) - box.left}px`;
-    caretEl.style.top = `${rect.top - box.top}px`;
-    caretEl.style.height = `${rect.height || 24}px`;
+    resultsEl.hidden = false;
+    resultsEl.innerHTML = `
+      <h3 class="sectionTitle">${icon("crown")} итог</h3>
+      <table class="table raceTable">
+        <thead><tr><th>место</th><th>игрок</th><th>wpm</th><th>точность</th></tr></thead>
+        <tbody>
+          ${finished
+            .map(
+              (p) => `
+            <tr${p.id === myId ? ` class="me"` : ""}>
+              <td>${p.place ?? "—"}</td>
+              <td>${escapeHtml(p.name)}</td>
+              <td class="main">${Math.round(p.wpm)}</td>
+              <td class="muted">${Math.round(p.accuracy)}%</td>
+            </tr>`,
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
   }
 
   function send(payload: Record<string, unknown>): void {
@@ -369,11 +390,22 @@ function joinRoom(container: HTMLElement, code: string): () => void {
     if (event.key === "Backspace") {
       event.preventDefault();
       engine.backspace(event.ctrlKey);
+      view.hold();
       return;
     }
     if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
       event.preventDefault();
+
+      // Верно или мимо — узнаём до нажатия, чтобы проиграть нужный звук
+      const word = engine.words[engine.wordIndex];
+      const expected = word?.target[word.typed.length];
+      const correct = event.key === " " || expected === event.key;
+
       engine.type(event.key);
+      view.hold();
+
+      if (correct) playClick();
+      else playError();
     }
   });
 
@@ -381,6 +413,7 @@ function joinRoom(container: HTMLElement, code: string): () => void {
     disposed = true;
     unsubscribe?.();
     engine?.dispose();
+    view.dispose();
     socket?.close();
   };
 }

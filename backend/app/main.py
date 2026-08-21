@@ -11,17 +11,29 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.api.routes import assets, auth, leaderboard, race, results, text
+from app.api.routes import admin, assets, auth, leaderboard, race, results, tags, text
 from app.api.routes.seo import router as seo_router
 from app.core import seo
 from app.core.config import settings
-from app.db.session import Base, engine
-from app.models import Language, Quote, Result, User, Word  # noqa: F401  — регистрирует таблицы
+from app.db.session import Base, engine, ensure_columns
+from app.models import (  # noqa: F401  — регистрирует таблицы
+    Language,
+    Preset,
+    Quote,
+    QuoteReport,
+    Result,
+    ResultTag,
+    Tag,
+    User,
+    Word,
+)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    # Новые таблицы create_all создаёт сам, а колонки в уже существующих — нет
+    ensure_columns()
     yield
 
 
@@ -49,7 +61,9 @@ app.include_router(results.router, prefix="/api")
 app.include_router(leaderboard.router, prefix="/api")
 app.include_router(text.router, prefix="/api")
 app.include_router(race.router, prefix="/api")
+app.include_router(tags.router, prefix="/api")
 app.include_router(assets.router, prefix="/api")
+app.include_router(admin.router, prefix="/api")
 
 # Без префикса: robots.txt и sitemap.xml поисковики ищут строго в корне
 app.include_router(seo_router)

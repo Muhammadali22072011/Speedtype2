@@ -32,6 +32,10 @@ interface Item {
   checked?: boolean;
   /** Приглушить и подписать: режим объявлен, но не работает. */
   pending?: boolean;
+  /** Подпись вместо «пока не работает» — например «нет в системе». */
+  note?: string;
+  /** Показать название его же гарнитурой: шрифт видно, а не читаешь имя. */
+  font?: string;
 }
 
 interface PickerOptions {
@@ -106,10 +110,21 @@ function openPicker({ title, items, multi, favourites, onPick, preview }: Picker
       );
     }
 
-    // Семейства держим вместе: 432 языка плоским списком не читаются
+    // Семейства держим вместе: 432 языка плоским списком не читаются.
+    // Порядок групп — тот, в каком они впервые встретились в списке, а не
+    // по алфавиту: у шрифтов «нет в системе» должно стоять последним,
+    // хотя по алфавиту попало бы в середину.
     if (items.some((item) => item.family)) {
-      list = [...list].sort((a, b) =>
-        (a.family ?? "").localeCompare(b.family ?? "") || a.label.localeCompare(b.label),
+      const order = new Map<string, number>();
+      for (const item of items) {
+        const family = item.family ?? "";
+        if (!order.has(family)) order.set(family, order.size);
+      }
+
+      list = [...list].sort(
+        (a, b) =>
+          (order.get(a.family ?? "") ?? 0) - (order.get(b.family ?? "") ?? 0) ||
+          a.label.localeCompare(b.label),
       );
     }
 
@@ -151,10 +166,14 @@ function openPicker({ title, items, multi, favourites, onPick, preview }: Picker
                 : ""
             }>
             ${multi ? (selected.has(item.value) ? icon("check") : icon("xmark")) : ""}
-            <span class="pickerLabel">${escapeHtml(item.label)}</span>
+            <span class="pickerLabel"${
+              item.font ? ` style="font-family: ${escapeHtml(item.font)}"` : ""
+            }>${escapeHtml(item.label)}</span>
             ${item.hint ? `<span class="pickerHint">${escapeHtml(item.hint)}</span>` : ""}
             ${
-              item.pending ? `<span class="pickerPending">пока не работает</span>` : ""
+              item.pending
+                ? `<span class="pickerPending">${escapeHtml(item.note ?? "пока не работает")}</span>`
+                : ""
             }
             ${
               item.paint
@@ -422,28 +441,157 @@ export async function openLayoutPicker(onPick: (v: string & string[]) => void): 
   const current = getSettings().layout;
   openPicker({
     title: "раскладка",
-    items: layouts.map((name) => ({
-      value: name,
-      label: name.replace(/_/g, " "),
-      checked: name === current,
-    })),
+    items: [
+      // Первым пунктом то, что стоит по умолчанию: клавиатура идёт за
+      // языком текста, и выбирать вручную ничего не нужно
+      {
+        value: "default",
+        label: "по языку",
+        hint: "русскому тексту — русская клавиатура",
+        checked: current === "default",
+      },
+      ...layouts.map((name) => ({
+        value: name,
+        label: name.replace(/_/g, " "),
+        checked: name === current,
+      })),
+    ],
     onPick,
   });
 }
 
-/** Моноширинные гарнитуры, которые есть в системе или подключены. */
-const FONTS = [
-  "Roboto Mono", "JetBrains Mono", "Cascadia Mono", "Consolas",
-  "Courier New", "IBM Plex Mono", "Fira Code", "Source Code Pro",
-  "Ubuntu Mono", "Inconsolata", "Menlo", "Monaco", "system-ui",
+/**
+ * Гарнитуры на выбор. Своих файлов шрифтов проект не возит — кроме одного
+ * встроенного Roboto Mono, — поэтому список честно делится на два: что
+ * стоит в системе и что нет.
+ *
+ * Раньше здесь было тринадцать имён без всякой проверки, и на обычной
+ * Windows восемь из них не работали: выбираешь Fira Code, а текст
+ * остаётся прежним, потому что подставляется запасной monospace.
+ */
+const FONTS: Array<{ name: string; kind: "mono" | "prose" }> = [
+  // Моноширинные — то, чем набирают
+  { name: "Roboto Mono", kind: "mono" },
+  { name: "Consolas", kind: "mono" },
+  { name: "Cascadia Mono", kind: "mono" },
+  { name: "Cascadia Code", kind: "mono" },
+  { name: "Courier New", kind: "mono" },
+  { name: "Lucida Console", kind: "mono" },
+  { name: "JetBrains Mono", kind: "mono" },
+  { name: "Fira Code", kind: "mono" },
+  { name: "IBM Plex Mono", kind: "mono" },
+  { name: "Source Code Pro", kind: "mono" },
+  { name: "Ubuntu Mono", kind: "mono" },
+  { name: "Inconsolata", kind: "mono" },
+  { name: "Hack", kind: "mono" },
+  { name: "Iosevka", kind: "mono" },
+  { name: "Geist Mono", kind: "mono" },
+  { name: "Space Mono", kind: "mono" },
+  { name: "Overpass Mono", kind: "mono" },
+  { name: "Noto Sans Mono", kind: "mono" },
+  { name: "DejaVu Sans Mono", kind: "mono" },
+  { name: "Liberation Mono", kind: "mono" },
+  { name: "MS Gothic", kind: "mono" },
+  { name: "SimSun", kind: "mono" },
+  { name: "Menlo", kind: "mono" },
+  { name: "Monaco", kind: "mono" },
+  { name: "SF Mono", kind: "mono" },
+  { name: "Andale Mono", kind: "mono" },
+
+  // Пропорциональные: у monkeytype они тоже есть — набирать ими труднее,
+  // но кому-то так привычнее, а Open Dyslexic и вовсе про доступность
+  { name: "Segoe UI", kind: "prose" },
+  { name: "Bahnschrift", kind: "prose" },
+  { name: "Calibri", kind: "prose" },
+  { name: "Candara", kind: "prose" },
+  { name: "Corbel", kind: "prose" },
+  { name: "Constantia", kind: "prose" },
+  { name: "Georgia", kind: "prose" },
+  { name: "Tahoma", kind: "prose" },
+  { name: "Verdana", kind: "prose" },
+  { name: "Arial", kind: "prose" },
+  { name: "Comic Sans MS", kind: "prose" },
+  { name: "Ink Free", kind: "prose" },
+  { name: "Sitka Text", kind: "prose" },
+  { name: "Impact", kind: "prose" },
+  { name: "Roboto", kind: "prose" },
+  { name: "Inter", kind: "prose" },
+  { name: "Lato", kind: "prose" },
+  { name: "Montserrat", kind: "prose" },
+  { name: "Nunito", kind: "prose" },
+  { name: "Open Dyslexic", kind: "prose" },
+  { name: "Atkinson Hyperlegible", kind: "prose" },
+  { name: "system-ui", kind: "prose" },
 ];
+
+/**
+ * Есть ли гарнитура в системе.
+ *
+ * document.fonts.check для этого не годится: в Chrome он отвечает «да»
+ * даже на выдуманное имя — проверяет пригодность записи, а не наличие
+ * шрифта. Поэтому меряем ширину строки: если с нужной гарнитурой она
+ * отличается от запасной хотя бы в одном из трёх семейств, шрифт есть.
+ */
+const installed = new Map<string, boolean>();
+
+function hasFont(name: string): boolean {
+  const known = installed.get(name);
+  if (known !== undefined) return known;
+
+  // system-ui и monospace — не имена шрифтов, а обещания браузера
+  if (name === "system-ui") {
+    installed.set(name, true);
+    return true;
+  }
+
+  const context = document.createElement("canvas").getContext("2d");
+  if (!context) return true;
+
+  // Строка со смесью широких и узких букв: на ней разница заметнее
+  const sample = "mmmmmmmmmmlli WW08";
+  const width = (family: string): number => {
+    context.font = `72px ${family}`;
+    return context.measureText(sample).width;
+  };
+
+  const result = ["monospace", "sans-serif", "serif"].some(
+    (base) => width(`"${name}", ${base}`) !== width(base),
+  );
+
+  installed.set(name, result);
+  return result;
+}
 
 export function openFontPicker(onPick: (v: string & string[]) => void): void {
   const current = getSettings().fontFamily;
 
+  // Установленные сверху, отсутствующие — вниз и приглушённо. Прятать их
+  // совсем не стоит: человек ставит шрифт в систему и возвращается
+  const items = FONTS.map((font) => {
+    const available = hasFont(font.name);
+    return {
+      value: font.name,
+      label: font.name,
+      font: `"${font.name}", ${font.kind === "mono" ? "monospace" : "sans-serif"}`,
+      checked: font.name === current,
+      hint: font.name === "Roboto Mono" ? "встроенный" : font.kind === "mono" ? "" : "непечатная",
+      family: available
+        ? font.kind === "mono"
+          ? "моноширинные"
+          : "пропорциональные"
+        : "нет в системе",
+      ...(available ? {} : { pending: true, note: "нет в системе" }),
+    };
+  });
+
+  // Порядок групп задаём здесь: пикер расставит их так, как они впервые
+  // встретились. Установленные моноширинные — первыми, отсутствующие — в конец
+  const groups = ["моноширинные", "пропорциональные", "нет в системе"];
+  items.sort((a, b) => groups.indexOf(a.family) - groups.indexOf(b.family));
+
   openPicker({
     title: "шрифт",
-    items: FONTS.map((name) => ({ value: name, label: name, checked: name === current })),
+    items,
     // Гарнитуру видно только на самом тексте, поэтому примеряем её там же,
     // где она будет жить. null возвращает выбранную в настройках
     preview: (name) => {
@@ -546,6 +694,168 @@ export function openCustomThemePicker(onPick: (v: string & string[]) => void): v
   document.addEventListener("keydown", onKey, true);
   document.body.appendChild(overlay);
   show();
+}
+
+/**
+ * Поиск цитаты — ctrl+shift+f, как у них.
+ *
+ * Список здесь живой: ищет сервер по тексту и по источнику, а не мы по
+ * загруженному куску. Пустой запрос отдаёт начало списка, чтобы окно не
+ * выглядело сломанным, пока в него ничего не ввели.
+ *
+ * Выбранную цитату отдаём словами от сервера, а не бьём текст сами —
+ * разбивка должна быть одна на проект.
+ */
+export function openQuoteSearch(
+  language: string,
+  onPick: (words: string[]) => void,
+): void {
+  const overlay = document.createElement("div");
+  overlay.className = "picker quoteSearch";
+  overlay.innerHTML = `
+    <div class="box">
+      <div class="pickerHead">
+        <h2>поиск цитаты</h2>
+        <span class="sub" data-count></span>
+        <button class="button" data-close>${icon("xmark")}</button>
+      </div>
+      <input class="input" data-search placeholder="слово из цитаты или автор…"
+             autocomplete="off" spellcheck="false">
+      <div class="list" data-list></div>
+    </div>
+  `;
+
+  const listEl = overlay.querySelector<HTMLElement>("[data-list]")!;
+  const searchEl = overlay.querySelector<HTMLInputElement>("[data-search]")!;
+  const countEl = overlay.querySelector<HTMLElement>("[data-count]")!;
+
+  /** Номер последнего запроса: ответы приходят вперемешку. */
+  let request = 0;
+
+  async function load(): Promise<void> {
+    const mine = ++request;
+    const query = searchEl.value.trim();
+
+    try {
+      const rows = await api.searchQuotes(language, query);
+
+      // Пока ждали, человек дописал буквы и ушёл следующий запрос —
+      // старый ответ рисовать нельзя, он перетрёт свежий
+      if (mine !== request) return;
+
+      countEl.textContent = rows.length === 0 ? "" : `${rows.length}`;
+      listEl.innerHTML =
+        rows.length === 0
+          ? `<p class="sub">ничего не нашлось</p>`
+          : rows
+              .map(
+                (row) => `
+        <button class="button quoteRow" data-id="${row.id}">
+          <span class="quoteText">${escapeHtml(row.text)}</span>
+          <span class="quoteMeta sub">${escapeHtml(row.source ?? "без источника")} · ${
+            row.length
+          } знаков</span>
+        </button>`,
+              )
+              .join("");
+    } catch {
+      if (mine === request) listEl.innerHTML = `<p class="error">не удалось загрузить цитаты</p>`;
+    }
+  }
+
+  function close(): void {
+    overlay.remove();
+    document.removeEventListener("keydown", onKey, true);
+  }
+
+  function onKey(event: KeyboardEvent): void {
+    if (event.key !== "Escape") return;
+    event.preventDefault();
+    event.stopPropagation();
+    close();
+  }
+
+  overlay.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement;
+
+    if (target === overlay || target.closest("[data-close]")) {
+      close();
+      return;
+    }
+
+    const row = target.closest<HTMLElement>("button[data-id]");
+    if (!row) return;
+
+    const id = Number(row.dataset["id"]);
+    row.classList.add("active");
+
+    void api
+      .quoteById(language, id)
+      .then((quote) => {
+        close();
+        onPick(quote.words);
+      })
+      .catch(() => {
+        row.classList.remove("active");
+        listEl.insertAdjacentHTML(
+          "afterbegin",
+          `<p class="error">не удалось взять эту цитату</p>`,
+        );
+      });
+  });
+
+  // Ждём паузу в наборе: иначе на каждую букву уходит запрос
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  searchEl.addEventListener("input", () => {
+    if (timer !== null) clearTimeout(timer);
+    timer = setTimeout(() => void load(), 200);
+  });
+
+  document.addEventListener("keydown", onKey, true);
+  document.body.appendChild(overlay);
+  searchEl.focus();
+  void load();
+}
+
+/**
+ * Метки результата. Набор заменяется целиком — сервер принимает список
+ * id, а не разницу: интерфейс отмечает галочками весь список сразу,
+ * и присылать разницу ему неоткуда.
+ */
+export async function openTagPicker(
+  chosen: readonly number[],
+  onPick: (ids: number[]) => void,
+): Promise<void> {
+  const tags = await api.tags();
+
+  if (tags.length === 0) {
+    // Пустой список меток выглядел бы как поломка. Говорим, где их завести
+    openPicker({
+      title: "метки",
+      items: [
+        {
+          value: "",
+          label: "меток пока нет",
+          hint: "завести можно в настройках аккаунта",
+          pending: true,
+          note: "нет меток",
+        },
+      ],
+      onPick: () => undefined,
+    });
+    return;
+  }
+
+  openPicker({
+    title: "метки",
+    multi: true,
+    items: tags.map((tag) => ({
+      value: String(tag.id),
+      label: tag.name,
+      checked: chosen.includes(tag.id),
+    })),
+    onPick: (values) => onPick((values as unknown as string[]).map(Number)),
+  });
 }
 
 export function openFunboxPicker(onPick: (v: string & string[]) => void): void {

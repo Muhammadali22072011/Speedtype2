@@ -13,6 +13,52 @@ export interface Layout {
 
 const ROWS = ["row1", "row2", "row3", "row4", "row5"] as const;
 
+/**
+ * Раскладка под язык текста.
+ *
+ * Нужна там, где qwerty на экране просто бесполезна: русский текст на
+ * латинской клавиатуре подсветить нечем — таких букв на ней нет.
+ * Языки латиницы сюда не входят намеренно: какая под ними физическая
+ * раскладка — qwerty, qwertz или azerty — мы знать не можем, а угадывать
+ * хуже, чем оставить привычную.
+ *
+ * Ключ — начало имени языка: файлов вида russian_10k у нас десятки.
+ */
+const LAYOUT_BY_LANGUAGE: ReadonlyArray<[prefix: string, layout: string]> = [
+  ["russian", "russian"],
+  ["ukrainian", "ukrainian"],
+  ["belarusian", "belarusian"],
+  ["bulgarian", "bulgarian"],
+  ["macedonian", "macedonian"],
+  ["mongolian", "mongolian"],
+  ["serbian", "serbian"],
+  ["kazakh", "kazakh"],
+  ["hebrew", "hebrew"],
+  ["arabic", "arabic_101"],
+  ["persian", "persian_standard"],
+  ["urdu", "urdu_phonetic"],
+  ["thai", "thai_kedmanee"],
+  ["hindi", "hindi_inscript"],
+  ["tamil", "tamil99"],
+  ["armenian", "armenian_hm_qwerty"],
+  ["korean", "korean"],
+  ["japanese", "japanese_hiragana"],
+  ["turkish", "turkish_e"],
+  ["polish", "polish_programmers"],
+];
+
+/**
+ * Какую раскладку рисовать. `default` и пустая строка значат «по языку»:
+ * это и есть поведение по умолчанию, отдельной настройки под него больше нет.
+ */
+export function resolveLayoutName(name: string, language: string): string {
+  if (name !== "" && name !== "default") return name;
+
+  const lower = language.toLowerCase();
+  const match = LAYOUT_BY_LANGUAGE.find(([prefix]) => lower.startsWith(prefix));
+  return match ? match[1] : "qwerty";
+}
+
 const cache = new Map<string, Layout>();
 
 export async function loadLayout(name: string): Promise<Layout | null> {
@@ -34,7 +80,11 @@ export async function loadLayout(name: string): Promise<Layout | null> {
 /** Разметка клавиатуры. Верхний ряд цифр показываем только если раскладка просит. */
 export function renderKeymap(layout: Layout, showTopRow: boolean): string {
   const rows = ROWS.filter((row) => {
-    if (!layout.keys[row]) return false;
+    const keys = layout.keys[row];
+    if (!keys || keys.length === 0) return false;
+    // Часть раскладок описывает пробел отдельным рядом row5. Свой пробел
+    // мы дорисовываем всегда, и без этой проверки их выходило два.
+    if (keys.every(([lower]) => (lower ?? "").trim() === "")) return false;
     if (row === "row1") return showTopRow || layout.keymapShowTopRow;
     return true;
   });
@@ -42,22 +92,37 @@ export function renderKeymap(layout: Layout, showTopRow: boolean): string {
   const html = rows
     .map((row) => {
       const keys = layout.keys[row] ?? [];
-      const cells = keys
-        .map(([lower, upper]) => {
-          const primary = lower ?? "";
-          const secondary = upper ?? "";
-          return `<div class="keymapKey" data-key="${escapeAttr(primary)}"
-                       data-shift="${escapeAttr(secondary)}">
-                    <span>${escapeHtmlChar(primary)}</span>
-                  </div>`;
-        })
-        .join("");
-      return `<div class="keymapRow">${cells}</div>`;
+      // Половины нужны формам split и alice. Остальным они не мешают:
+      // .keymapHalf стоит display: contents, и ряд выглядит сплошным.
+      const split = Math.floor(keys.length / 2);
+      const left = keys.slice(0, split).map(renderKey).join("");
+      const right = keys.slice(split).map(renderKey).join("");
+      // data-row, а не порядок в разметке: скрытый ряд цифр сдвигал бы
+      // ступеньки на ряд выше, и клавиатура переставала походить на себя
+      return `<div class="keymapRow" data-row="${row}">
+                <div class="keymapHalf">${left}</div>
+                <div class="keymapHalf">${right}</div>
+              </div>`;
     })
     .join("");
 
   // Пробел отдельным рядом: он есть в любой раскладке, но в файлах не описан
-  return `${html}<div class="keymapRow"><div class="keymapKey keymapSpace" data-key=" "><span></span></div></div>`;
+  return `${html}<div class="keymapRow"><div class="keymapKey keymapSpace" data-key=" "><span class="keymapLegend"></span></div></div>`;
+}
+
+/**
+ * Клавиша с двумя подписями. Вторая — символ с Shift, её показывает
+ * legendStyle: dynamic, пока Shift зажат. Если верхнего символа в раскладке
+ * нет, повторяем нижний: пустая клавиша под Shift читалась бы как поломка.
+ */
+function renderKey([lower, upper]: [string, string]): string {
+  const primary = lower ?? "";
+  const secondary = upper || primary;
+  return `<div class="keymapKey" data-key="${escapeAttr(primary)}"
+               data-shift="${escapeAttr(upper ?? "")}">
+            <span class="keymapLegend">${escapeHtmlChar(primary)}</span>
+            <span class="keymapLegend keymapLegendShift">${escapeHtmlChar(secondary)}</span>
+          </div>`;
 }
 
 /**

@@ -255,8 +255,10 @@ export const FUNBOXES: readonly Funbox[] = [
     kind: "text",
     generator: true,
   },
-  { name: "poetry", label: "poetry", hint: "строки стихов вместо слов", kind: "text", generator: true},
-  { name: "wikipedia", label: "wikipedia", hint: "абзацы из случайных статей", kind: "text", generator: true},
+  // Обоим нужен внешний источник текста, которого у нас нет:
+  // подсунуть вместо стихов обычные слова — это обман, а не режим
+  { name: "poetry", label: "poetry", hint: "строки стихов вместо слов", kind: "text", generator: true, done: false },
+  { name: "wikipedia", label: "wikipedia", hint: "абзацы из случайных статей", kind: "text", generator: true, done: false },
   { name: "polyglot", label: "polyglot", hint: "слова из нескольких языков", kind: "text", generator: true},
   {
     name: "arrows",

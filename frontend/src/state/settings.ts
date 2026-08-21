@@ -192,13 +192,20 @@ const DEFAULTS: Settings = {
   customBackgroundSize: "cover",
   customBackgroundFilter: "",
 
-  keymapMode: "off",
+  // Клавиатура на экране видна сразу и подсвечивает следующую клавишу:
+  // тренажёр слепой печати без неё учит смотреть на свои руки
+  keymapMode: "next",
   keymapStyle: "staggered",
   keymapLegendStyle: "lowercase",
   keymapKeys: "minimal",
   keymapSize: 1,
-  layout: "qwerty",
-  keymapLayout: "qwerty",
+  // «default» значит «по языку»: русскому тексту — русская клавиатура.
+  // Так же устроен и оригинал, только у них это зовётся overrideSync.
+  layout: "default",
+  // Пусто значит «та же, что и раскладка набора». Отдельной настройки под
+  // клавиатуру на экране больше нет — ключ остался ради тех, кто успел
+  // выбрать её раньше.
+  keymapLayout: "",
 
   soundOnClick: "off",
   soundOnError: "off",
@@ -241,6 +248,12 @@ function load(): Settings {
  */
 function migrate(settings: Settings): Settings {
   if ((settings.caretStyle as string) === "line") settings.caretStyle = "default";
+
+  // Раскладка на экране перестала быть отдельной настройкой. Сохранённое
+  // «qwerty» никто не выбирал осознанно — это было прежнее значение по
+  // умолчанию, и оно бы намертво приклеило латиницу к русскому тексту.
+  if (settings.keymapLayout === "qwerty") settings.keymapLayout = "";
+  if (settings.layout === "qwerty") settings.layout = "default";
   return settings;
 }
 

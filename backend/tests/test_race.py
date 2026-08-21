@@ -11,11 +11,9 @@ import asyncio
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, select
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
+from sqlalchemy import select
 
-from app.db.session import Base, get_db
+from app.db.session import Base, SessionLocal, engine
 from app.main import app
 from app.models import Language, Word
 from app.services.rooms import (
@@ -25,55 +23,29 @@ from app.services.rooms import (
     RoomRegistry,
 )
 
-engine = create_engine(
-    "sqlite://",
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-TestSession = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-
-
-def override_get_db():
-    db = TestSession()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 @pytest.fixture()
 def client():
-    """Клиент со своей базой в памяти.
+    """Клиент с заведённым английским языком — гонке нужны слова.
 
-    Подмену get_db ставим на время теста, а не при импорте модуля.
-    Это важно: test_api.py делает то же самое, и если обе подмены висят
-    на уровне модуля, побеждает та, чей файл собрали последним — тесты
-    соседа начинают ходить в чужую пустую базу. Порознь всё зелено,
-    вместе падает половина, и выглядит это как поломка кода.
+    Движок и база — общие, из conftest.py; здесь только своя фикстура,
+    потому что гонке, в отличие от остальных тестов, нужен непустой язык
+    со словами. Одноимённая фикстура из conftest при этом перекрывается
+    ровно для этого файла — так и задумано.
     """
     Base.metadata.create_all(bind=engine)
 
-    прежний = app.dependency_overrides.get(get_db)
-    app.dependency_overrides[get_db] = override_get_db
-    with TestSession() as db:
-        # Фикстура работает на каждый тест, а база одна на файл — язык
-        # заводим только если его ещё нет, иначе вторая вставка упадёт
-        # на ограничении уникальности
-        if db.scalar(select(Language).where(Language.name == "english")) is None:
-            lang = Language(name="english", display_name="english")
-            db.add(lang)
-            db.flush()
-            db.add_all([Word(language_id=lang.id, word=w) for w in ("one", "two", "three")])
-            db.commit()
+    with SessionLocal() as db:
+        lang = Language(name="english", display_name="english")
+        db.add(lang)
+        db.flush()
+        db.add_all([Word(language_id=lang.id, word=w) for w in ("one", "two", "three")])
+        db.commit()
 
-    try:
-        with TestClient(app) as c:
-            yield c
-    finally:
-        if прежний is None:
-            app.dependency_overrides.pop(get_db, None)
-        else:
-            app.dependency_overrides[get_db] = прежний
+    with TestClient(app) as c:
+        yield c
+
+    Base.metadata.drop_all(bind=engine)
 
 
 # --- счёт символов -------------------------------------------------------

@@ -36,6 +36,13 @@ class Settings(BaseSettings):
     max_wpm: float = 300.0
     max_test_duration: int = 3600
 
+    # Кто администратор — список имён через запятую в ADMIN_USERNAMES.
+    # Именно окружение, а не «первый зарегистрированный»: иначе роль занял бы
+    # случайный человек, успевший зарегистрироваться раньше владельца.
+    # Строкой, а не list[str]: pydantic читал бы список из окружения как JSON,
+    # и «alice,bob» не разобрал бы. Разбор — в admin_username_set.
+    admin_usernames: str = ""
+
     # Канонический адрес сайта — единственное место, где записан домен.
     # Отсюда берутся canonical, og:url, sitemap.xml и robots.txt.
     # Без слеша на конце: к нему всегда дописывается путь.
@@ -45,6 +52,11 @@ class Settings(BaseSettings):
     # для подстановки мета-тегов. В dev папки может не быть — это нормально,
     # там страницу раздаёт Vite.
     frontend_dist: Path = BASE_DIR.parent / "frontend" / "dist"
+
+    @property
+    def admin_username_set(self) -> set[str]:
+        """Имена администраторов в нижнем регистре — с чем сверяться в проверке."""
+        return {name.strip().lower() for name in self.admin_usernames.split(",") if name.strip()}
 
 
 @lru_cache

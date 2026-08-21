@@ -1,0 +1,290 @@
+/*
+ * Экран результата. Переехал сюда из monkeytype.css и modes.css, чтобы
+ * страница теста и страница результата правились по отдельности.
+ *
+ * Имена селекторов не менялись ни одного: на #result и всё, что внутри,
+ * целятся файлы тем monkeytype. Переехал файл, не контракт.
+ *
+ * Подключается импортом из pages/result.ts — то есть после tokens.css
+ * и monkeytype.css, но до файлов тем и funbox, которые грузятся во время
+ * работы и по-прежнему перебивают всё.
+ */
+
+#result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+#result .stats {
+  display: flex;
+  gap: var(--space-32);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+#result .stats .group {
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+ * Один кегль на весь экран результата — так попросил владелец.
+ *
+ * Было восемь размеров: 64 у главной цифры, 24 у мелких показателей,
+ * 17.6 у типа теста и разбивки символов, 16 у примечания, 14.4 у
+ * подписей, 12 у легенды графика, 11 и 10 у подписей осей.
+ *
+ * Цена решения: цифра wpm перестаёт быть главной на экране — раньше она
+ * была вчетверо крупнее остального. Возвращается снятием этого блока:
+ * ниже сохранены прежние значения в комментариях у каждого правила.
+ */
+#result,
+#result .stats .group .top,
+#result .stats .group .bottom,
+#result .stats .group.small .bottom,
+#result .stats .group .bottom.testType,
+#result .stats .group .bottom.chars,
+#result .afk,
+#result .sub,
+#result .chartLegend,
+#result .historyTools,
+#result .wordsHistory {
+  font-size: var(--font-size-base);
+}
+
+#result .stats .group .top {
+  color: var(--fg-muted);
+  /* было --font-size-md */
+}
+
+#result .stats .group .bottom {
+  color: var(--fg-accent);
+  /* было --font-size-result */
+  line-height: var(--leading-none);
+  font-variant-numeric: tabular-nums;
+}
+
+/* было --font-size-xl */
+
+/* Тип теста и разбивка символов — строки, а не числа. Кегль общий,
+   перенос по-прежнему запрещён: «слова 10 english» рвать негде.
+   Было 1.1rem. */
+#result .stats .group .bottom.testType,
+#result .stats .group .bottom.chars {
+  white-space: nowrap;
+}
+
+#result .stats .group .bottom.chars {
+  cursor: help;
+}
+
+/* Время без нажатий стоит рядом со временем теста, мельче и приглушённо */
+#result .afk {
+  margin-left: var(--space-6);
+  color: var(--fg-muted);
+  /* Кегль общий для всего экрана, задан выше. Было --font-size-md */
+}
+
+/*
+ * Высоту графику не задаём: её приносит сам svg, нарисованный в
+ * настоящих пикселях по замеру этого блока (см. drawChart).
+ *
+ * Прежде здесь стояли height: 200px у блока, height: 100% у svg и
+ * overflow: visible. Проценты не от чего было считать — .chartBox между
+ * ними высоты не имеет, — и svg брал высоту из своих пропорций: на
+ * полторы тысячи точек ширины выходило больше пятисот высоты. Лишние
+ * триста, не пролезая в блок, ложились поверх подписи и кнопок.
+ */
+#result .chart {
+  width: 100%;
+}
+
+#result .chart svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+/*
+ * Кнопки под результатом — шесть штук, только иконки, надпись у каждой
+ * лежит в подсказке. Перенос нужен для узкого экрана: без него шесть
+ * кнопок по 52px с зазорами не влезают в 331px и уезжают за край, а
+ * горизонтальной прокрутки в проекте нет.
+ */
+#result .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+  justify-content: center;
+}
+
+#result .actions .button {
+  /* Не ужиматься уже собственного содержимого: лучше перенести на
+     вторую строку, чем сплющить иконку */
+  flex: 0 0 auto;
+  padding: var(--space-10) 1.2rem;
+}
+
+#result .actions .button svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* ============ Рекорд ============ */
+
+.personalBest {
+  color: var(--fg-accent);
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  font-size: var(--font-size-sm);
+  /* Рекорд появляется, а не просто оказывается на экране — как у них */
+  animation: personalBestIn var(--duration-base) var(--ease-standard);
+}
+
+/*
+ * Корона размером с букву. Без этого правила svg берёт размер из своего
+ * viewBox и растягивается на весь экран: у остальных иконок кегль задан
+ * через .button svg или .failed svg, а у плашки рекорда своего не было.
+ */
+.personalBest svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  flex: none;
+}
+
+.personalBest .was {
+  color: var(--fg-muted);
+}
+
+@keyframes personalBestIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem) scale(0.9);
+  }
+}
+
+/* ============ Проваленный тест и сохранение ============ */
+
+/*
+ * Тот же вид, что у предупреждения Caps Lock: красная строка по центру.
+ * Правило для #capsWarning осталось в modes.css — оно про сам тест.
+ */
+.failed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  color: var(--fg-error);
+  font-size: var(--font-size-sm);
+}
+
+.failed svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+/* Сообщение о неудачном сохранении и кнопка повтора — в одну строку */
+.saveFailed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-12);
+  flex-wrap: wrap;
+}
+
+.center {
+  text-align: center;
+}
+
+/* Источник цитаты */
+.quoteSource {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.quoteSource svg {
+  width: 0.8em;
+  height: 0.8em;
+}
+
+/* ============ Разбор слов ============ */
+
+.wordsHistory {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  font-size: var(--font-size-sm);
+  color: var(--fg-muted);
+}
+
+.wordsHistory .ok {
+  color: var(--fg-main);
+}
+
+.wordsHistory .bad {
+  color: var(--fg-error);
+  text-decoration: underline;
+}
+
+#resultWordsHistory .wordsHistory {
+  justify-content: center;
+}
+
+.historyTools {
+  display: flex;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-8);
+  font-size: var(--font-size-2xs);
+}
+
+.historyTools .button {
+  padding: var(--space-4) var(--space-10);
+  border-radius: var(--radius-sm);
+}
+
+/*
+ * Тепловая карта скорости: пять ступеней от медленного к быстрому.
+ * Включается кнопкой в разборе и настройкой burstHeatmap. Цвета только
+ * из темы — своих здесь быть не должно, иначе на светлой теме получится
+ * нечитаемо.
+ */
+.wordsHistory.heat .heat-0 { color: var(--fg-error); }
+.wordsHistory.heat .heat-1 { color: var(--fg-error-extra); }
+.wordsHistory.heat .heat-2 { color: var(--fg-muted); }
+.wordsHistory.heat .heat-3 { color: var(--fg-main); }
+.wordsHistory.heat .heat-4 { color: var(--fg-accent); }
+
+.heatLegend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+  font-size: var(--font-size-2xs);
+}
+
+.heatLegend span {
+  width: var(--space-16);
+  height: var(--space-6);
+  border-radius: var(--radius-sm);
+}
+
+.heatLegend .heat-0 { background-color: var(--fg-error); }
+.heatLegend .heat-1 { background-color: var(--fg-error-extra); }
+.heatLegend .heat-2 { background-color: var(--fg-muted); }
+.heatLegend .heat-3 { background-color: var(--fg-main); }
+.heatLegend .heat-4 { background-color: var(--fg-accent); }
+
+/* На узком экране числа стоят теснее — иначе строка показателей рвётся */
+@media (max-width: 848px) {
+  #result .stats {
+    gap: var(--space-24);
+  }
+}

@@ -1,0 +1,259 @@
+/*
+ * Онлайн-гонки.
+ *
+ * Подключать импортом из pages/race.ts (`import "../styles/race.css"`) —
+ * тогда правила приезжают ленивым чанком и грузятся ПОСЛЕ monkeytype.css,
+ * то есть перебивают прежние #race-правила по равному весу ещё до того,
+ * как их вычистят из monkeytype.css. Гэпа между «встал race.css» и
+ * «снят дубль» нет.
+ *
+ * Всё на токенах слоя 2. Дорожка и живая статистика намеренно совпадают
+ * по кеглю и цвету с тестом: гонка — тот же тренажёр, а не второй.
+ *
+ * КОНТРАКТ РАЗМЕТКИ (сводит координатор, имена не меняются):
+ *   #race           — корень; несёт РОВНО ОДИН класс состояния:
+ *                     .state-lobby / .state-waiting / .state-countdown /
+ *                     .state-racing / .state-finished. Видимостью секций
+ *                     рулит css ниже, а не атрибут hidden и не инлайн.
+ *   .raceLobby      — экран создания/входа (только в state-lobby)
+ *   .raceForm       — форма внутри лобби
+ *   .players/.player— список участников; .player.me — свой
+ *   .player .name   — имя; .player .wpm — живая скорость (в гонке);
+ *   .player .place  — место/медаль (на финише); .track/.fill — дорожка
+ *   #countdown      — крупная цифра отсчёта
+ *   #raceTest       — область набора (в гонке)
+ *   #raceActions    — кнопки («готов» в ожидании, «ещё/выйти» на финише)
+ */
+
+/* ============ Состояния: одно активно, остальные скрыты ============ */
+
+/*
+ * Переключаем ИЗВЕСТНЫЕ по имени элементы, а не абстрактные секции —
+ * так не приходится заводить новых имён, которых нет в контракте.
+ * Каждый элемент по умолчанию скрыт и показывается только в своём
+ * состоянии. Если лобби и комната рендерятся раздельно (как сейчас),
+ * класс состояния всё равно лежит на #race, и правила ниже срабатывают
+ * ровно для тех элементов, что есть в текущем рендере, — остальные
+ * просто отсутствуют.
+ *
+ * Кто в каком состоянии виден:
+ *                 lobby  waiting  countdown  racing  finished
+ *   .raceLobby      +
+ *   .players               +         +         +        +
+ *   #countdown                       +
+ *   #raceTest                                  +
+ *   #raceActions           +                            +
+ *   .player .wpm                               +
+ *   .player .place                                      +
+ */
+
+#race .raceLobby,
+#race .players,
+#race #countdown,
+#race #raceTest,
+#race #raceActions {
+  display: none;
+}
+
+#race.state-lobby .raceLobby {
+  display: flex;
+  flex-direction: column;
+}
+
+#race.state-waiting .players,
+#race.state-countdown .players,
+#race.state-racing .players,
+#race.state-finished .players {
+  display: flex;
+}
+
+#race.state-countdown #countdown {
+  display: block;
+}
+
+#race.state-racing #raceTest {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+#race.state-waiting #raceActions,
+#race.state-finished #raceActions {
+  display: flex;
+  gap: var(--space-12);
+  justify-content: center;
+}
+
+/* Живая скорость — только в гонке, место/медаль — только на финише.
+   До этого wpm писался в .place текстом; развели. */
+#race .player .wpm,
+#race .player .place {
+  display: none;
+}
+
+#race.state-racing .player .wpm {
+  display: inline;
+}
+
+#race.state-finished .player .place {
+  display: inline;
+}
+
+/* ============ Лобби ============ */
+
+#race .raceLobby {
+  gap: var(--space-16);
+  max-width: 22rem;
+  margin: var(--space-32) auto 0;
+}
+
+#race .raceForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+/* Код комнаты человек диктует вслух — крупно, вразрядку, по центру */
+#race .raceForm .input {
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-logo);
+}
+
+/* ============ Шапка комнаты ============ */
+
+#race .raceHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-24);
+}
+
+/* Код комнаты в шапке — сам по себе кнопка «скопировать» */
+#race .raceHead .roomCode {
+  font-size: var(--font-size-lg);
+  letter-spacing: var(--tracking-logo);
+  color: var(--fg-accent);
+}
+
+/* ============ Участники и дорожки ============ */
+
+#race .players {
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+/*
+ * Строка участника: имя слева, скорость/место справа, дорожка во всю
+ * ширину под ними. Своя строка — приподнята и с рамкой-акцентом слева,
+ * чтобы человек сразу находил себя среди чужих.
+ */
+#race .player {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-6) var(--space-16);
+  align-items: center;
+  padding: var(--space-8) var(--space-12);
+  border-radius: var(--radius-md);
+  border-left: var(--border-width-thick) solid transparent;
+}
+
+#race .player.me {
+  background-color: var(--surface-raised);
+  border-left-color: var(--border-accent-color);
+}
+
+#race .player .name {
+  font-size: var(--font-size-md);
+}
+
+#race .player.me .name {
+  color: var(--fg-accent);
+}
+
+/* Живая скорость — тем же цветом и моноширинными цифрами, что показатели
+   теста: одна система, а не два разных числа */
+#race .player .wpm {
+  font-size: var(--font-size-md);
+  color: var(--fg-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+#race .player .wpm .label {
+  font-size: var(--font-size-2xs);
+  color: var(--fg-muted);
+  margin-left: var(--space-2);
+}
+
+/* Место на финише: цифра или медаль, акцентным */
+#race .player .place {
+  font-size: var(--font-size-sm);
+  color: var(--fg-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Дорожка — подпись жанра. Полоса во всю ширину строки, по ней слева
+   направо едет заполнение. Длительность — токен прогресса, тот же, что
+   у полос теста и таймера. */
+#race .player .track {
+  grid-column: 1 / -1;
+  height: var(--space-8);
+  border-radius: var(--radius-pill);
+  background-color: var(--surface-raised);
+  overflow: hidden;
+}
+
+#race .player .fill {
+  height: 100%;
+  background-color: var(--surface-accent);
+  border-radius: inherit;
+  transition: width var(--progress-duration) var(--ease-linear);
+}
+
+/* Своя дорожка сохраняет акцент даже если строка приподнята на surface */
+#race .player.me .track {
+  background-color: var(--surface-sunken);
+}
+
+/* ============ Отсчёт ============ */
+
+/* Крупная цифра по центру — как таймер теста, но во весь экран */
+#race #countdown {
+  font-size: var(--font-size-4xl);
+  color: var(--fg-accent);
+  text-align: center;
+  line-height: var(--leading-none);
+  font-variant-numeric: tabular-nums;
+  padding: var(--space-40) 0;
+}
+
+/* ============ Настройки хоста ============ */
+
+/*
+ * Хост настраивает комнату тем же видом, что панель режимов теста:
+ * карточки .card с группами .group. Второй облик заводить незачем —
+ * это одна и та же «панель конфигурации». Разметку под неё даёт
+ * «Пять страниц»; здесь только контейнер, если он понадобится.
+ */
+#race .raceSettings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-24);
+}
+
+/* ============ Узкий экран ============ */
+
+@media (max-width: 425px) {
+  #race .raceLobby {
+    margin-top: var(--space-16);
+  }
+
+  #race #countdown {
+    font-size: var(--font-size-3xl);
+    padding: var(--space-24) 0;
+  }
+}

@@ -23,18 +23,22 @@ const THEME_STYLE_ID = "themeColors";
  * тем же цветом, что и в шапке страницы.
  */
 function paintFavicon(colors: Record<string, string>): void {
-  const glyph = iconPath("keyboard");
+  const glyph = iconPath("logo");
   if (!glyph) return;
 
   const bg = colors["--bg-color"] ?? "#323437";
   const main = colors["--main-color"] ?? "#e2b714";
 
-  // viewBox глифа — 576x512, вписываем его в квадрат 64x64 со скруглением
-  const body = glyph.d.map((d) => `<path fill="${main}" d="${d}"/>`).join("");
+  // viewBox глифа — 24x24, вписываем его в квадрат 64x64 со скруглением
+  // Полосы разгона глушим так же, как css глушит их в шапке: знак во
+  // вкладке должен совпадать с логотипом на странице, а не быть плоским
+  const body = glyph.d
+    .map((d, i) => `<path fill="${main}"${i > 0 ? ' fill-opacity="0.45"' : ""} d="${d}"/>`)
+    .join("");
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">` +
     `<rect width="64" height="64" rx="14" fill="${bg}"/>` +
-    `<svg x="8" y="14" width="48" height="43" viewBox="${glyph.viewBox}">${body}</svg>` +
+    `<svg x="13" y="13" width="38" height="38" viewBox="${glyph.viewBox}">${body}</svg>` +
     `</svg>`;
 
   // Тег заводим заново, а не правим href у старого: Chrome читает значок

@@ -1,0 +1,305 @@
+/*
+ * Графики. Цвета только переменными темы: график должен читаться и на
+ * светлой теме, и на тех, где основной цвет почти сливается с фоном.
+ */
+
+.chartBox {
+  width: 100%;
+  /* Якорь для подсказки при наведении: она позиционируется абсолютно */
+  position: relative;
+}
+
+/*
+ * Высоту и ширину приносит сам svg, нарисованный в настоящих пикселях по
+ * замеру места. Прежде здесь стояли width: 100% и height: 220px: viewBox
+ * 800×180 растягивался до этой высоты, и столбики с подписями распухали
+ * вслед за шириной карточки. Теперь svg рисуется в тех же пикселях, что
+ * измерены, и растягивать нечего.
+ */
+.chartBox svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+/* ============ Наведение ============ */
+
+/*
+ * Вертикальная линия под курсором. Атрибут hidden сам по себе svg-элемент
+ * не прячет — правило ниже это делает. Курсор не должен перехватывать
+ * мышь, иначе mousemove начнёт дёргаться на нём самом.
+ */
+.chartCursor {
+  stroke: var(--sub-color);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  pointer-events: none;
+}
+
+.chartCursor[hidden] {
+  display: none;
+}
+
+/*
+ * Подсказка со значениями секунды. Идёт над курсором, за края блока не
+ * вылезает (это считает bindChart). Цвета — только из темы.
+ */
+.chartTip {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - var(--space-10)));
+  min-width: 8rem;
+  padding: var(--space-6) var(--space-8);
+  border: 1px solid var(--sub-color);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  color: var(--fg-main);
+  font-size: var(--font-size-2xs);
+  line-height: var(--leading-tight);
+  white-space: nowrap;
+  box-shadow: var(--shadow-modal, 0 2px 8px rgb(0 0 0 / 0.25));
+}
+
+.chartTip[hidden] {
+  display: none;
+}
+
+.chartTip .sec {
+  margin-bottom: var(--space-4);
+  color: var(--fg-muted);
+}
+
+.chartTip .row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+
+/* Кружок цвета ряда перед его названием — как в легенде */
+.chartTip .k {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  color: var(--fg-muted);
+}
+
+.chartTip .k::before {
+  content: "";
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: 50%;
+  background-color: var(--dot, var(--sub-color));
+}
+
+.chartTip .v {
+  color: var(--fg-main);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============ Ряды ============ */
+
+.speedLine {
+  fill: none;
+  stroke: var(--main-color);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.speedArea {
+  fill: var(--main-color);
+  opacity: 0.12;
+  stroke: none;
+}
+
+/* raw пунктиром — как у них: линия та же, но видно, что это другой ряд */
+.rawLine {
+  fill: none;
+  stroke: var(--sub-color);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+  stroke-linejoin: round;
+}
+
+.burstLine {
+  fill: none;
+  stroke: var(--text-color);
+  stroke-width: 1;
+  opacity: 0.45;
+  stroke-linejoin: round;
+}
+
+.errorMark {
+  stroke: var(--error-color);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.pbLine {
+  stroke: var(--text-color);
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  opacity: 0.6;
+}
+
+.pbLabel {
+  fill: var(--text-color);
+  /* Подписи графика идут тем же кеглем, что и весь экран результата.
+     Было 10px. */
+  font-size: var(--font-size-base);
+  opacity: 0.6;
+}
+
+/* ============ Сетка и подписи ============ */
+
+.gridLine {
+  stroke: var(--sub-alt-color);
+  stroke-width: 1;
+}
+
+.axisLabel {
+  fill: var(--sub-color);
+  /* Было 11px, см. выше. */
+  font-size: var(--font-size-base);
+}
+
+/* ============ Легенда ============ */
+
+.chartLegend {
+  display: flex;
+  gap: var(--space-12);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: var(--space-8);
+  font-size: var(--font-size-2xs);
+}
+
+.chartToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  background: none;
+  border: none;
+  padding: var(--space-2) var(--space-4);
+  color: var(--fg-muted);
+  font: inherit;
+  cursor: pointer;
+  /* Выключенный ряд виден, но приглушён — иначе непонятно, что его можно
+     вернуть */
+  opacity: var(--state-dim-opacity);
+  transition: opacity var(--transition), color var(--transition);
+}
+
+.chartToggle::before {
+  content: "";
+  width: var(--space-12);
+  height: var(--space-4);
+  border-radius: var(--radius-sm);
+  background-color: var(--dot, var(--sub-color));
+}
+
+.chartToggle.on {
+  opacity: 1;
+  color: var(--fg-muted-readable);
+}
+
+.chartToggle:hover {
+  color: var(--fg-main);
+}
+
+.chartToggle:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
+}
+
+/* ============ Тепловая карта ============ */
+
+/*
+ * Год по неделям. Ширина клеток фиксированная, а не растянутая: карта
+ * должна читаться одинаково и на широком экране, и на узком — там она
+ * просто прокручивается.
+ */
+.heatmapBox {
+  overflow-x: auto;
+  padding-bottom: var(--space-4);
+}
+
+.heatmapBox svg {
+  height: 108px;
+  min-width: 700px;
+}
+
+.heatCell {
+  fill: var(--surface-raised);
+}
+
+/*
+ * Ступени теплоты одним цветом разной плотности. Отдельных цветов здесь
+ * быть не должно: тема задаёт основной цвет, и карта обязана следовать
+ * за ним, а не спорить с ним своим.
+ */
+.heatCell.heat-1 { fill: var(--main-color); opacity: 0.25; }
+.heatCell.heat-2 { fill: var(--main-color); opacity: 0.5; }
+.heatCell.heat-3 { fill: var(--main-color); opacity: 0.75; }
+.heatCell.heat-4 { fill: var(--main-color); opacity: 1; }
+
+.heatMonth {
+  fill: var(--sub-color);
+  font-size: 10px;
+}
+
+.heatmapFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-12);
+  margin-top: var(--space-6);
+  font-size: var(--font-size-2xs);
+  flex-wrap: wrap;
+}
+
+.heatScale {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.heatScale i {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  background-color: var(--surface-raised);
+}
+
+.heatScale i.heat-1 { background-color: var(--main-color); opacity: 0.25; }
+.heatScale i.heat-2 { background-color: var(--main-color); opacity: 0.5; }
+.heatScale i.heat-3 { background-color: var(--main-color); opacity: 0.75; }
+.heatScale i.heat-4 { background-color: var(--main-color); opacity: 1; }
+
+/* ============ Гистограмма ============ */
+
+.histBar {
+  fill: var(--main-color);
+  transition: fill var(--transition);
+}
+
+.histBar:hover {
+  fill: var(--text-color);
+}
+
+/* ============ Мини-график строки истории ============ */
+
+.sparkline {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.samplesRow td {
+  padding: var(--space-8) var(--space-12);
+  background-color: var(--surface-raised);
+}

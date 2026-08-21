@@ -1,34 +1,99 @@
-/** Вход и регистрация — одна страница в двух режимах. */
+/**
+ * Вход и регистрация — одна страница в двух режимах.
+ *
+ * Разметка собрана по их исходникам: ts/components/pages/login/Login.tsx
+ * и Register.tsx. Колонка 20rem, заголовок с иконкой кеглем основного
+ * текста, поля подряд. Кнопки входа через Google и GitHub у них есть,
+ * у нас такого входа нет — не переносим.
+ *
+ * Логика формы не менялась: обработчик тот же, что был.
+ */
+
+import "../styles/auth.css";
 
 import { api, ApiError, setToken } from "../api/client";
 import { navigate, type PageContext } from "../router";
 import { escapeHtml } from "../ui/format";
+import { icon } from "../ui/icons";
+
+/** Поле с видимой подписью. Метка обёрнута вокруг input — связь без id. */
+function field(options: {
+  label: string;
+  name: string;
+  type?: string;
+  autocomplete: string;
+  hint?: string;
+  attrs?: string;
+}): string {
+  const { label, name, type = "text", autocomplete, hint, attrs = "" } = options;
+  return `
+    <label class="authField">
+      <span class="authLabel">${label}</span>
+      <input class="input" name="${name}" type="${type}" required
+             autocomplete="${autocomplete}" ${attrs}>
+      ${hint ? `<span class="authHint">${hint}</span>` : ""}
+    </label>
+  `;
+}
 
 function form(kind: "login" | "register"): string {
   const isRegister = kind === "register";
+
   return `
-    <form class="form" id="form">
-      <h2 style="text-align:center">${isRegister ? "регистрация" : "вход"}</h2>
-      <input class="input" name="username" placeholder="имя пользователя" required
-             minlength="3" maxlength="50" autocomplete="username">
-      ${
-        isRegister
-          ? `<input class="input" name="email" type="email" placeholder="email" required
-                    autocomplete="email">`
-          : ""
-      }
-      <input class="input" name="password" type="password" placeholder="пароль" required
-             minlength="6" autocomplete="${isRegister ? "new-password" : "current-password"}">
-      <p class="error" id="error"></p>
-      <button class="btn" type="submit">${isRegister ? "создать аккаунт" : "войти"}</button>
-      <p class="muted" style="text-align:center; font-size:0.85rem">
+    <div class="authPage">
+      <form class="authForm" id="form">
+        <h1 class="authTitle">
+          ${icon(isRegister ? "userPlus" : "signIn")}
+          ${isRegister ? "регистрация" : "вход"}
+        </h1>
+
+        ${field({
+          label: "имя пользователя",
+          name: "username",
+          autocomplete: isRegister ? "new-username" : "username",
+          attrs: 'minlength="3" maxlength="50"',
+          ...(isRegister ? { hint: "от 3 до 50 символов, менять нельзя" } : {}),
+        })}
+
         ${
           isRegister
-            ? `уже есть аккаунт? <a href="/login">войти</a>`
-            : `нет аккаунта? <a href="/register">зарегистрироваться</a>`
+            ? field({
+                label: "почта",
+                name: "email",
+                type: "email",
+                autocomplete: "new-email",
+                hint: "нужна для восстановления доступа",
+              })
+            : ""
         }
-      </p>
-    </form>
+
+        ${field({
+          label: "пароль",
+          name: "password",
+          type: "password",
+          autocomplete: isRegister ? "new-password" : "current-password",
+          attrs: 'minlength="6"',
+          ...(isRegister ? { hint: "не короче 6 символов" } : {}),
+        })}
+
+        <!-- role="alert" — экранный диктор прочитает ошибку сам,
+             не дожидаясь, пока человек до неё дойдёт -->
+        <p class="error authError" id="error" role="alert"></p>
+
+        <button class="button authSubmit" type="submit">
+          ${icon(isRegister ? "userPlus" : "signIn")}
+          ${isRegister ? "создать аккаунт" : "войти"}
+        </button>
+
+        <p class="authSwitch">
+          ${
+            isRegister
+              ? `уже есть аккаунт? <a href="/login">войти</a>`
+              : `нет аккаунта? <a href="/register">зарегистрироваться</a>`
+          }
+        </p>
+      </form>
+    </div>
   `;
 }
 

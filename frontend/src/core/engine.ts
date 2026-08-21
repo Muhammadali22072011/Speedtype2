@@ -86,7 +86,16 @@ export interface TestSummary extends LiveStats {
   mode: TestMode;
   modeValue: number;
   language: string;
+  /** Нарастающий wpm по секундам. Из него сервер считает consistency. */
   wpmSamples: number[];
+  /** Скорость ЗА каждую секунду — для графика, а не для метрик. */
+  speedSamples: number[];
+  /** То же по всем нажатиям, включая ошибочные. */
+  rawSamples: number[];
+  /** Скорость слова, которое набиралось в эту секунду. */
+  burstSamples: number[];
+  /** Сколько ошибочных нажатий пришлось на каждую секунду. */
+  errorSamples: number[];
   failed: boolean;
   failReason: string;
 }
@@ -115,6 +124,15 @@ export class TypingEngine {
   private sampleTimer: ReturnType<typeof setInterval> | null = null;
 
   /**
+   * Конец теста на время. Раньше его не было вовсе: время выходило, а тест
+   * заканчивался только на СЛЕДУЮЩЕМ нажатии — то есть если человек
+   * дописал и убрал руки, экран результата не появлялся, пока он не
+   * тронет клавишу. Секундный замер тоже не спасал: он проверяет пределы
+   * скорости и точности, но не конец.
+   */
+  private endTimer: ReturnType<typeof setTimeout> | null = null;
+
+  /**
    * Верные и ошибочные нажатия считаем по мере ввода, а не по финальному
    * тексту: иначе исправленная ошибка исчезнет из статистики и точность
    * окажется завышенной.
@@ -136,7 +154,31 @@ export class TypingEngine {
    * это подпись на экране результата, а не поправка к скорости.
    */
   private afkSeconds = 0;
-  private lastKeyAt: number | null = null;
+  /**
+   * Нажатия с прошлого замера. Считаем их, а не время последнего нажатия:
+   * по времени секунда, в которую нажали на самой её границе, выходила
+   * пустой — от нажатия до замера ровно 1000 мс, и проверка срабатывала.
+   */
+  private keysSinceSample = 0;
+
+  /**
+   * Посекундные ряды для графика результата.
+   *
+   * Отличаются от wpmSamples тем, что показывают скорость ЗА секунду,
+   * а не с начала теста. Нарастающий ряд идёт гладкой дугой, и на графике
+   * по нему не видно ни провалов, ни рывков — а видеть их и есть смысл
+   * графика.
+   *
+   * На сохраняемые метрики не влияют и на сервер не уходят: consistency
+   * по-прежнему считается из wpmSamples, и её смысл не меняется.
+   */
+  private readonly speedSamples: number[] = [];
+  private readonly rawSamples: number[] = [];
+  private readonly burstSamples: number[] = [];
+  private readonly errorSamples: number[] = [];
+
+  /** Счётчики на границе прошлой секунды — из них берётся разница. */
+  private atLastSecond = { correct: 0, incorrect: 0 };
 
   private readonly listeners = new Set<Listener>();
 
@@ -180,7 +222,7 @@ export class TypingEngine {
   type(char: string): void {
     if (this.finished) return;
     this.ensureStarted();
-    this.lastKeyAt = performance.now();
+    this.keysSinceSample += 1;
 
     if (char === " ") {
       this.commitWord();
@@ -256,7 +298,7 @@ export class TypingEngine {
   /** Backspace. Возврат к предыдущему слову разрешён, если оно с ошибкой. */
   backspace(wholeWord = false): void {
     // Правка — тоже работа: пока человек стирает, он не afk
-    this.lastKeyAt = performance.now();
+    this.keysSinceSample += 1;
     if (this.finished) return;
     if (this.confidenceMode === "max") return;
 
@@ -362,18 +404,49 @@ export class TypingEngine {
     this.startedAt = performance.now();
     this.wordStartedAt = this.startedAt;
 
-    this.lastKeyAt = this.startedAt;
-
     this.sampleTimer = setInterval(() => {
       if (this.finished) return;
-      // Прошедшая секунда без единого нажатия — afk
-      if (this.lastKeyAt !== null && performance.now() - this.lastKeyAt >= 1000) {
-        this.afkSeconds += 1;
-      }
       this.wpmSamples.push(calculateWpm(this.correctKeystrokes, this.elapsed));
+      this.sampleSecond();
       this.checkLimits();
+      // Страховка на случай, если точный таймер не сработал: вкладку
+      // могли усыпить, и setTimeout проснётся позже срока
+      this.checkFinish();
       this.emit();
     }, 1000);
+
+    // Тест на время кончается сам, ровно в срок, а не по нажатию
+    if (this.config.mode === "time") {
+      this.endTimer = setTimeout(() => {
+        if (!this.finished) this.finish();
+      }, this.config.modeValue * 1000);
+    }
+  }
+
+  /**
+   * Что произошло за последнюю секунду: сколько верных и всего нажатий,
+   * сколько ошибок, с какой скоростью шло текущее слово.
+   *
+   * Множитель 12 — это 60/5: слово считается за пять символов, а секунда
+   * составляет шестидесятую минуты.
+   */
+  private sampleSecond(): void {
+    const correct = this.correctKeystrokes - this.atLastSecond.correct;
+    const incorrect = this.incorrectKeystrokes - this.atLastSecond.incorrect;
+
+    // Секунда без единого нажатия — afk. Стирание тоже считается работой
+    if (this.keysSinceSample === 0) this.afkSeconds += 1;
+    this.keysSinceSample = 0;
+
+    this.speedSamples.push(correct * 12);
+    this.rawSamples.push((correct + incorrect) * 12);
+    this.errorSamples.push(incorrect);
+    this.burstSamples.push(this.currentBurst);
+
+    this.atLastSecond = {
+      correct: this.correctKeystrokes,
+      incorrect: this.incorrectKeystrokes,
+    };
   }
 
   private checkFinish(): void {
@@ -474,6 +547,10 @@ export class TypingEngine {
       clearInterval(this.sampleTimer);
       this.sampleTimer = null;
     }
+    if (this.endTimer !== null) {
+      clearTimeout(this.endTimer);
+      this.endTimer = null;
+    }
     this.listeners.clear();
   }
 
@@ -528,6 +605,10 @@ export class TypingEngine {
       modeValue: this.config.modeValue,
       language: this.config.language,
       wpmSamples: [...this.wpmSamples],
+      speedSamples: [...this.speedSamples],
+      rawSamples: [...this.rawSamples],
+      burstSamples: [...this.burstSamples],
+      errorSamples: [...this.errorSamples],
       failed: this.failed,
       failReason: this.failReason,
     };

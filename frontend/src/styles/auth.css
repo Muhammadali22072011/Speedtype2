@@ -1,0 +1,131 @@
+/*
+ * Вход и регистрация.
+ *
+ * Разметка повторяет monkeytype: у них это
+ * ts/components/pages/login/Login.tsx и Register.tsx — колонка шириной
+ * 20rem, заголовок кеглем в основной текст и цветом --sub-color, поля
+ * подряд с зазором 0.5rem. Никакой карточки у них нет, поля лежат прямо
+ * на фоне страницы — заливку даёт сам input.
+ *
+ * Файл подключает pages/auth.ts и грузится вместе с ним, то есть лениво:
+ * в основную сборку эти правила не попадают. Общих классов здесь нет
+ * намеренно — всё, что нужно только этой странице, живёт только тут.
+ */
+
+/* Форма стоит по центру экрана, а не прижата к верхнему краю.
+   #page — колонка во всю высоту, поэтому хватает flex: 1 и place-items */
+.authPage {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: var(--space-32) 0;
+}
+
+.authForm {
+  display: grid;
+  gap: var(--space-8);
+  /* 20rem — их sm:w-80. Столько же было в старом .form, только там форма
+     висела у верхнего края */
+  width: min(20rem, 100%);
+}
+
+/*
+ * Заголовок: кегль основного текста и цвет приглушённого — как их H3
+ * (text-[1em] text-sub, gap 0.5em, pb 0.5em). Крупный центрированный
+ * заголовок здесь не нужен: на странице всего одна форма, и представлять
+ * её незачем.
+ *
+ * Тег h1, потому что это единственный заголовок страницы. Кегль
+ * к уровню заголовка отношения не имеет.
+ */
+.authTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding-bottom: var(--space-8);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  color: var(--fg-muted-readable);
+}
+
+.authTitle svg {
+  width: 1em;
+  height: 1em;
+}
+
+/*
+ * Подпись у поля видимая, а не только placeholder.
+ *
+ * Это единственное расхождение с их разметкой, и оно осознанное:
+ * placeholder исчезает при первом же символе, и через три поля человек
+ * уже не помнит, где что. Метка обёрнута вокруг поля, поэтому связь
+ * с ним держится сама, без id и for.
+ */
+.authField {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.authLabel {
+  font-size: var(--font-size-2xs);
+  color: var(--fg-muted-readable);
+}
+
+.authHint {
+  font-size: var(--font-size-4xs);
+  color: var(--fg-muted-readable);
+}
+
+/*
+ * Ошибка.
+ *
+ * Цвет, кегль и зарезервированную высоту даёт общий класс .error — здесь
+ * они не повторяются намеренно. Своя копия у меня сначала была, и она
+ * молча не работала: после починки слова с опечаткой общее правило стало
+ * `.error:not(.word)`, а :not() приносит вес своего аргумента — 0,2,0
+ * против 0,1,0 у .authError. Форк размером в три строки проиграл бы
+ * в любом случае, и правильно: у ошибки формы нет причин выглядеть иначе,
+ * чем у остальных.
+ *
+ * Остаётся одно правило, которого нет в общем классе: первая буква
+ * приводится к нижнему регистру. Весь интерфейс проекта в нижнем, а текст
+ * ошибки приходит с сервера с заглавной. Трогает ровно одну букву,
+ * остальное сообщение не искажается.
+ */
+.authError::first-letter {
+  text-transform: lowercase;
+}
+
+.authSubmit {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Переход между входом и регистрацией — мелкой строкой под кнопкой */
+.authSwitch {
+  padding-top: var(--space-8);
+  font-size: var(--font-size-2xs);
+  color: var(--fg-muted-readable);
+  text-align: center;
+}
+
+.authSwitch a {
+  color: var(--fg-accent);
+}
+
+.authSwitch a:hover {
+  color: var(--fg-main);
+}
+
+.authSwitch a:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
+}
+
+/* На узком экране колонка занимает всю ширину, поля страницы уже задал #app */
+@media (max-width: 425px) {
+  .authPage {
+    padding: var(--space-16) 0;
+  }
+}

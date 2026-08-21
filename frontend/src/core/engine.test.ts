@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { TypingEngine } from "./engine";
 import { calculateAccuracy, calculateConsistency, calculateRaw, calculateWpm } from "./metrics";
@@ -165,5 +165,78 @@ describe("подписка", () => {
     unsubscribe();
     engine.type("h");
     expect(calls).toBe(1);
+  });
+});
+
+describe("посекундные ряды для графика", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  /** Один тик замера — секунда по таймеру движка. */
+  function tick(): void {
+    vi.advanceTimersByTime(1000);
+  }
+
+  it("скорость и raw считаются за секунду, а не с начала теста", () => {
+    const engine = makeEngine(["aaaaa", "bbbbb"], "time");
+
+    // Пять верных нажатий за первую секунду — это 5 символов, то есть
+    // одно слово в секунду, то есть 60 wpm
+    typeAll(engine, "aaaaa");
+    tick();
+
+    // Во вторую секунду не нажали ничего: ряд обязан показать ноль,
+    // а не унаследовать прошлое значение
+    tick();
+
+    const summary = engine.summary;
+    expect(summary.speedSamples).toEqual([60, 0]);
+    expect(summary.rawSamples).toEqual([60, 0]);
+    expect(summary.errorSamples).toEqual([0, 0]);
+  });
+
+  it("ошибки попадают в свой ряд и в raw, но не в скорость", () => {
+    const engine = makeEngine(["aaaaa"], "time");
+
+    engine.type("a");
+    engine.type("x");
+    engine.type("x");
+    tick();
+
+    const summary = engine.summary;
+    expect(summary.speedSamples).toEqual([12]);
+    expect(summary.rawSamples).toEqual([36]);
+    expect(summary.errorSamples).toEqual([2]);
+  });
+
+  it("нарастающий ряд wpm остался прежним — по нему считается ровность", () => {
+    const engine = makeEngine(["aaaaa", "bbbbb"], "time");
+
+    typeAll(engine, "aaaaa");
+    tick();
+    tick();
+
+    // Пять символов за две секунды — это 30 wpm с начала теста.
+    // Ряд для consistency обязан остаться нарастающим, иначе смысл
+    // сохранённой ровности поменяется задним числом
+    const [first, second] = engine.summary.wpmSamples;
+    expect(first).toBeCloseTo(60, 0);
+    expect(second).toBeCloseTo(30, 0);
+  });
+
+  it("время без нажатий считается по секундам", () => {
+    const engine = makeEngine(["aaaaa"], "time");
+
+    engine.type("a");
+    tick();
+    tick();
+    tick();
+
+    expect(engine.summary.afkSeconds).toBe(2);
   });
 });

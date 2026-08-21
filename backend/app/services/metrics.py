@@ -20,6 +20,17 @@ from dataclasses import dataclass
 
 CHARS_PER_WORD = 5
 
+#: Версия формулы ровности, которой посчитан результат.
+#: 1 — коэффициент вариации НАРАСТАЮЩЕГО ряда wpm, линейный перевод в проценты.
+#:     Нарастающий ряд гладок по своей природе, поэтому цифра завышена
+#:     примерно на 14 пунктов против monkeytype.
+#: 2 — как у них: коэффициент вариации ПОСЕКУНДНОЙ скорости, перевод через
+#:     kogasa. Считается только когда клиент прислал посекундный ряд.
+#: Версия хранится у каждого результата: старые и новые цифры несравнимы,
+#: и без пометки лидерборд молча смешал бы две шкалы.
+CONSISTENCY_LEGACY = 1
+CONSISTENCY_CURRENT = 2
+
 
 @dataclass(frozen=True)
 class TestMetrics:
@@ -33,6 +44,10 @@ class TestMetrics:
     incorrect_chars: int
     total_chars: int
     duration: float
+    #: Какой формулой посчитана ровность — см. CONSISTENCY_LEGACY и CURRENT.
+    #: Со значением по умолчанию, поэтому стоит последним: у dataclass
+    #: поля без значения не могут идти после полей со значением.
+    consistency_version: int = CONSISTENCY_LEGACY
 
 
 def _minutes(seconds: float) -> float:
@@ -56,6 +71,50 @@ def calculate_accuracy(correct_chars: int, incorrect_chars: int) -> float:
     if total == 0:
         return 100.0
     return (correct_chars / total) * 100.0
+
+
+
+
+def kogasa(cov: float) -> float:
+    """Перевод коэффициента вариации в проценты ровности, как у monkeytype.
+
+    Сглаженная версия «100 − cov·100»: до cov 0.5 они совпадают в пределах
+    десятой доли процента, дальше эта не уходит в отрицательные значения.
+    Формула из packages/util/src/numbers.ts.
+    """
+    return 100 * (1 - math.tanh(cov + cov**3 / 3 + cov**5 / 5))
+
+
+def coefficient_of_variation(samples: list[float]) -> float | None:
+    """Отношение среднеквадратичного отклонения к среднему.
+
+    None означает «считать не из чего»: одного замера мало, а нулевое
+    среднее означает, что не набрано ничего.
+    """
+    values = [s for s in samples if s > 0]
+    if len(values) < 2:
+        return None
+
+    mean = sum(values) / len(values)
+    if mean == 0:
+        return None
+
+    variance = sum((s - mean) ** 2 for s in values) / len(values)
+    return math.sqrt(variance) / mean
+
+
+def calculate_consistency_v2(raw_samples: list[float]) -> float:
+    """Ровность по посекундной скорости — так считает monkeytype.
+
+    Ряд должен быть именно посекундным: скорость ЗА каждую секунду,
+    а не с начала теста. Нарастающий ряд подавляет разброс и завышает
+    ровность примерно на 14 пунктов.
+    """
+    cov = coefficient_of_variation(raw_samples)
+    if cov is None:
+        return 100.0
+
+    return max(0.0, min(100.0, kogasa(cov)))
 
 
 def calculate_consistency(wpm_samples: list[float]) -> float:
@@ -85,15 +144,32 @@ def build_metrics(
     incorrect_chars: int,
     seconds: float,
     wpm_samples: list[float] | None = None,
+    raw_samples: list[float] | None = None,
 ) -> TestMetrics:
-    """Собрать все метрики теста разом."""
+    """Собрать все метрики теста разом.
+
+    Ровность считается по посекундному ряду, если клиент его прислал, —
+    так же, как у monkeytype. Старые клиенты его не шлют, для них остаётся
+    прежняя формула, и результат помечается версией 1.
+
+    Обратной совместимости ради, а не из вежливости: без неё каждый
+    не обновившийся клиент получал бы ровность 100% на пустом ряде.
+    """
     total_chars = correct_chars + incorrect_chars
+
+    if raw_samples:
+        consistency = calculate_consistency_v2(raw_samples)
+        version = CONSISTENCY_CURRENT
+    else:
+        consistency = calculate_consistency(wpm_samples or [])
+        version = CONSISTENCY_LEGACY
 
     return TestMetrics(
         wpm=round(calculate_wpm(correct_chars, seconds), 2),
         raw=round(calculate_raw(total_chars, seconds), 2),
         accuracy=round(calculate_accuracy(correct_chars, incorrect_chars), 2),
-        consistency=round(calculate_consistency(wpm_samples or []), 2),
+        consistency=round(consistency, 2),
+        consistency_version=version,
         correct_chars=correct_chars,
         incorrect_chars=incorrect_chars,
         total_chars=total_chars,
