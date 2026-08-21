@@ -98,6 +98,24 @@
   animation: var(--incorrect-letter-animation);
 }
 
+/*
+ * Лишняя буква и в этих режимах остаётся лишней.
+ *
+ * Правила выше весом (1,4,1) перебивали общее `#words .word letter.extra`
+ * весом (1,2,1): при любом словном режиме подсветки лишняя буква получала
+ * цвет неверной, и отличить «набрал не ту букву» от «набрал лишнюю» можно
+ * было только в режимах off и letter. Под лишние в проекте заведён
+ * отдельный цвет, значит различать эти случаи считалось нужным.
+ */
+#words.highlight-word:not(.blind) .word.typed.error letter.extra,
+#words.highlight-word:not(.blind) .word.active:has(letter.incorrect) letter.extra,
+#words.highlight-next-word:not(.blind) .word.typed.error letter.extra,
+#words.highlight-next-two-words:not(.blind) .word.typed.error letter.extra,
+#words.highlight-next-three-words:not(.blind) .word.typed.error letter.extra {
+  color: var(--extra-letter-color);
+  animation: var(--extra-letter-animation);
+}
+
 /* Лента: одна строка, текст едет мимо каретки.
    Высоту обёртки ставит JS, здесь только раскладка слов. */
 #words.tape {
