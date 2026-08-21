@@ -39,7 +39,7 @@ import {
 } from "../ui/keymap";
 import { askNumber, askText } from "../ui/modal";
 import { notify } from "../ui/notify";
-import { openFunboxPicker, openLanguagePicker } from "../ui/pickers";
+import { openFunboxPicker, openLanguagePicker, openQuoteSearch } from "../ui/pickers";
 import { applyThemeByName, pickRandomTheme } from "../state/themes";
 
 /** Сколько строк слов видно сразу — как у monkeytype, три. */
@@ -1363,6 +1363,19 @@ export async function testPage({ container }: PageContext): Promise<() => void> 
     if (event.key === "Escape") {
       event.preventDefault();
       openCommandline();
+      return;
+    }
+
+    // ctrl+shift+f — поиск цитаты. Окно доступно в любом режиме; выбор сам
+    // переводит тест в режим цитаты, иначе выбранную цитату негде показать.
+    // Ловим по event.code, а не по key: на кириллице key придёт «а», и на
+    // русской раскладке клавиша бы молчала — а это русский тренажёр.
+    if (event.ctrlKey && event.shiftKey && event.code === "KeyF") {
+      event.preventDefault();
+      openQuoteSearch(getSettings().language, (words) => {
+        if (getSettings().mode !== "quote") updateSettings({ mode: "quote" });
+        restart(words);
+      });
       return;
     }
 
